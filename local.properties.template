@@ -1,0 +1,7 @@
+#
+# If you don't use Android Studio for compilation,
+# copy this file to `local.properties`
+# `copy local.properties.template local.properties`
+#
+ndk.dir=/PATH/TO/android-ndk
+sdk.dir=/PATH/TO/android-sdk

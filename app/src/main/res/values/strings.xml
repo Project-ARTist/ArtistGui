@@ -1,0 +1,120 @@
+<resources>
+    <string name="app_name">ArtistGui</string>
+
+    <string name="main_activity_text">Artist on-device compiler\n\n</string>
+    <string name="compiler_activity_name">ArtistCompiler</string>
+    <string name="compile_dialog_activity_name">ArtistCompileDialog</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+
+    <string name="pref_compiler_debugmode">Dex2oat Compile in DebugMode</string>
+    <string name="pref_compiler_debugmode_summary">Recompiles the App in DebugMode instead of the performance optimized ReleaseMode</string>
+    <string name="title_activity_artist_gui_settings_general">ArtistGUI Settings</string>
+
+    <string name="pref_category_dex2oat">Dex2oat Compiler Config</string>
+    <string name="pref_category_codelib">Codelib Config</string>
+    <string name="pref_category_apk">Apk Config</string>
+
+
+    <!-- Strings related to Settings -->
+
+    <!-- Example General settings -->
+    <string name="pref_header_general">General</string>
+
+    <string name="pref_title_social_recommendations">Enable social recommendations</string>
+    <string name="pref_description_social_recommendations">Recommendations for people to contact
+        based on your message history
+    </string>
+
+    <string name="pref_title_display_name">Display name</string>
+    <string name="pref_default_display_name">John Smith</string>
+
+    <string name="pref_title_general_loglevel">LogLevel</string>
+    <string-array name="pref_general_loglevel">
+        <item>verbose</item>
+        <item>debug</item>
+        <item>info</item>
+        <item>Off</item>
+    </string-array>
+    <string-array name="pref_general_loglevel_values">
+        <item>verbose</item>
+        <item>debug</item>
+        <item>info</item>
+        <item>off</item>
+    </string-array>
+
+    <!-- Example settings for Data & Sync -->
+    <string name="pref_header_data_sync">Data &amp; sync</string>
+
+    <string name="pref_title_compiler_threads">Dex2oat Compiler Threads</string>
+    <string-array name="pref_compiler_threads">
+        <item>1 Thread</item>
+        <item>2 Threads</item>
+        <item>3 Threads</item>
+        <item>4 Threads</item>
+        <item>5 Threads</item>
+        <item>6 Threads</item>
+        <item>7 Threads</item>
+        <item>8 Threads</item>
+        <item>Compiler Decides</item>
+    </string-array>
+    <string-array name="pref_compiler_threads_values">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>-1</item>
+    </string-array>
+
+    <string name="pref_title_system_sync_settings">System sync settings</string>
+
+    <!-- Example settings for Notifications -->
+    <string name="pref_header_notifications">Notifications</string>
+
+    <string name="pref_title_new_message_notifications">New message notifications</string>
+
+    <string name="pref_title_ringtone">Ringtone</string>
+    <string name="pref_ringtone_silent">Silent</string>
+
+    <string name="pref_title_vibrate">Vibrate</string>
+    <string name="pref_header_compiler">Compiler</string>
+    <string name="pref_compiler_backup_merged_apk">Backup Merged APK</string>
+    <string name="pref_compiler_backup_merged_apk_summary">Copies a backup of the merged APK including TaintLib to /sdcard</string>
+    <string name="pref_compiler_backup_original_apk">Backup Original APK</string>
+    <string name="pref_compiler_launch_activity">Launch Activity</string>
+    <string name="pref_compiler_launch_activity_summary">Select if you want artist to launch the app after injection/recompilation.</string>
+    <string name="pref_compiler_backup_original_apk_summary">Copies a backup of the original APK to /sdcard</string>
+    <string name="pref_compiler_inject_codelib">Inject CodeLib</string>
+    <string name="pref_compiler_inject_codelib_summary">Select if you want to inject an external code library via DexMerger</string>
+    <string name="pref_compiler_abort_multidex_summary">Whether the compiler aborts the compilation of multidex apps</string>
+    <string name="pref_compiler_abort_multidex">Abort Multidex</string>
+
+
+    <string name="pref_title_codelib_import">Codelib (Import)</string>
+    <string name="pref_summary_codelib_import">Please select a CodeLib that should get imported into the CodeLib Folder.</string>
+    <string name="pref_title_codelib_selection">CodeLib (Choose)</string>
+    <string name="pref_summary_codelib_selection">Please choose a CodeLib for injection.</string>
+    <string name="notification_compilation_title">Artist Compilation</string>
+    <string name="notification_compilation_text"></string>
+    <string name="pref_compiler_special_app_compart">Lib: AppCompart Settings</string>
+    <string name="pref_compiler_special_app_compart_summary">Select if you want to enable specialised AppCompart Settings</string>
+
+    <string name="snack_compilation_success">Compilation Success:</string>
+    <string name="snack_compilation_failed">Compilation Failed:</string>
+    <string name="pref_compiler_replace_base_apk">Replace original application APK (base.apk)</string>
+    <string name="pref_compiler_replace_base_apk_summary">Replaces orginal application APK with the injected APK.
+        Keep unchecked if the original APK should remain untouched.
+    </string>
+    <string name="empty"></string>
+    <string name="compile_dialog_button_show_more">Show More</string>
+    <string name="compile_dialog_status_ex"></string>
+    <string name="compile_dialog_button_cancel">Cancel</string>
+    <string name="about_text_main">The ARTist project allows for on-device modification and rewriting of apps.  ArtistGUI, in particular, ships the specialized ARTist compiler to the device to allow for simple recompilation of installed apps (root required).  For more information, please visit https://artist.cispa.saarland</string>
+</resources>

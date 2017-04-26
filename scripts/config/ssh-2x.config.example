@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+
+### This is an example config file for building aosp on a remote machine using ssh and sshfs.
+### Copy it to ssh-2x.config where x should be replaced by the api_level this config is valid for.
+### Configure the paths below according to your needs
+
+ndk_path=/path/to/ndk-bundle
+
+# ssh alias for your build server
+# => You could also use `localhost` if you don't use a build server.
+#    `server_aosp` and `mounted_aosp` would be equal in this case
+server_alias="SSH-SERVER-ALIAS"
+
+# path to aosp root on the build server
+server_aosp="/path/to/aosp"
+
+# local mount point for aosp
+mounted_aosp="/mounted/aosp/from/server"
+
+# the api level for which aosp is checked out and will be compiled
+# artist currently supports api levels 23 (marshmallow), 24 (nougat) and 25 (nougat 7.1)
+api_level=2x
+
+# how many threads are available for compilation on the build server
+threads=1
+
+
+
+
+
+
+

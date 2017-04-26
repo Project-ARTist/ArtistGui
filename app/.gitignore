@@ -1,0 +1,4 @@
+build
+src/main/jni/*.so
+src/main/assets/artist/*/dex2oat
+src/main/assets/artist/*/lib

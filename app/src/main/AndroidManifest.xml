@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="saarland.cispa.artist.artistgui">
+
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity
+            android:name="saarland.cispa.artist.artistgui.ArtistMainActivity"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="saarland.cispa.artist.artistgui.CompileActivity"
+            android:label="@string/compiler_activity_name"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity
+            android:name="saarland.cispa.artist.artistgui.CompileDialogActivity"
+            android:label="@string/compile_dialog_activity_name"
+            android:launchMode="standard"
+            android:theme="@android:style/Theme.DeviceDefault.Light.Dialog"></activity>
+        <activity
+            android:name="saarland.cispa.artist.artistgui.settings.ArtistGuiSettingsGeneral"
+            android:label="@string/title_activity_artist_gui_settings_general"></activity>
+
+        <service
+            android:name="saarland.cispa.artist.artistgui.CompilationService"
+            android:exported="false" />
+
+    </application>
+
+</manifest>
