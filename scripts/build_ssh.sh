@@ -58,7 +58,8 @@ dexToOatLibs=(
 
 # do the actual building
 echo "Connecting to ${server_alias}, building Android"
-ssh ${server_alias} "cd ${server_aosp} ; . build/envsetup.sh; mmm art/ -j${threads}"
+
+ssh ${server_alias} "cd ${server_aosp} ; . build/envsetup.sh; mmma art/ -j${threads}"
 
 if [ $? -eq 0 ]; then
     echo ""
@@ -97,7 +98,7 @@ if [ $? -eq 0 ]; then
     git --git-dir ${mounted_art_git_path} --work-tree ${mounted_art_path} status --porcelain >> ${art_version_file}
 
 else
-    echo "Building Nougat failed..."
+    echo "Building ARTist failed..."
 fi
 
 echo "" && date
