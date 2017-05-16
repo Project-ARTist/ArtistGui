@@ -449,6 +449,7 @@ public class ArtistImpl implements Artist {
         } else {
             cmd_dex2oat_compile += " --dex-file="  + config.app_apk_merged_signed_file_path;
             cmd_dex2oat_compile += " --dex-location="  + config.app_apk_file_path;
+            cmd_dex2oat_compile += " --checksum-rewriting";
         }
 
         if (config.COMPILER_THREADS != -1) {
