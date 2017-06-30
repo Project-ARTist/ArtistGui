@@ -23,15 +23,15 @@
         <activity
             android:name="saarland.cispa.artist.artistgui.CompileActivity"
             android:label="@string/compiler_activity_name"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name="saarland.cispa.artist.artistgui.CompileDialogActivity"
             android:label="@string/compile_dialog_activity_name"
             android:launchMode="standard"
-            android:theme="@android:style/Theme.DeviceDefault.Light.Dialog"></activity>
+            android:theme="@android:style/Theme.DeviceDefault.Light.Dialog" />
         <activity
             android:name="saarland.cispa.artist.artistgui.settings.ArtistGuiSettingsGeneral"
-            android:label="@string/title_activity_artist_gui_settings_general"></activity>
+            android:label="@string/title_activity_artist_gui_settings_general" />
 
         <service
             android:name="saarland.cispa.artist.artistgui.CompilationService"

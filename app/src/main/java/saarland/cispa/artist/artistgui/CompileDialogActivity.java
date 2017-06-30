@@ -38,6 +38,9 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import java.util.Locale;
+import java.util.Objects;
+
 import saarland.cispa.artist.ArtistImpl;
 import saarland.cispa.artist.CompilationResultReceiver;
 import saarland.cispa.artist.artistgui.gui.CompileNotification;
@@ -128,7 +131,8 @@ public class CompileDialogActivity
         if (resultData != null) {
             appPackageName = resultData.getString(ArtistImpl.INTENT_EXTRA_APP_NAME);
         }
-        Log.d(TAG, String.format("CompileDialogActivity.onReceiveResult() resultcode[%d] APP[%s]",
+        Log.d(TAG, String.format(Locale.getDefault(),
+                "CompileDialogActivity.onReceiveResult() resultcode[%d] APP[%s]",
                 resultCode, appPackageName));
 
         if (appPackageName != null && !appPackageName.isEmpty()) {
@@ -174,7 +178,6 @@ public class CompileDialogActivity
             setCompilationProgress(progress);
             this.progressBar.setProgress(progress);
             this.compileStatusExtended.append("> " + message + "\n");
-            // this.compileStatusExtended.scrollTo(this.compileStatusExtended.getMaxHeight(), this.compileStatusExtended.getMaxHeight());
         });
     }
 
@@ -250,7 +253,7 @@ public class CompileDialogActivity
     }
 
     private void setDefaultTitle() {
-        if (APP_NAME != null && APP_NAME != "") {
+        if (APP_NAME != null && !Objects.equals(APP_NAME, "")) {
             setTitle(APP_NAME);
         } else {
             setTitle("Artist Compilation");
@@ -279,12 +282,10 @@ public class CompileDialogActivity
         final Button buttonVerbose = (Button)findViewById(R.id.button_compile_verbose);
         buttonVerbose.setOnClickListener(onClickListener -> {
             if (this.compileStatusExtended.isShown()) {
-//                this.compileStatus.setVisibility(View.VISIBLE);
                 this.compileStatusExtended.setVisibility(View.GONE);
                 this.compileDialogLayout.setVisibility(View.GONE);
                 this.compileDialogLayout.setVisibility(View.VISIBLE);
             } else {
-//                this.compileStatus.setVisibility(View.GONE);
                 this.compileStatusExtended.setVisibility(View.VISIBLE);
                 this.compileDialogLayout.setVisibility(View.GONE);
                 this.compileDialogLayout.setVisibility(View.VISIBLE);
@@ -370,7 +371,7 @@ public class CompileDialogActivity
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        Log.d(TAG, String.format("MotionEven: [%s] [Action: %d] [Masked: %d]",
+        Log.d(TAG, String.format(Locale.getDefault(), "MotionEven: [%s] [Action: %d] [Masked: %d]",
                 event.toString(),
                 event.getAction(),
                 event.getActionMasked()));
@@ -385,7 +386,7 @@ public class CompileDialogActivity
         return true;
     }
 
-    public static final void compile(final Activity activity, final String apkPackageName) {
+    public static void compile(final Activity activity, final String apkPackageName) {
         final Intent intent = new Intent(activity, CompileDialogActivity.class);
         final Bundle bundle = new Bundle();
         bundle.putString(CompilationService.EXTRA_APP_NAME, apkPackageName);

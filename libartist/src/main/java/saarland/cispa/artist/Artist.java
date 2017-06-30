@@ -29,7 +29,6 @@ import saarland.cispa.artist.settings.ArtistRunConfig;
 
 public interface Artist {
 
-    String CODE_LIB_DEFAULT_NAME = "usercodelib.apk";
     String CODE_LIB_ASSET = "assetcodelib.apk";
 
     void init(final Context context);
@@ -37,14 +36,5 @@ public interface Artist {
 
     boolean mergeCodeLib(final Context context, final ArtistRunConfig config);
 
-    void signApk();
-
-    boolean TestRun(final Activity activity);
-
-    boolean Run(final Activity activity, final Context context);
-    boolean Run(final Activity activity);
     boolean Run(final Context context);
-
-    void RunExternalApk(final Context context, final String apkAssetFileName, final String bootImage);
-    void RunBootImage(final Context context, final String bootImgName);
 }

@@ -75,7 +75,7 @@ public class CompilationService extends Service {
      * Because we know this service always
      * runs in the same process as its clients, we don't need to deal with IPC.
      */
-    public class CompilationServiceBinder extends Binder {
+    class CompilationServiceBinder extends Binder {
         CompilationService getService() {
             // Return this instance of LocalService so clients can call public methods
             return CompilationService.this;
@@ -162,11 +162,6 @@ public class CompilationService extends Service {
         return ALLOW_REBIND;
     }
 
-    /**
-     *
-     * @param context
-     * @param appName
-     */
     public static void startService(final Context context, @Nullable final String appName) {
         Log.d(TAG, "startService() " + appName);
         Intent intent = new Intent(context, CompilationService.class);
@@ -203,7 +198,7 @@ public class CompilationService extends Service {
             final ArtistCompilationTask compileTask =
                     createCompilationTask(listener, appPackageName, guiCallback);
             restartExecutorServiceIfNecessary();
-            Future<Boolean> result = this.pool.submit(compileTask);
+            final Future<Boolean> result = this.pool.submit(compileTask);
             compilationQueue.add(compileTask);
             compilationResults.put(appPackageName, result);
         }

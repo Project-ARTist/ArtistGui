@@ -57,9 +57,6 @@ public class ArtistMainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
-
-
         setContentView(R.layout.activity_artist_main);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);

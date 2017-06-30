@@ -26,7 +26,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
-import android.content.res.AssetManager;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
@@ -48,7 +47,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
@@ -258,7 +256,6 @@ public class CompileActivity extends AppCompatActivity
     }
 
     private boolean writeResultFile(String packageName, boolean success) {
-        // TODO get rid of hardcoded path
         final File resultsDir = new File(getExternalFilesDir(null), "ArtistResults");
         if (!resultsDir.exists()) {
             if (!resultsDir.mkdir()) {
@@ -302,16 +299,7 @@ public class CompileActivity extends AppCompatActivity
     }
 
     private void setupAppList() {
-        final AssetManager assetManager = getAssets();
-
-        final String[] list = setupAppListBundledApps(assetManager);
-
         final ArrayList<String> applicationList = new ArrayList<>();
-
-        applicationList.add("<< boot image >>");
-        applicationList.add(GuiUtils.LIST_VIEW_SEPARATOR);
-        applicationList.addAll(Arrays.asList(list));
-        applicationList.add(GuiUtils.LIST_VIEW_SEPARATOR);
 
         final List<String> installedApps = AndroidUtils.getInstalledPackages(getApplicationContext());
 
@@ -337,28 +325,6 @@ public class CompileActivity extends AppCompatActivity
 
             queueCompilation(apkFilename);
         });
-    }
-
-    @NonNull
-    private String[] setupAppListBundledApps(AssetManager assetManager) {
-
-        String list[];
-
-        try {
-            list = assetManager.list(PATH_ASSETS_APPS);
-
-            if (list != null) {
-                Log.d(TAG, "Bundled App count: " + list.length);
-                for (final String bundledApk : list) {
-                    Log.d("Bundle App:", "apps/" + bundledApk);
-                }
-            }
-        } catch (final IOException e) {
-            Log.w(TAG, "Bundled Applist Error", e);
-            list = new String[0];
-        }
-        //noinspection ConstantConditions
-        return list;
     }
 
     private void executeAvailableIntentTasks() {

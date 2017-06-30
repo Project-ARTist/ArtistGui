@@ -86,7 +86,7 @@
     <string name="pref_title_vibrate">Vibrate</string>
     <string name="pref_header_compiler">Compiler</string>
     <string name="pref_compiler_backup_merged_apk">Backup Merged APK</string>
-    <string name="pref_compiler_backup_merged_apk_summary">Copies a backup of the merged APK including TaintLib to /sdcard</string>
+    <string name="pref_compiler_backup_merged_apk_summary">Copies a backup of the merged APK including CodeLib to /sdcard</string>
     <string name="pref_compiler_backup_original_apk">Backup Original APK</string>
     <string name="pref_compiler_launch_activity">Launch Activity</string>
     <string name="pref_compiler_launch_activity_summary">Select if you want artist to launch the app after injection/recompilation.</string>

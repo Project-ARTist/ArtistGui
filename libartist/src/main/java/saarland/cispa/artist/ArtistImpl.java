@@ -42,6 +42,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
@@ -120,14 +121,6 @@ public class ArtistImpl implements Artist {
         AndroidUtils.createFoldersInFilesDir(context, config.artist_exec_path_libs_dir);
     }
 
-    @Override
-    public boolean TestRun(Activity activity) {
-        Log.i(TAG, "TestRun() compiling and starting " + config.app_name);
-        setupArtistLibraries(activity.getApplicationContext(), config);
-        Log.i(TAG, "TestRun() compiling and starting " + config.app_name + " DONE");
-        return true;
-    }
-
     /**
      * @param context
      * @param config
@@ -183,21 +176,7 @@ public class ArtistImpl implements Artist {
     }
 
     @Override
-    public void signApk() {
-
-    }
-
-    @Override
-    public boolean Run(final Activity activity) {
-        return Run(activity, activity.getApplicationContext());
-    }
-
     public boolean Run(final Context context) {
-        return Run(null, context);
-    }
-
-    @Override
-    public boolean Run(final Activity activity, final Context context) {
         Log.i(TAG, "Run() compiling and starting " + config.app_name);
         Log.i(TAG, "> app_name:    " + config.app_name);
         Log.i(TAG, "> apkPath:     " + config.app_apk_file_path);
@@ -271,7 +250,7 @@ public class ArtistImpl implements Artist {
 
             if (this.config.REPLACE_BASE_APK) {
                 Log.i(TAG, "Replacing the original base.apk");
-                replaceAppApkWithMergedApk(context, config);
+                replaceAppApkWithMergedApk(config);
             } else {
                 Log.i(TAG, "Leaving the original base.apk untouched");
             }
@@ -435,9 +414,6 @@ public class ArtistImpl implements Artist {
                 "export LD_LIBRARY_PATH=" + context.getApplicationInfo().nativeLibraryDir + ":"
                         + AndroidUtils.getFilesDirLocation(context, config.artist_exec_path_libs_dir) + ";"
                         + pathDex2oat
-                        //+ " --runtime-arg -Xzygote"
-                        //+ " --runtime-arg -Xnoimage-dex2oat"
-                        //+ " --runtime-arg -Ximage:"+bootImageDir.getAbsolutePath()+File.separatorChar+bootImage+".art"
                         + " --oat-file=" + config.app_oat_file_path
                         + " --compiler-backend=Optimizing"
                         + " --compiler-filter=everything"
@@ -503,408 +479,7 @@ public class ArtistImpl implements Artist {
         AndroidUtils.copyAsset(context, config.asset_path_keystore, config.keystore.getAbsolutePath());
     }
 
-    public void RunBootImage(final Context context, final String bootImgName) {
-
-        File imageLibs = new File(context.getFilesDir().getAbsolutePath() + File.separatorChar + "ImageLibs" + File.separatorChar);
-        imageLibs.mkdir();
-
-        File bootImageDir = new File(context.getFilesDir().getAbsolutePath() + File.separatorChar + "BootImages" + File.separatorChar);
-        File bootImageIsaDir = new File(bootImageDir.getAbsolutePath() + File.separatorChar + "arm" + File.separatorChar);
-        bootImageDir.mkdir();
-        bootImageIsaDir.mkdir();
-
-        String imageLibsDir = imageLibs.getAbsolutePath();
-        AndroidUtils.copyAsset(context, "ImageLibs" + File.separatorChar + "core-libart.jar", imageLibsDir + File.separatorChar + "core-libart.jar");
-        AndroidUtils.copyAsset(context, "ImageLibs" + File.separatorChar + "TaintLib.jar", imageLibsDir + File.separatorChar + "TaintLib.jar");
-        AndroidUtils.copyAsset(context, "ImageLibs" + File.separatorChar + "conscrypt.jar", imageLibsDir + File.separatorChar + "conscrypt.jar");
-        AndroidUtils.copyAsset(context, "ImageLibs" + File.separatorChar + "okhttp.jar", imageLibsDir + File.separatorChar + "okhttp.jar");
-        AndroidUtils.copyAsset(context, "ImageLibs" + File.separatorChar + "core-junit.jar", imageLibsDir + File.separatorChar + "core-junit.jar");
-        AndroidUtils.copyAsset(context, "ImageLibs" + File.separatorChar + "bouncycastle.jar", imageLibsDir + File.separatorChar + "bouncycastle.jar");
-        AndroidUtils.copyAsset(context, "ImageLibs" + File.separatorChar + "ext.jar", imageLibsDir + File.separatorChar + "ext.jar");
-        AndroidUtils.copyAsset(context, "ImageLibs" + File.separatorChar + "framework.jar", imageLibsDir + File.separatorChar + "framework.jar");
-        AndroidUtils.copyAsset(context, "ImageLibs" + File.separatorChar + "telephony-common.jar", imageLibsDir + File.separatorChar + "telephony-common.jar");
-        AndroidUtils.copyAsset(context, "ImageLibs" + File.separatorChar + "voip-common.jar", imageLibsDir + File.separatorChar + "voip-common.jar");
-        AndroidUtils.copyAsset(context, "ImageLibs" + File.separatorChar + "ims-common.jar", imageLibsDir + File.separatorChar + "ims-common.jar");
-        AndroidUtils.copyAsset(context, "ImageLibs" + File.separatorChar + "apache-xml.jar", imageLibsDir + File.separatorChar + "apache-xml.jar");
-        AndroidUtils.copyAsset(context, "ImageLibs" + File.separatorChar + "org.apache.http.legacy.boot.jar", imageLibsDir + File.separatorChar + "org.apache.http.legacy.boot.jar");
-
-
-        String args = "--runtime-arg "
-                + "-Xms64m "
-                + "--runtime-arg"
-                + "-Xmx64m "
-                + "--image-classes=frameworks/base/preloaded-classes "
-                /*"--image-classes=frameworks/base/preloaded-classes " +
-                "--dex-file=out/target/common/obj/JAVA_LIBRARIES/core-libart_intermediates/javalib.jar " +
-                "--dex-file=out/target/common/obj/JAVA_LIBRARIES/conscrypt_intermediates/javalib.jar " +
-                "--dex-file=out/target/common/obj/JAVA_LIBRARIES/okhttp_intermediates/javalib.jar " +
-                "--dex-file=out/target/common/obj/JAVA_LIBRARIES/core-junit_intermediates/javalib.jar " +
-                "--dex-file=out/target/common/obj/JAVA_LIBRARIES/bouncycastle_intermediates/javalib.jar " +
-                "--dex-file=out/target/common/obj/JAVA_LIBRARIES/ext_intermediates/javalib.jar " +
-                "--dex-file=out/target/common/obj/JAVA_LIBRARIES/framework_intermediates/javalib.jar " +
-                "--dex-file=out/target/common/obj/JAVA_LIBRARIES/telephony-common_intermediates/javalib.jar " +
-                "--dex-file=out/target/common/obj/JAVA_LIBRARIES/voip-common_intermediates/javalib.jar " +
-                "--dex-file=out/target/common/obj/JAVA_LIBRARIES/ims-common_intermediates/javalib.jar " +
-                "--dex-file=out/target/common/obj/JAVA_LIBRARIES/apache-xml_intermediates/javalib.jar " +
-                "--dex-file=out/target/common/obj/JAVA_LIBRARIES/org.apache.http.legacy.boot_intermediates/javalib.jar " +
-*/
-/*
-                "--dex-location=/system/framework/core-libart.jar " +
-                "--dex-location=/system/framework/conscrypt.jar " +
-                "--dex-location=/system/framework/okhttp.jar " +
-                "--dex-location=/system/framework/core-junit.jar " +
-                "--dex-location=/system/framework/bouncycastle.jar " +
-                "--dex-location=/system/framework/ext.jar " +
-                "--dex-location=/system/framework/framework.jar " +
-                "--dex-location=/system/framework/telephony-common.jar " +
-                "--dex-location=/system/framework/voip-common.jar " +
-                "--dex-location=/system/framework/ims-common.jar " +
-                "--dex-location=/system/framework/apache-xml.jar " +
-                "--dex-location=/system/framework/org.apache.http.legacy.boot.jar " +
-*/
-                + "--dex-file=" + imageLibsDir + File.separatorChar + "core-libart.jar " +
-                "--dex-file=" + imageLibsDir + File.separatorChar + "TaintLib.jar " +
-                "--dex-file=" + imageLibsDir + File.separatorChar + "conscrypt.jar " +
-                "--dex-file=" + imageLibsDir + File.separatorChar + "okhttp.jar " +
-                "--dex-file=" + imageLibsDir + File.separatorChar + "core-junit.jar " +
-                "--dex-file=" + imageLibsDir + File.separatorChar + "bouncycastle.jar " +
-                "--dex-file=" + imageLibsDir + File.separatorChar + "ext.jar " +
-                "--dex-file=" + imageLibsDir + File.separatorChar + "framework.jar " +
-                "--dex-file=" + imageLibsDir + File.separatorChar + "telephony-common.jar " +
-                "--dex-file=" + imageLibsDir + File.separatorChar + "voip-common.jar " +
-                "--dex-file=" + imageLibsDir + File.separatorChar + "ims-common.jar " +
-                "--dex-file=" + imageLibsDir + File.separatorChar + "apache-xml.jar " +
-                "--dex-file=" + imageLibsDir + File.separatorChar + "org.apache.http.legacy.boot.jar " +
-//                    "--dex-file=/system/framework/conscrypt.jar " +
-//                    "--dex-file=/system/framework/okhttp.jar " +
-//                    "--dex-file=/system/framework/core-junit.jar " +
-//                    "--dex-file=/system/framework/bouncycastle.jar " +
-//                    "--dex-file=/system/framework/ext.jar " +
-//                    "--dex-file=/system/framework/framework.jar " +
-//                    "--dex-file=/system/framework/telephony-common.jar " +
-//                    "--dex-file=/system/framework/voip-common.jar " +
-//                    "--dex-file=/system/framework/ims-common.jar " +
-//                    "--dex-file=/system/framework/apache-xml.jar " +
-//                    "--dex-file=/system/framework/org.apache.http.legacy.boot.jar " +
-
-                //"--oat-symbols=out/target/product/hammerhead/symbols/system/framework/arm/boot.oat " +
-                //"--oat-file=out/target/product/hammerhead/dex_bootjars/system/framework/arm/boot.oat " +
-                //"--oat-location=/system/framework/arm/taint_aware_boot.oat " +
-                "--oat-file=" + bootImageIsaDir + File.separatorChar + bootImgName + ".oat " +
-                //"--image=out/target/product/hammerhead/dex_bootjars/system/framework/arm/boot.art " +
-                "--image=" + bootImageIsaDir + File.separatorChar + bootImgName + ".art " +
-                "--base=0x70000000 " +
-                "--instruction-set=arm " +
-                "--instruction-set-variant=krait " +
-                "--instruction-set-features=default " +
-                //"--android-root=out/target/product/hammerhead/system " +
-                "--include-patch-information " +
-                "--runtime-arg -Xnorelocate " +
-                //"--no-generate-debug-info";
-                "--generate-debug-info " +
-                "--compiler-backend=Optimizing " +
-                "--dump-timing ";
-        if (config.COMPILER_THREADS != -1) {
-            args += " -j" + config.COMPILER_THREADS;
-        }
-            /*
-            dex2oat-cmdline =
-            --runtime-arg -Xms64m
-            --runtime-arg -Xmx64m
-            --image-classes=frameworks/base/preloaded-classes
-            --dex-file=out/target/common/obj/JAVA_LIBRARIES/core-libart_intermediates/javalib.jar
-            --dex-file=out/target/common/obj/JAVA_LIBRARIES/conscrypt_intermediates/javalib.jar
-            --dex-file=out/target/common/obj/JAVA_LIBRARIES/okhttp_intermediates/javalib.jar
-            --dex-file=out/target/common/obj/JAVA_LIBRARIES/core-junit_intermediates/javalib.jar
-            --dex-file=out/target/common/obj/JAVA_LIBRARIES/bouncycastle_intermediates/javalib.jar
-            --dex-file=out/target/common/obj/JAVA_LIBRARIES/ext_intermediates/javalib.jar
-            --dex-file=out/target/common/obj/JAVA_LIBRARIES/framework_intermediates/javalib.jar
-            --dex-file=out/target/common/obj/JAVA_LIBRARIES/telephony-common_intermediates/javalib.jar
-            --dex-file=out/target/common/obj/JAVA_LIBRARIES/voip-common_intermediates/javalib.jar
-            --dex-file=out/target/common/obj/JAVA_LIBRARIES/ims-common_intermediates/javalib.jar
-            --dex-file=out/target/common/obj/JAVA_LIBRARIES/apache-xml_intermediates/javalib.jar
-            --dex-file=out/target/common/obj/JAVA_LIBRARIES/org.apache.http.legacy.boot_intermediates/javalib.jar
-
-            --dex-location=/system/framework/core-libart.jar --dex-location=/system/framework/conscrypt.jar --dex-location=/system/framework/okhttp.jar --dex-location=/system/framework/core-junit.jar --dex-location=/system/framework/bouncycastle.jar --dex-location=/system/framework/ext.jar --dex-location=/system/framework/framework.jar --dex-location=/system/framework/telephony-common.jar --dex-location=/system/framework/voip-common.jar --dex-location=/system/framework/ims-common.jar --dex-location=/system/framework/apache-xml.jar --dex-location=/system/framework/org.apache.http.legacy.boot.jar --oat-symbols=out/target/product/hammerhead/symbols/system/framework/arm/boot.oat --oat-file=out/target/product/hammerhead/dex_bootjars/system/framework/arm/boot.oat --oat-location=/system/framework/arm/boot.oat --image=out/target/product/hammerhead/dex_bootjars/system/framework/arm/boot.art --base=0x70000000 --instruction-set=arm --instruction-set-variant=krait --instruction-set-features=default --android-root=out/target/product/hammerhead/system --include-patch-information --runtime-arg -Xnorelocate --no-generate-debug-info
-             */
-
-
-        String binTarget = AndroidUtils.getFilesDirLocation(context, "artist/android-25/dex2oat");
-        Log.d(TAG, "Copying the dex2oatd binary from assets to app files dir");
-        AndroidUtils.copyAsset(context, "artist/android-25/dex2oat", binTarget);
-
-        final String cmd_chmod_777 = "chmod 777 " + binTarget;
-        Log.d(TAG, "Changing rights of dex2oat file to 777");
-        boolean success = ProcessExecutor.execute(cmd_chmod_777, true,ProcessExecutor.processName(config.app_name, "chmod_777"));
-        if (success) {
-            Log.d(TAG, "Successfully changed the file rights of dex2oat");
-        } else {
-            Log.d(TAG, "Changing the file rights for dex2oat failed.");
-            return;
-        }
-
-        final String cmd_export_ld = "export LD_LIBRARY_PATH="
-                + context.getApplicationInfo().nativeLibraryDir + ";" + binTarget + " " + args;
-
-        Log.d(TAG, "dex2oat command:");
-        Log.d(TAG, cmd_export_ld);
-        Log.d(TAG, "Starting the compilation process!");
-
-
-        Log.d(TAG, Logg.HR);
-        Log.d(TAG, Logg.HR);
-        Log.d(TAG, Logg.HR);
-        Log.d(TAG, Logg.HR);
-        Log.d(TAG, Logg.HR);
-        Log.d(TAG, Logg.HR);
-
-        success = ProcessExecutor.execute(cmd_export_ld, true, ProcessExecutor.processName(config.app_name, "dex2artist"));
-
-        Log.d(TAG, Logg.HR);
-        Log.d(TAG, Logg.HR);
-        Log.d(TAG, Logg.HR);
-        Log.d(TAG, Logg.HR);
-        Log.d(TAG, Logg.HR);
-        Log.d(TAG, Logg.HR);
-
-        if (success) {
-            Log.d(TAG, Logg.HR);
-            Log.d(TAG, "Compilation was successfull");
-        } else {
-            Log.d(TAG, Logg.HR);
-            Log.d(TAG, "Compilation failed...");
-            return;
-        }
-    }
-
-    public void RunExternalApk(final Context context, final String apkAssetFileName, final String bootImage) {
-        try {
-
-            ////////////////////////////////// copy policy files /////////////////////////////////////////////////////////////
-
-            Log.d(TAG, "compiling and starting " + apkAssetFileName);
-
-            final String originsFile = AndroidUtils.getFilesDirLocation(context, "config/TaintOriginsPolicyFile");
-            final String sinksFile = AndroidUtils.getFilesDirLocation(context, "config/GlobalTaintSinksPolicyFile");
-
-            AndroidUtils.copyAsset(context, "config/TaintOriginsPolicyFile", originsFile);
-            Log.d(TAG, "Copied TaintOriginsPolicyFile to " + originsFile);
-
-            AndroidUtils.copyAsset(context, "config/GlobalTaintSinksPolicyFile", sinksFile);
-            Log.d(TAG, "Copied GlobalTaintSinksPolicyFile to " + sinksFile);
-
-            ////////////////////////////////// prepare dex2oat ///////////////////////////////////////////////////////////////
-
-            final String binDex2oat = AndroidUtils.getFilesDirLocation(context, "artist/android-25/dex2oat");
-
-            File binDex2oatFile = new File(binDex2oat);
-
-            if (binDex2oatFile.exists()) {
-                binDex2oatFile.delete();
-            }
-
-            Log.d(TAG, "Copying the dex2oat binary from assets to app files dir");
-            AndroidUtils.copyAsset(context, "artist/android-25/dex2oat", binDex2oat);
-
-
-            final String cmd_chmod777 = "chmod 777 " + binDex2oat;
-            Log.d(TAG, "Changing rights of dex2oat file to 777");
-            boolean success = ProcessExecutor.execute(cmd_chmod777, true, ProcessExecutor.processName(config.app_name, "chmod_777"));
-            if (success) {
-                Log.d(TAG, "Successfully changed the file rights of dex2oat");
-            } else {
-                Log.d(TAG, "Changing the file rights for dex2oat failed.");
-                return;
-            }
-
-            ////////////////////////////////// prepare APKs ///////////////////////////////////////////////////////////////////
-
-            final String apkPath = AndroidUtils.getFilesDirLocation(context, apkAssetFileName);
-
-            AndroidUtils.copyAsset(context, "Apps" + File.separatorChar + apkAssetFileName, apkPath);
-            PackageInfo info = context.getPackageManager().getPackageArchiveInfo(apkPath, 0);
-            String packageName = info.packageName;
-
-            final String codeLibPath = AndroidUtils.getFilesDirLocation(context, "codelib.apk");
-            AndroidUtils.copyAsset(context, "artist" + File.separatorChar + "codelib.apk", codeLibPath);
-
-            Log.d(TAG, "apkPath: " + apkPath);
-            Log.d(TAG, "assetPath: Apps" + File.separatorChar + apkAssetFileName);
-            Log.d(TAG, "packageName: " + packageName);
-
-            final Dex appApkBuffer = new Dex(new File(apkPath));
-            final Dex codeLibApkBuffer = new Dex(new File(codeLibPath));
-
-            final Dex[] allDexes = {
-                    appApkBuffer,
-                    codeLibApkBuffer
-            };
-
-            DexMerger merger = new DexMerger(allDexes, CollisionPolicy.FAIL);
-            Dex merged = merger.merge();
-            String mergedApkPath = apkPath.replace(".apk", "_merged.apk");
-
-            InputStream is = new FileInputStream(new File(apkPath));
-            ZipInputStream zipInput = new ZipInputStream(new BufferedInputStream(is));
-
-            OutputStream os = new FileOutputStream(new File(mergedApkPath));
-            ZipOutputStream zipOutput = new ZipOutputStream(new BufferedOutputStream(os));
-
-            try {
-                ZipEntry apkContent;
-                while ((apkContent = zipInput.getNextEntry()) != null) {
-
-                    if (apkContent.getName().contains("classes.dex")) {
-
-                        Log.d(TAG, "Replacing original " + apkContent.getName() + " with merged one");
-                        ZipEntry newClassesEntry = new ZipEntry("classes.dex");
-                        zipOutput.putNextEntry(newClassesEntry);
-                        zipOutput.write(merged.getBytes(), 0, merged.getLength());
-                        zipOutput.closeEntry();
-
-                    } else {
-                        Log.d(TAG, "copying " + apkContent.getName() + " without modification");
-                        byte[] buffer = new byte[1024];
-                        int count;
-                        zipOutput.putNextEntry(apkContent);
-                        while ((count = zipInput.read(buffer)) != -1) {
-                            zipOutput.write(buffer, 0, count);
-                        }
-                        zipOutput.closeEntry();
-                    }
-                }
-            } finally {
-                zipInput.close();
-                zipOutput.close();
-            }
-
-            final String oatbaseFolder = File.separator + "data"
-                    + File.separator + "app"
-                    + File.separator + packageName + "-1"
-                    + File.separator + "oat";
-            // --oat-file=/data/dalvik-cache/arm/data@app@de.infsec.tainttracking.taintmeapp-1@base.apk@classes.dex
-            final String odexDest = oatbaseFolder + File.separator + AndroidUtils.probeArchitetureFolderName(oatbaseFolder) + File.separator  + "base.odex";
-
-            // odexDest = "/data/dalvik-cache/arm/data@app@de.infsec.tainttracking.taintmeapp-1@base.apk@classes.dex";
-            String oatOwner = AndroidUtils.getFileOwnerUid(odexDest);
-            String oatGroup = AndroidUtils.getFileGroupId(odexDest);
-
-            final long odexOriginalSize = new File(odexDest).length();
-
-            // Move compiled dex here: >>odexDest
-            success = deleteRootFile(odexDest);
-
-            if (!success) {
-                Log.d(TAG, "Failed to delete old base oat:");
-                Log.d(TAG, odexDest);
-                return;
-            }
-
-            String cmd_dex2oat_compile =
-                    "export LD_LIBRARY_PATH=" + context.getApplicationInfo().nativeLibraryDir + ";"
-                            + binDex2oat
-                            //+ " --runtime-arg -Xzygote"
-                            //+ " --runtime-arg -Xnoimage-dex2oat"
-                            //+ " --runtime-arg -help"
-                            //+ " --runtime-arg -Ximage:"+bootImageDir.getAbsolutePath()+File.separatorChar+bootImage+".art"
-                            //+ " --dex-file=" + taintLibDexTarget
-                            + " --dex-file=" + mergedApkPath
-                            //+ " --dex-file=" + installedDexTarget
-                            + " --oat-file=" + odexDest
-                            + " --compiler-backend=Optimizing"
-                            //+ " --boot-image="+bootImageFile.getAbsolutePath()
-                            + " --compiler-filter=everything"
-                            + " --generate-debug-info"
-                            + " --compile-pic";
-            if (config.COMPILER_THREADS != -1) {
-                cmd_dex2oat_compile += " -j" + config.COMPILER_THREADS;
-            }
-
-            Log.d(TAG, "dex2oat command:");
-            Log.d(TAG, cmd_dex2oat_compile);
-            Log.d(TAG, "Starting the compilation process!");
-            Log.d(TAG, "> Result will get placed at: " + odexDest);
-
-
-            Log.d(TAG, Logg.HR);
-            Log.d(TAG, Logg.HR);
-            Log.d(TAG, Logg.HR);
-            Log.d(TAG, Logg.HR);
-            Log.d(TAG, Logg.HR);
-            Log.d(TAG, Logg.HR);
-
-            success = ProcessExecutor.execute(cmd_dex2oat_compile, true, ProcessExecutor.processName(config.app_name, "dex2artist"));
-
-            Log.d(TAG, Logg.HR);
-            Log.d(TAG, Logg.HR);
-            Log.d(TAG, Logg.HR);
-            Log.d(TAG, Logg.HR);
-            Log.d(TAG, Logg.HR);
-            Log.d(TAG, Logg.HR);
-
-
-            if (success) {
-                Log.d(TAG, Logg.HR);
-                Log.d(TAG, "Compilation was successfull");
-            } else {
-                Log.d(TAG, Logg.HR);
-                Log.d(TAG, "Compilation failed...");
-                return;
-            }
-
-            File oatFile = new File(odexDest);
-            if (oatFile.exists() && !oatFile.isDirectory()) {
-                Log.d(TAG, "Success! Oat file created.");
-
-                final long odexNewSize = oatFile.length();
-
-                Log.d(TAG, "odex OLD size: " + odexOriginalSize);
-                Log.d(TAG, "odex NEW size: " + odexNewSize);
-
-                Log.d(TAG, "Changing the owner of the oat file to " + oatOwner);
-
-                final String cmd_chown_oat = "chown " + oatOwner + " " + odexDest;
-                success = ProcessExecutor.execute(cmd_chown_oat, true, ProcessExecutor.processName(config.app_name, "chown_oat"));
-
-                if (!success) {
-                    Log.d(TAG, "Could not change oat owner to " + oatOwner + "... ");
-                    Log.d(TAG, "... for path " + odexDest);
-                    return;
-                }
-                Log.d(TAG, "Changing the group of the oat file to " + oatGroup);
-
-                final String cmd_chgrp_oat = "chgrp " + oatGroup + " " + odexDest;
-                success = ProcessExecutor.execute(cmd_chgrp_oat, true, ProcessExecutor.processName(config.app_name, "chgrp_oat"));
-
-                if (!success) {
-                    Log.d(TAG, "Could not change oat group to " + oatGroup + "... ");
-                    Log.d(TAG, "... for path " + odexDest);
-                    return;
-                }
-
-                final String oat_permissions = "777";
-
-                final String cmd_chmod_oat = "chmod " + oat_permissions + " " + odexDest;
-                success = ProcessExecutor.execute(cmd_chmod_oat, true, ProcessExecutor.processName(config.app_name, "chmod_777"));
-
-                if (!success) {
-                    Log.d(TAG, "Could not change oat permissions to " + oat_permissions);
-                    Log.d(TAG, "... for path " + odexDest);
-                    return;
-                }
-
-                Log.d(TAG, "Everything worked out as expected!!!");
-
-            } else {
-                Log.d(TAG, "Fail! Oat file not created.");
-            }
-        } catch (final IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private String replaceAppApkWithMergedApk(final Context context,
-                                              final ArtistRunConfig config) {
+    private String replaceAppApkWithMergedApk(final ArtistRunConfig config) {
         Log.d(TAG, "replaceAppApkWithMergedApk()");
         progressUpdateVerbose(-1, "Replacing original APk with merged APK");
         final String packageName = config.app_package_name;
@@ -934,40 +509,6 @@ public class ArtistImpl implements Artist {
         AndroidUtils.setFileUid(apkPath, baseApkUid);
         AndroidUtils.setFileGid(apkPath, baseApkGid);
         AndroidUtils.setFilePermissions(apkPath, baseApkPerms);
-
-        return packageName;
-    }
-
-    private String setupMergedAppApk(final ArtistRunConfig config) {
-        Log.d(TAG, "setupMergedAppApk()");
-        String packageName = config.app_package_name;
-        final String apkPathOriginal = config.app_apk_file_path;
-        final String apkPathAlternative = config.app_apk_file_path_alternative;
-        final String mergedApkPath = config.app_apk_merged_signed_file_path;
-        Log.d(TAG, "setupMergedAppApk() APK: " + apkPathAlternative);
-
-        final String baseApkUid = AndroidUtils.getFileOwnerUid(apkPathOriginal);
-        final String baseApkGid = AndroidUtils.getFileGroupId(apkPathOriginal);
-        final String baseApkPerms = AndroidUtils.getFilePermissions(apkPathOriginal);
-
-        Log.d(TAG, String.format("> UID: %s GID: %s (Permissions: %s)",
-                baseApkUid, baseApkGid, baseApkPerms));
-
-//        final String cmd_delete_base_apk = "rm " + apkPathOriginal;
-//        final boolean successs = ProcessExecutor.execute(cmd_delete_base_apk, true, ProcessExecutor.processName(config.app_name, "rm_backup"));
-//        if (!successs ) {
-//            return "";
-//        }
-
-        final String cmd_copy_merged_apk = "cp " + mergedApkPath + " " + apkPathAlternative;
-        final boolean success = ProcessExecutor.execute(cmd_copy_merged_apk, true, ProcessExecutor.processName(config.app_name, "cp_backup_merged"));
-        if (!success) {
-            Log.d(TAG, "setupMergedAppApk() Failed");
-            packageName =  "";
-        }
-        AndroidUtils.setFileUid(apkPathAlternative, baseApkUid);
-        AndroidUtils.setFileGid(apkPathAlternative, baseApkGid);
-        AndroidUtils.setFilePermissions(apkPathAlternative, baseApkPerms);
 
         return packageName;
     }
@@ -1009,7 +550,7 @@ public class ArtistImpl implements Artist {
         Log.v(TAG, "backupMergedApk()");
 
         final File sdcard = Environment.getExternalStorageDirectory();
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss", Locale.getDefault());
         Date date = new Date();
 
         final String mergedApkBackupPath = sdcard.getAbsolutePath() + File.separator
@@ -1035,7 +576,7 @@ public class ArtistImpl implements Artist {
         }
         Log.v(TAG, "backupOriginalApk()");
         final File sdcard = Environment.getExternalStorageDirectory();
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss", Locale.getDefault());
         Date date = new Date();
 
         final String originalApkBackupPath = sdcard.getAbsolutePath() + File.separator
@@ -1057,7 +598,8 @@ public class ArtistImpl implements Artist {
         if (config.codeLibName.startsWith(ArtistUtils.CODELIB_ASSET)) {
             Log.d(TAG, "setupCodeLib() " + config.codeLibName);
             final String assetName = config.codeLibName.replaceFirst(ArtistUtils.CODELIB_ASSET, "");
-            AndroidUtils.copyAsset(context, "codelib" + File.separator + assetName, config.codeLib.getAbsolutePath());
+            AndroidUtils.copyAsset(context, "codelib" + File.separator + assetName,
+                    config.codeLib.getAbsolutePath());
             if (!config.codeLib.exists()) {
                 Log.e(TAG, " setupCodeLib: " + config.codeLib + " FAILED");
             } else {

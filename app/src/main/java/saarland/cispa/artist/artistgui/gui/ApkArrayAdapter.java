@@ -28,8 +28,6 @@ import java.util.List;
 
 public class ApkArrayAdapter extends ArrayAdapter<String> {
 
-    String[] files = null;
-
     public ApkArrayAdapter(Context context, int textViewResourceId, List<String> objects) {
         super(context, textViewResourceId, objects);
     }

@@ -89,19 +89,17 @@ public class ArtistConfigFactory {
         artistConfig.app_folder_path = new File(artistConfig.app_apk_file_path).getParentFile().getAbsolutePath();
         artistConfig.app_apk_file_path_alternative = artistConfig.app_folder_path + File.separator + ArtistRunConfig.BASE_APK_ALTERNATIVE;
 
-        // --oat-file=/data/dalvik-cache/arm/data@app@de.infsec.tainttracking.taintmeapp-1@base.apkFile@classes.dex
-        // odexDest = "/data/dalvik-cache/arm/data@app@de.infsec.tainttracking.taintmeapp-1@base.apkFile@classes.dex";
         artistConfig.app_oat_folder_path = artistConfig.app_folder_path + File.separator + "oat" + File.separator;
         artistConfig.app_oat_architecture = AndroidUtils.probeArchitetureFolderName(artistConfig.app_oat_folder_path );
         artistConfig.app_oat_file_path = artistConfig.app_oat_folder_path
                 + artistConfig.app_oat_architecture
-                + File.separator + artistConfig.OAT_FILE;
+                + File.separator + ArtistRunConfig.OAT_FILE;
 
         final String userCodeLib = sharedPref.getString(ArtistAppConfig.PREF_KEY_CODELIB_SELECTION, "");
         artistConfig.codeLibName = userCodeLib;
         artistConfig.codeLib = getPathToCodeLib(context, userCodeLib);
 
-        artistConfig.keystore = new File(AndroidUtils.getFilesDirLocation(context, artistConfig.KEYSTORE_NAME));
+        artistConfig.keystore = new File(AndroidUtils.getFilesDirLocation(context, ArtistRunConfig.KEYSTORE_NAME));
 
         artistConfig.REPLACE_BASE_APK = sharedPref.getBoolean("pref_key_compiler_replace_base_apk", false);
 

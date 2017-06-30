@@ -63,7 +63,7 @@ ssh ${server_alias} "cd ${server_aosp} ; . build/envsetup.sh; mmma art/ -j${thre
 
 if [ $? -eq 0 ]; then
     echo ""
-    echo "Build Nougat succeeded!"
+    echo "Build ARTist succeeded!"
     echo ""
     cd ./app/src/main
 

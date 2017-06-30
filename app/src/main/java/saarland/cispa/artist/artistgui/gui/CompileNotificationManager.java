@@ -92,10 +92,6 @@ public class CompileNotificationManager {
         mNotificationManager.cancel(COMPILATION_NOTIFICATION_ID);
     }
 
-    public static void updateNotification(final Context context, final int progressValue) {
-        updateNotification(context, progressValue, "");
-    }
-
     static void updateNotification(final Context context,
                                    final int progressValue,
                                    final String statusText) {

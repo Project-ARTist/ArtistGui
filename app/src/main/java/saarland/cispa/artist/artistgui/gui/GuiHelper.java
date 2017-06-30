@@ -70,11 +70,6 @@ public class GuiHelper {
         showFileChooser(activity, "application/vnd.android.package-archive");
     }
 
-
-    public static void showFileChooserAllFiles(final Activity activity) {
-        showFileChooser(activity, "*/*");
-    }
-
     public static String[] listImportedCodeLibs(final Context context) {
         final String codeLibFolder = AndroidUtils.getFilesDirLocation(context,
                 ArtistAppConfig.APP_FOLDER_CODELIBS);

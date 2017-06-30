@@ -32,17 +32,10 @@ public class CompileNotification implements ArtistGuiProgress {
 
     private static final String TAG = Logg.TAG;
     
-    Activity activity;
-    Context appContext;
-
-    public CompileNotification(final Activity activity) {
-        this.activity = activity;
-        this.appContext = activity.getApplicationContext();
-        CompileNotificationManager.showNotification(this.appContext);
-    }
+    private Context appContext;
 
     public CompileNotification(final Context context) {
-        this.appContext = context;
+        this.appContext = context.getApplicationContext();
         CompileNotificationManager.showNotification(this.appContext);
     }
 
