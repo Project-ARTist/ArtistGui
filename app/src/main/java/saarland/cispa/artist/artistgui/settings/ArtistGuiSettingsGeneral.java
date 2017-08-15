@@ -39,6 +39,7 @@ import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.NavUtils;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -50,7 +51,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import saarland.cispa.artist.artistgui.ArtistMainActivity;
+import saarland.cispa.artist.artistgui.MainActivity;
 import saarland.cispa.artist.artistgui.R;
 import saarland.cispa.artist.artistgui.gui.GuiHelper;
 import saarland.cispa.artist.artistgui.utils.UriUtils;
@@ -233,7 +234,7 @@ public class ArtistGuiSettingsGeneral extends AppCompatPreferenceActivity
 
         if (id == R.id.nav_home) {
             Log.d(TAG, "Starting Home Activity");
-            final Intent compileActivityintent = new Intent(ArtistGuiSettingsGeneral.this, ArtistMainActivity.class);
+            final Intent compileActivityintent = new Intent(ArtistGuiSettingsGeneral.this, MainActivity.class);
             ArtistGuiSettingsGeneral.this.startActivity(compileActivityintent);
         } else if (id == R.id.nav_compiler) {
             Toast.makeText(ArtistGuiSettingsGeneral.this, "Compiler already running!",
@@ -270,7 +271,7 @@ public class ArtistGuiSettingsGeneral extends AppCompatPreferenceActivity
         public boolean onOptionsItemSelected(MenuItem item) {
             int id = item.getItemId();
             if (id == android.R.id.home) {
-                startActivity(new Intent(getActivity(), ArtistGuiSettingsGeneral.class));
+                NavUtils.navigateUpFromSameTask(getActivity());
                 return true;
             }
             return super.onOptionsItemSelected(item);

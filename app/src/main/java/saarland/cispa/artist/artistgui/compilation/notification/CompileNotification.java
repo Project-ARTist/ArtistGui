@@ -19,9 +19,8 @@
  * @author "Sebastian Weisgerber <weisgerber@cispa.saarland>"
  *
  */
-package saarland.cispa.artist.artistgui.gui;
+package saarland.cispa.artist.artistgui.compilation.notification;
 
-import android.app.Activity;
 import android.content.Context;
 
 import saarland.cispa.artist.gui.artist.ArtistGuiProgress;

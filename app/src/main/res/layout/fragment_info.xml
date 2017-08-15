@@ -9,8 +9,7 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="saarland.cispa.artist.artistgui.ArtistMainActivity"
-    tools:showIn="@layout/app_bar_artist_main">
+    tools:context="saarland.cispa.artist.artistgui.ArtistMainActivity">
 
     <TextView
         android:layout_width="wrap_content"

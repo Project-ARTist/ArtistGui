@@ -1,4 +1,4 @@
-/**
+/*
  * The ARTist Project (https://artist.cispa.saarland)
  *
  * Copyright (C) 2017 CISPA (https://cispa.saarland), Saarland University
@@ -15,31 +15,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * @author "Oliver Schranz <oliver.schranz@cispa.saarland>"
- * @author "Sebastian Weisgerber <weisgerber@cispa.saarland>"
- *
  */
-package saarland.cispa.artist.artistgui.gui;
 
-import android.content.Context;
-import android.widget.ArrayAdapter;
+package saarland.cispa.artist.artistgui.compilation.base;
 
-import java.util.List;
-
-public class ApkArrayAdapter extends ArrayAdapter<String> {
-
-    public ApkArrayAdapter(Context context, int textViewResourceId, List<String> objects) {
-        super(context, textViewResourceId, objects);
-    }
-
-    @Override
-    public long getItemId(int position) {
-        return position;
-    }
-
-    @Override
-    public boolean hasStableIds() {
-        return true;
-    }
-
+public interface BasePresenter {
+    void start();
 }

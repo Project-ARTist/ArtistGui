@@ -43,8 +43,8 @@ import java.util.concurrent.Future;
 import saarland.cispa.artist.ArtistCompilationTask;
 import saarland.cispa.artist.ArtistImpl;
 import saarland.cispa.artist.CompilationResultReceiver;
-import saarland.cispa.artist.artistgui.gui.CompileNotification;
-import saarland.cispa.artist.artistgui.gui.CompileNotificationManager;
+import saarland.cispa.artist.artistgui.compilation.notification.CompileNotification;
+import saarland.cispa.artist.artistgui.compilation.notification.CompileNotificationManager;
 import saarland.cispa.artist.artistgui.settings.ArtistConfigFactory;
 import saarland.cispa.artist.gui.artist.ArtistGuiProgress;
 import saarland.cispa.artist.log.Logg;
@@ -75,8 +75,8 @@ public class CompilationService extends Service {
      * Because we know this service always
      * runs in the same process as its clients, we don't need to deal with IPC.
      */
-    class CompilationServiceBinder extends Binder {
-        CompilationService getService() {
+    public class CompilationServiceBinder extends Binder {
+        public CompilationService getService() {
             // Return this instance of LocalService so clients can call public methods
             return CompilationService.this;
         }

@@ -43,7 +43,7 @@ import java.util.Objects;
 
 import saarland.cispa.artist.ArtistImpl;
 import saarland.cispa.artist.CompilationResultReceiver;
-import saarland.cispa.artist.artistgui.gui.CompileNotification;
+import saarland.cispa.artist.artistgui.compilation.notification.CompileNotification;
 import saarland.cispa.artist.gui.artist.ArtistGuiProgress;
 import saarland.cispa.artist.log.Logg;
 import trikita.log.Log;
@@ -241,7 +241,7 @@ public class CompileDialogActivity
             this.APP_NAME = bundle.getString(CompilationService.EXTRA_APP_NAME);
             Log.d(TAG, "onCreate() Bundle APP_NAME: " + this.APP_NAME);
         }
-        setContentView(R.layout.activity_dialog_compiler);
+        setContentView(R.layout.dialog_compilation);
 
         this.compileDialogLayout = (RelativeLayout) findViewById(R.id.compile_dialog_layout);
         this.progressBar = (ProgressBar) findViewById(R.id.compile_progress);
