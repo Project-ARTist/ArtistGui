@@ -1,13 +1,20 @@
 <resources>
     <string name="app_name">ArtistGui</string>
 
+    <!-- Drawer header -->
+    <string name="header_title">ArtistGui (On-Device Code Injection)</string>
+    <string name="header_url">https://artist.cispa.saarland</string>
+
     <string name="main_activity_text">Artist on-device compiler\n\n</string>
     <string name="compiler_activity_name">ArtistCompiler</string>
     <string name="compile_dialog_activity_name">ArtistCompileDialog</string>
 
+    <!-- Nav drawer -->
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
+    <string name="menu_drawer_home">Home</string>
+    <string name="menu_drawer_compiler">Compiler</string>
     <string name="action_settings">Settings</string>
 
     <string name="pref_compiler_debugmode">Dex2oat Compile in DebugMode</string>
@@ -18,6 +25,16 @@
     <string name="pref_category_codelib">Codelib Config</string>
     <string name="pref_category_apk">Apk Config</string>
 
+    <string name="app_icon">App icon</string>
+
+    <!-- Main Activity -->
+    <string name="incompatible_android_version">Incompatible Android version</string>
+    <string name="unsupported_android_version_info">Artist does not support your Android version.
+        For more information, please visit https://artist.cispa.saarland
+        You can still navigate the application. However, the core functionality, e.g., recompiling applications, will most probably not work.</string>
+
+    <!-- Compiler Fragment -->
+    <string name="no_codelib_chosen">WARNING: No codelib chosen yet. Compilation might crash.</string>
 
     <!-- Strings related to Settings -->
 
