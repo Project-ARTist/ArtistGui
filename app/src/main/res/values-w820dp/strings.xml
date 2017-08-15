@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="about_text_main">The ARTist project allows for on-device modification and rewriting of apps.  ArtistGUI, in particular, ships the specialized ARTist compiler to the device to allow for simple recompilation of installed apps (root required).  For more information, please visit https://artist.cispa.saarland</string>
-</resources>
