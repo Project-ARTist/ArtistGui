@@ -57,8 +57,6 @@ assemble.dependsOn 'artistGuiVersion'
 
 ext.supportLibVersion = '25.3.1'
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-
     compile project(':libartist')
 
     compile "com.android.support:appcompat-v7:$supportLibVersion"
