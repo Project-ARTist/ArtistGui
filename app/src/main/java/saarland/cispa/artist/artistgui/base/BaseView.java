@@ -17,7 +17,7 @@
  *
  */
 
-package saarland.cispa.artist.artistgui.compilation.base;
+package saarland.cispa.artist.artistgui.base;
 
 public interface BaseView<T> {
     void setPresenter(T presenter);

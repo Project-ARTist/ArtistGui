@@ -27,7 +27,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 
-import saarland.cispa.artist.artistgui.CompileDialogActivity;
+import saarland.cispa.artist.artistgui.compilation.CompileDialogActivity;
 import saarland.cispa.artist.artistgui.R;
 import saarland.cispa.artist.log.Logg;
 import trikita.log.Log;

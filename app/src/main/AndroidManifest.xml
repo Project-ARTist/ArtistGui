@@ -20,7 +20,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="saarland.cispa.artist.artistgui.CompileDialogActivity"
+            android:name="saarland.cispa.artist.artistgui.compilation.CompileDialogActivity"
             android:label="@string/compile_dialog_activity_name"
             android:launchMode="standard"
             android:theme="@android:style/Theme.DeviceDefault.Light.Dialog" />
@@ -31,7 +31,7 @@
             android:label="@string/title_activity_artist_gui_settings_general" />
 
         <service
-            android:name="saarland.cispa.artist.artistgui.CompilationService"
+            android:name="saarland.cispa.artist.artistgui.compilation.CompilationService"
             android:exported="false" />
 
     </application>

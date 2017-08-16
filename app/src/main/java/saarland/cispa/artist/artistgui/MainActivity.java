@@ -39,6 +39,7 @@ import java.util.Locale;
 
 import saarland.cispa.artist.artistgui.compilation.CompilationContract;
 import saarland.cispa.artist.artistgui.compilation.CompilationPresenter;
+import saarland.cispa.artist.artistgui.compilation.CompileDialogActivity;
 import saarland.cispa.artist.artistgui.compilation.CompileFragment;
 import saarland.cispa.artist.artistgui.settings.SettingsActivity;
 import saarland.cispa.artist.artistgui.utils.CompatUtils;

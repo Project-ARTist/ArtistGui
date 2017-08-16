@@ -22,8 +22,8 @@ package saarland.cispa.artist.artistgui.compilation;
 import android.content.Intent;
 import android.content.ServiceConnection;
 
-import saarland.cispa.artist.artistgui.compilation.base.BasePresenter;
-import saarland.cispa.artist.artistgui.compilation.base.BaseView;
+import saarland.cispa.artist.artistgui.base.BasePresenter;
+import saarland.cispa.artist.artistgui.base.BaseView;
 
 public interface CompilationContract {
 

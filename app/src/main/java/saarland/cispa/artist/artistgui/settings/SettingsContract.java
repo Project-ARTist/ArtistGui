@@ -24,8 +24,8 @@ import android.content.Intent;
 import android.preference.ListPreference;
 import android.preference.Preference;
 
-import saarland.cispa.artist.artistgui.compilation.base.BasePresenter;
-import saarland.cispa.artist.artistgui.compilation.base.BaseView;
+import saarland.cispa.artist.artistgui.base.BasePresenter;
+import saarland.cispa.artist.artistgui.base.BaseView;
 
 interface SettingsContract {
 
