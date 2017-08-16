@@ -44,7 +44,7 @@ public class SettingsFragment extends PreferenceFragment implements SettingsCont
         addPreferencesFromResource(R.xml.preferences);
 
         Preference logLevelPref = findPreference(ArtistAppConfig.KEY_PREF_GENERAL_LOGLEVEL);
-        mPresenter.bindPrefValueToSummary(logLevelPref);
+        mPresenter.setupLoggingListener(logLevelPref);
 
         Preference compilerPref = findPreference(ArtistAppConfig.KEY_PREF_COMPILER_THREADS);
         mPresenter.bindPrefValueToSummary(compilerPref);

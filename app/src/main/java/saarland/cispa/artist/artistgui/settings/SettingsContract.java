@@ -36,6 +36,8 @@ interface SettingsContract {
     interface Presenter extends BasePresenter {
         void bindPrefValueToSummary(Preference preference);
 
+        void setupLoggingListener(Preference preference);
+
         void setupCodeLibSelection(ListPreference codeLibSelection);
 
         void setupCodeLibImport(final Activity activity, Preference preference);

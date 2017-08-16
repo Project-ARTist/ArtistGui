@@ -39,6 +39,7 @@ import java.util.List;
 
 import saarland.cispa.artist.artistgui.settings.config.ArtistAppConfig;
 import saarland.cispa.artist.artistgui.utils.UriUtils;
+import saarland.cispa.artist.log.Logg;
 import saarland.cispa.artist.utils.AndroidUtils;
 import saarland.cispa.artist.utils.ArtistUtils;
 import trikita.log.Log;
@@ -50,25 +51,25 @@ class SettingsPresenter implements SettingsContract.Presenter {
     private static final String TAG = "SettingsPresenter";
     private static final String APK_MIME_TYPE = "application/vnd.android.package-archive";
 
+    private Context mContext;
+    private SettingsContract.View mView;
+
     /**
      * A preference value change listener that updates the preference's summary
      * to reflect its new value.
      */
     private Preference.OnPreferenceChangeListener mBindValueToSummaryListener =
             (preference, value) -> {
-                ListPreference listPreference = (ListPreference) preference;
-                final String stringValue = value.toString();
-                int index = listPreference.findIndexOfValue(stringValue);
-
-                // Set the summary to reflect the new value.
-                preference.setSummary(index >= 0 ? listPreference.getEntries()[index]
-                        : null);
-
+                bindValueToSummary(preference, value);
                 return true;
             };
 
-    private Context mContext;
-    private SettingsContract.View mView;
+    private Preference.OnPreferenceChangeListener mLoggingPrefListener =
+            (preference, value) -> {
+                bindValueToSummary(preference, value);
+                Logg.setUserLogLevel(value.toString());
+                return true;
+            };
 
     SettingsPresenter(Context context, SettingsContract.View view) {
         mContext = context;
@@ -83,15 +84,32 @@ class SettingsPresenter implements SettingsContract.Presenter {
 
     @Override
     public void bindPrefValueToSummary(Preference preference) {
-        // Set the listener to watch for value changes.
         preference.setOnPreferenceChangeListener(mBindValueToSummaryListener);
+        triggerInitialOnPreferenceChange(preference, mBindValueToSummaryListener);
+    }
 
-        // Trigger the listener immediately with the preference's
-        // current value.
-        mBindValueToSummaryListener.onPreferenceChange(preference,
+    private void bindValueToSummary(Preference preference, Object value) {
+        ListPreference listPreference = (ListPreference) preference;
+        final String stringValue = value.toString();
+        int index = listPreference.findIndexOfValue(stringValue);
+
+        // Set the summary to reflect the new value.
+        preference.setSummary(index >= 0 ? listPreference.getEntries()[index]
+                : null);
+    }
+
+    private void triggerInitialOnPreferenceChange(Preference preference,
+                                                  Preference.OnPreferenceChangeListener listener) {
+        listener.onPreferenceChange(preference,
                 PreferenceManager
                         .getDefaultSharedPreferences(preference.getContext())
                         .getString(preference.getKey(), ""));
+    }
+
+    @Override
+    public void setupLoggingListener(Preference preference) {
+        preference.setOnPreferenceChangeListener(mLoggingPrefListener);
+        triggerInitialOnPreferenceChange(preference, mLoggingPrefListener);
     }
 
     @Override
