@@ -45,7 +45,6 @@ public class CompileNotificationManager {
         Notification.Builder notificationBuilder = new Notification.Builder(context)
                 .setSmallIcon(R.drawable.ic_icon_compiler)
                 .setContentTitle(context.getString(R.string.notification_compilation_title))
-                .setContentText(context.getString(R.string.notification_compilation_text))
                 .setProgress(PROGRESS_MAX, 0, false)
                 .setOngoing(true)
                 .setAutoCancel(false);
@@ -67,12 +66,7 @@ public class CompileNotificationManager {
     }
 
     static void showNotification(final Context context) {
-        showNotification(context, context.getString(R.string.notification_compilation_text));
-    }
-
-    private static void showNotification(final Context context, final String message) {
         Notification.Builder notification = buildDefault(context);
-        notification.setSubText(message);
         build(context, notification);
     }
 

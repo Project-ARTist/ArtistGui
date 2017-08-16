@@ -79,14 +79,13 @@
 
     <string name="pref_title_codelib_import">Codelib (Import)</string>
     <string name="pref_summary_codelib_import">Please select a CodeLib that should get imported into the CodeLib Folder.</string>
+    <string name="external_storage_permission_denied">Can\'t access external storage. Please allow the permission.</string>
     <string name="pref_title_codelib_selection">CodeLib (Choose)</string>
     <string name="pref_summary_codelib_selection">Please choose a CodeLib for injection.</string>
     <string name="notification_compilation_title">Artist Compilation</string>
-    <string name="notification_compilation_text"></string>
 
     <string name="snack_compilation_success">Compilation Success:</string>
     <string name="snack_compilation_failed">Compilation Failed:</string>
-    <string name="empty"></string>
     <string name="compile_dialog_button_show_more">Show More</string>
     <string name="compile_dialog_button_cancel">Cancel</string>
     <string name="about_text_main">The ARTist project allows for on-device modification and rewriting of apps.  ArtistGUI, in particular, ships the specialized ARTist compiler to the device to allow for simple recompilation of installed apps (root required).  For more information, please visit https://artist.cispa.saarland</string>
