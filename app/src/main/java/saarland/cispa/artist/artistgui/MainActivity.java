@@ -72,6 +72,7 @@ public class MainActivity extends AppCompatActivity
         mFragmentManager = getSupportFragmentManager();
 
         final Intent intent = getIntent();
+        mPresenter = new MainActivityPresenter(getApplicationContext(), this);
         if (intent != null && intent.hasExtra(MainActivity.EXTRA_PACKAGE)) {
             mPresenter.processIntent(intent);
         } else {
@@ -82,7 +83,6 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-        mPresenter = new MainActivityPresenter(getApplicationContext(), this);
         mPresenter.start();
         mPresenter.checkCompatibility();
     }
