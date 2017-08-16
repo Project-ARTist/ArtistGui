@@ -21,7 +21,6 @@ package saarland.cispa.artist.artistgui;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
@@ -37,27 +36,19 @@ import android.view.MenuItem;
 
 import java.util.Locale;
 
-import saarland.cispa.artist.artistgui.compilation.CompilationContract;
-import saarland.cispa.artist.artistgui.compilation.CompilationPresenter;
 import saarland.cispa.artist.artistgui.compilation.CompileDialogActivity;
-import saarland.cispa.artist.artistgui.compilation.CompileFragment;
 import saarland.cispa.artist.artistgui.settings.SettingsActivity;
-import saarland.cispa.artist.artistgui.utils.CompatUtils;
-import saarland.cispa.artist.log.Logg;
 import trikita.log.Log;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener,
+        MainActivityContract.View {
 
     private static final String TAG = "MainActivity";
 
     public static final String EXTRA_PACKAGE = "INTENT_EXTRA_PACKAGE";
 
-    private InfoFragment mInfoFragment;
-
-    private CompileFragment mCompileFragment;
-    CompilationContract.Presenter mCompilationPresenter;
-
+    private MainActivityContract.Presenter mPresenter;
     private FragmentManager mFragmentManager;
     private DrawerLayout mDrawerLayout;
 
@@ -82,26 +73,30 @@ public class MainActivity extends AppCompatActivity
 
         final Intent intent = getIntent();
         if (intent != null && intent.hasExtra(MainActivity.EXTRA_PACKAGE)) {
-            mCompilationPresenter.executeIntentTasks(intent);
-            selectFragmentToDisplay(R.id.nav_compiler);
+            mPresenter.processIntent(intent);
         } else {
-            selectFragmentToDisplay(R.id.nav_home);
+            mPresenter.selectFragment(R.id.nav_home);
         }
     }
 
     @Override
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-        // Setup logging
-        Logg.setUserLogLevel(getApplicationContext());
+        mPresenter = new MainActivityPresenter(getApplicationContext(), this);
+        mPresenter.start();
+        mPresenter.checkCompatibility();
+    }
 
-        // compatibility check
-        if (!CompatUtils.supportedByArtist()) {
-            new AlertDialog.Builder(this).setTitle(R.string.incompatible_android_version)
-                    .setMessage(R.string.unsupported_android_version_info)
-                    .setPositiveButton("Close", (dialog, which) -> {
-                    }).show();
-        }
+    @Override
+    public void setPresenter(MainActivityContract.Presenter presenter) {
+        mPresenter = presenter;
+    }
+
+    @Override
+    public void onIncompatibleAndroidVersion() {
+        new AlertDialog.Builder(this).setTitle(R.string.incompatible_android_version)
+                .setMessage(R.string.unsupported_android_version_info)
+                .setPositiveButton("Close", (dialog, which) -> {}).show();
     }
 
     @Override
@@ -111,7 +106,7 @@ public class MainActivity extends AppCompatActivity
         switch (id) {
             case R.id.nav_home:
             case R.id.nav_compiler:
-                selectFragmentToDisplay(id);
+                mPresenter.selectFragment(id);
                 break;
             case R.id.nav_settings:
                 final Intent generalSettings = new Intent(this, SettingsActivity.class);
@@ -124,25 +119,10 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    private void selectFragmentToDisplay(@IdRes int id) {
-        Fragment selectedFragment = null;
-        switch (id) {
-            case R.id.nav_home:
-                if (mInfoFragment == null) {
-                    mInfoFragment = new InfoFragment();
-                }
-                selectedFragment = mInfoFragment;
-                break;
-            case R.id.nav_compiler:
-                if (mCompileFragment == null) {
-                    mCompileFragment = new CompileFragment();
-                    mCompilationPresenter = new CompilationPresenter(this, mCompileFragment);
-                }
-                selectedFragment = mCompileFragment;
-                break;
-        }
+    @Override
+    public void onFragmentSelected(Fragment fragment) {
         mFragmentManager.beginTransaction()
-                .replace(R.id.content_frame, selectedFragment)
+                .replace(R.id.content_frame, fragment)
                 .commit();
     }
 
@@ -162,7 +142,7 @@ public class MainActivity extends AppCompatActivity
                 requestCode, resultCode, data));
 
         if (requestCode == CompileDialogActivity.COMPILE_DIALOG_ID) {
-            mCompilationPresenter.onCompilationFinished(resultCode, data);
+            mPresenter.processCompilationResult(resultCode, data);
         }
     }
 }
