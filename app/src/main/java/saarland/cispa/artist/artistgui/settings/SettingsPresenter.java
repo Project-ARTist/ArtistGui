@@ -29,14 +29,14 @@ import android.net.Uri;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceManager;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
+import android.widget.Toast;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import saarland.cispa.artist.artistgui.R;
 import saarland.cispa.artist.artistgui.settings.config.ArtistAppConfig;
 import saarland.cispa.artist.artistgui.utils.UriUtils;
 import saarland.cispa.artist.log.Logg;
@@ -137,16 +137,12 @@ class SettingsPresenter implements SettingsContract.Presenter {
         {
             Log.d(TAG, "performFileSearch()");
 
-            // Assume thisActivity is the current activity
-            final int permissionCheck = ContextCompat.checkSelfPermission(mContext,
-                    Manifest.permission.READ_EXTERNAL_STORAGE);
-            if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
-                // No explanation needed, we can request the permission.
-                Log.d(TAG, "Requesting Permission: " + Manifest.permission
-                        .READ_EXTERNAL_STORAGE);
+            final int permissionCheck = activity
+                    .checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE);
 
-                ActivityCompat.requestPermissions(activity,
-                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+            if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
+                Log.d(TAG, "Requesting Permission: " + Manifest.permission.READ_EXTERNAL_STORAGE);
+                activity.requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
                         READ_EXTERNAL_STORAGE_REQUEST_CODE);
             } else {
                 mView.showFileChooser(APK_MIME_TYPE);
@@ -154,6 +150,17 @@ class SettingsPresenter implements SettingsContract.Presenter {
 
             return true;
         });
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int[] grantResults) {
+        if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            mView.showFileChooser(APK_MIME_TYPE);
+        } else {
+            Toast.makeText(mContext,
+                    mContext.getString(R.string.external_storage_permission_denied),
+                    Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override

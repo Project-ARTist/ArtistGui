@@ -42,6 +42,8 @@ interface SettingsContract {
 
         void setupCodeLibImport(final Activity activity, Preference preference);
 
+        void onRequestPermissionsResult(int[] grantResults);
+
         void processChosenCodeLib(Intent resultData);
     }
 }
