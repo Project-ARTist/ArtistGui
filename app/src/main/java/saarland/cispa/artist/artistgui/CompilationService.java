@@ -45,7 +45,7 @@ import saarland.cispa.artist.ArtistImpl;
 import saarland.cispa.artist.CompilationResultReceiver;
 import saarland.cispa.artist.artistgui.compilation.notification.CompileNotification;
 import saarland.cispa.artist.artistgui.compilation.notification.CompileNotificationManager;
-import saarland.cispa.artist.artistgui.settings.ArtistConfigFactory;
+import saarland.cispa.artist.artistgui.settings.config.ArtistConfigFactory;
 import saarland.cispa.artist.gui.artist.ArtistGuiProgress;
 import saarland.cispa.artist.log.Logg;
 import saarland.cispa.artist.settings.ArtistRunConfig;

@@ -33,7 +33,6 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import saarland.cispa.artist.StringUtils;
-import saarland.cispa.artist.artistgui.R;
 import trikita.log.Log;
 
 public class InfoFragment extends Fragment {

@@ -1,4 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <!-- Logging related settings -->
+    <PreferenceCategory android:title="@string/pref_title_logging">
+        <ListPreference
+            android:defaultValue="@string/log_level_default"
+            android:entries="@array/pref_general_log_level"
+            android:entryValues="@array/pref_general_log_level"
+            android:key="pref_general_log_level"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null"
+            android:title="@string/pref_title_general_log_level" />
+    </PreferenceCategory>
+
+    <!-- Compiler related settings -->
+    <PreferenceCategory android:title="@string/pref_category_dex2oat">
+
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="pref_key_compiler_debugmode"
+            android:summary="@string/pref_compiler_debugmode_summary"
+            android:title="@string/pref_compiler_debugmode" />
+
+        <ListPreference
+            android:defaultValue="-1"
+            android:entries="@array/pref_compiler_threads"
+            android:entryValues="@array/pref_compiler_threads_values"
+            android:key="pref_key_compiler_threads"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null"
+            android:title="@string/pref_title_compiler_threads" />
+
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="pref_key_compiler_launch_activity"
+            android:summary="@string/pref_compiler_launch_activity_summary"
+            android:title="@string/pref_compiler_launch_activity" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/pref_category_codelib">
+
+        <Preference
+            android:key="pref_key_codelib_import"
+            android:selectAllOnFocus="true"
+            android:singleLine="false"
+            android:summary="@string/pref_summary_codelib_import"
+            android:title="@string/pref_title_codelib_import" />
+
+        <ListPreference
+            android:defaultValue="-1"
+            android:entries="@array/pref_compiler_threads"
+            android:entryValues="@array/pref_compiler_threads_values"
+            android:key="pref_key_codelib_selection"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null"
+            android:summary="@string/pref_summary_codelib_selection"
+            android:title="@string/pref_title_codelib_selection" />
+
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="pref_key_compiler_inject_codelib"
+            android:summary="@string/pref_compiler_inject_codelib_summary"
+            android:title="@string/pref_compiler_inject_codelib" />
+
+    </PreferenceCategory>
 </PreferenceScreen>

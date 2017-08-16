@@ -25,7 +25,7 @@
             android:launchMode="standard"
             android:theme="@android:style/Theme.DeviceDefault.Light.Dialog" />
         <activity
-            android:name="saarland.cispa.artist.artistgui.settings.ArtistGuiSettingsGeneral"
+            android:name="saarland.cispa.artist.artistgui.settings.SettingsActivity"
             android:launchMode="singleInstance"
             android:parentActivityName=".MainActivity"
             android:label="@string/title_activity_artist_gui_settings_general" />

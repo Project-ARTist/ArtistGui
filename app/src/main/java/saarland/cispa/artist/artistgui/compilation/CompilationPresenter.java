@@ -37,7 +37,7 @@ import saarland.cispa.artist.artistgui.CompilationService;
 import saarland.cispa.artist.artistgui.CompileDialogActivity;
 import saarland.cispa.artist.artistgui.MainActivity;
 import saarland.cispa.artist.artistgui.compilation.notification.CompileNotificationManager;
-import saarland.cispa.artist.artistgui.settings.ArtistAppConfig;
+import saarland.cispa.artist.artistgui.settings.config.ArtistAppConfig;
 import saarland.cispa.artist.utils.AndroidUtils;
 import trikita.log.Log;
 

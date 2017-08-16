@@ -44,7 +44,7 @@ public class UriUtils {
         return filename;
     }
 
-    public static String cleanUriFilename(String filename) {
+    private static String cleanUriFilename(String filename) {
         if (filename.startsWith("primary:")) {
             filename = filename.replaceFirst("primary:", "");
         }

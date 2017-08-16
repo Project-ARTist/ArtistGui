@@ -40,7 +40,7 @@ import java.util.Locale;
 import saarland.cispa.artist.artistgui.compilation.CompilationContract;
 import saarland.cispa.artist.artistgui.compilation.CompilationPresenter;
 import saarland.cispa.artist.artistgui.compilation.CompileFragment;
-import saarland.cispa.artist.artistgui.settings.ArtistGuiSettingsGeneral;
+import saarland.cispa.artist.artistgui.settings.SettingsActivity;
 import saarland.cispa.artist.artistgui.utils.CompatUtils;
 import saarland.cispa.artist.log.Logg;
 import trikita.log.Log;
@@ -113,7 +113,7 @@ public class MainActivity extends AppCompatActivity
                 selectFragmentToDisplay(id);
                 break;
             case R.id.nav_settings:
-                final Intent generalSettings = new Intent(this, ArtistGuiSettingsGeneral.class);
+                final Intent generalSettings = new Intent(this, SettingsActivity.class);
                 startActivity(generalSettings);
                 return true;
         }

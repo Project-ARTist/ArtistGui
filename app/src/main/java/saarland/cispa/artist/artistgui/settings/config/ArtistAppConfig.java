@@ -19,7 +19,7 @@
  * @author "Sebastian Weisgerber <weisgerber@cispa.saarland>"
  *
  */
-package saarland.cispa.artist.artistgui.settings;
+package saarland.cispa.artist.artistgui.settings.config;
 
 public class ArtistAppConfig {
 
@@ -43,7 +43,7 @@ public class ArtistAppConfig {
     public static final String PREF_KEY_CODELIB_SELECTION = "pref_key_codelib_selection";
     public static final String PREF_KEY_CODELIB_IMPORT = "pref_key_codelib_import";
 
-    public static final String KEY_PREF_GENERAL_LOGLEVEL = "pref_general_loglevel";
+    public static final String KEY_PREF_GENERAL_LOGLEVEL = "pref_general_log_level";
 
 
     public String apkBackupFolderLocation = "";
