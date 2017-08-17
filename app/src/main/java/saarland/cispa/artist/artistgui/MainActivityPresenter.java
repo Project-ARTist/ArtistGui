@@ -23,8 +23,11 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
-import android.support.annotation.IdRes;
+import android.support.annotation.IntDef;
 import android.support.v4.app.Fragment;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
 import saarland.cispa.artist.artistgui.compilation.CompilationContract;
 import saarland.cispa.artist.artistgui.compilation.CompilationPresenter;
@@ -33,6 +36,12 @@ import saarland.cispa.artist.log.Logg;
 
 class MainActivityPresenter implements MainActivityContract.Presenter {
 
+    @Retention(RetentionPolicy.SOURCE)
+    @IntDef({INFO_FRAGMENT, COMPILATION_FRAGMENT})
+    @interface selectableFragment {}
+    static final int INFO_FRAGMENT = 0;
+    static final int COMPILATION_FRAGMENT = 1;
+
     private static final int[] supportedSdks = {Build.VERSION_CODES.M, Build.VERSION_CODES.N,
             Build.VERSION_CODES.N_MR1};
 
@@ -40,6 +49,7 @@ class MainActivityPresenter implements MainActivityContract.Presenter {
     private Activity mActivity;
     private MainActivityContract.View mView;
 
+    private int mSelectedFragmentId;
     private InfoFragment mInfoFragment;
 
     private CompileFragment mCompileFragment;
@@ -65,8 +75,12 @@ class MainActivityPresenter implements MainActivityContract.Presenter {
 
     @Override
     public void processIntent(Intent intent) {
-        selectFragment(R.id.nav_compiler);
-        mCompilationPresenter.executeIntentTasks(intent);
+        if (intent.hasExtra(MainActivity.EXTRA_PACKAGE)) {
+            mCompilationPresenter.executeIntentTasks(intent);
+            selectFragment(COMPILATION_FRAGMENT);
+        } else {
+            selectFragment(INFO_FRAGMENT);
+        }
     }
 
     @Override
@@ -75,16 +89,16 @@ class MainActivityPresenter implements MainActivityContract.Presenter {
     }
 
     @Override
-    public void selectFragment(@IdRes int id) {
+    public void selectFragment(@selectableFragment int id) {
         Fragment selectedFragment = null;
         switch (id) {
-            case R.id.nav_home:
+            case INFO_FRAGMENT:
                 if (mInfoFragment == null) {
                     mInfoFragment = new InfoFragment();
                 }
                 selectedFragment = mInfoFragment;
                 break;
-            case R.id.nav_compiler:
+            case COMPILATION_FRAGMENT:
                 if (mCompileFragment == null) {
                     mCompileFragment = new CompileFragment();
                     mCompilationPresenter = new CompilationPresenter(mActivity, mCompileFragment);
@@ -92,7 +106,28 @@ class MainActivityPresenter implements MainActivityContract.Presenter {
                 selectedFragment = mCompileFragment;
                 break;
         }
+        mSelectedFragmentId = id;
         mView.onFragmentSelected(selectedFragment);
+    }
+
+    @Override
+    public void onRestoreSavedInstance(int selectedFragmentId, Fragment selectedFragment) {
+        switch (selectedFragmentId) {
+            case INFO_FRAGMENT:
+                mInfoFragment = (InfoFragment) selectedFragment;
+                break;
+            case COMPILATION_FRAGMENT:
+                mCompileFragment = (CompileFragment) selectedFragment;
+                mCompilationPresenter = new CompilationPresenter(mActivity, mCompileFragment);
+                mCompileFragment.setPresenter(mCompilationPresenter);
+                break;
+        }
+        mSelectedFragmentId = selectedFragmentId;
+    }
+
+    @Override
+    public int getSelectedFragmentId() {
+        return mSelectedFragmentId;
     }
 
     private static boolean supportedByArtist() {

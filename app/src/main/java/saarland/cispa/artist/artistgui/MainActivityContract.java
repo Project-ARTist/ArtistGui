@@ -20,7 +20,6 @@
 package saarland.cispa.artist.artistgui;
 
 import android.content.Intent;
-import android.support.annotation.IdRes;
 import android.support.v4.app.Fragment;
 
 import saarland.cispa.artist.artistgui.base.BasePresenter;
@@ -40,6 +39,10 @@ interface MainActivityContract {
 
         void processCompilationResult(int resultCode, final Intent data);
 
-        void selectFragment(@IdRes int id);
+        void selectFragment(@MainActivityPresenter.selectableFragment int id);
+
+        void onRestoreSavedInstance(int selectedFragmentId, Fragment selectedFragment);
+
+        int getSelectedFragmentId();
     }
 }

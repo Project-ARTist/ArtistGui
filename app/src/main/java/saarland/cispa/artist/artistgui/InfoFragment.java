@@ -29,6 +29,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import org.w3c.dom.Text;
+
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -39,17 +41,34 @@ public class InfoFragment extends Fragment {
 
     private static final String TAG = "InfoFragment";
 
+    private static final String VERSION_TEXTVIEW_STATE_KEY = "version_textview";
+
+    private TextView mTextView;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_info, container, false);
-        TextView textView = (TextView) view.findViewById(R.id.main_activity_textview);
-        setupTextView(textView);
+        mTextView = (TextView) view.findViewById(R.id.main_activity_textview);
+
+        if (savedInstanceState == null) {
+            setupTextView();
+        } else {
+            String versionText = savedInstanceState.getString(VERSION_TEXTVIEW_STATE_KEY);
+            mTextView.setText(versionText);
+        }
+
         return view;
     }
 
-    private void setupTextView(TextView textView) {
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(VERSION_TEXTVIEW_STATE_KEY, mTextView.getText().toString());
+    }
+
+    private void setupTextView() {
         StringBuilder artistGuiVersion = new StringBuilder();
         StringBuilder artistVersion = new StringBuilder();
 
@@ -75,12 +94,12 @@ public class InfoFragment extends Fragment {
             Log.e(TAG, "Could not read Artist Version files from assets.", e);
         }
 
-        textView.append("\n\n");
-        textView.append("ArtistGUI Version:\n");
-        textView.append(artistGuiVersion.toString());
-        textView.append("\n\n");
-        textView.append("Artist Dex2oat Versions:\n");
-        textView.append(artistVersion.toString());
-        textView.setMovementMethod(new ScrollingMovementMethod());
+        mTextView.append("\n\n");
+        mTextView.append("ArtistGUI Version:\n");
+        mTextView.append(artistGuiVersion.toString());
+        mTextView.append("\n\n");
+        mTextView.append("Artist Dex2oat Versions:\n");
+        mTextView.append(artistVersion.toString());
+        mTextView.setMovementMethod(new ScrollingMovementMethod());
     }
 }

@@ -31,7 +31,19 @@ import saarland.cispa.artist.artistgui.settings.config.ArtistAppConfig;
 
 public class SettingsFragment extends PreferenceFragment implements SettingsContract.View {
 
+    private static final String LOG_LEVEL_STATE_KEY = "log_level";
+    private static final String COMPILER_THREADS_STATE_KEY = "compiler_threads";
+    private static final String CHOSEN_CODELIB_STATE_KEY = "chosen_codelib";
+
+    private static final String SELECTABLE_CODELIB_ENTRIES_STATE_KEY = "selectable_codelib_entries";
+    private static final String SELECTABLE_CODELIB_ENTRY_VALUES_STATE_KEY = "selectable_codelib_values";
+
     private SettingsContract.Presenter mPresenter;
+
+    private Preference mLogLevelPref;
+    private Preference mCompilerThreadsPref;
+    private Preference mCodeLibImportPref;
+    private ListPreference mCodeLibSelectionPref;
 
     @Override
     public void setPresenter(SettingsContract.Presenter presenter) {
@@ -43,20 +55,65 @@ public class SettingsFragment extends PreferenceFragment implements SettingsCont
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.preferences);
 
-        Preference logLevelPref = findPreference(ArtistAppConfig.KEY_PREF_GENERAL_LOGLEVEL);
-        mPresenter.setupLoggingListener(logLevelPref);
-
-        Preference compilerPref = findPreference(ArtistAppConfig.KEY_PREF_COMPILER_THREADS);
-        mPresenter.bindPrefValueToSummary(compilerPref);
-
-        ListPreference codeLibSelectionPref = (ListPreference) findPreference(ArtistAppConfig
+        mLogLevelPref = findPreference(ArtistAppConfig.KEY_PREF_GENERAL_LOGLEVEL);
+        mCompilerThreadsPref = findPreference(ArtistAppConfig.KEY_PREF_COMPILER_THREADS);
+        mCodeLibImportPref = findPreference(ArtistAppConfig.PREF_KEY_CODELIB_IMPORT);
+        mCodeLibSelectionPref = (ListPreference) findPreference(ArtistAppConfig
                 .PREF_KEY_CODELIB_SELECTION);
-        mPresenter.bindPrefValueToSummary(codeLibSelectionPref);
-        mPresenter.setupCodeLibSelection(codeLibSelectionPref);
+    }
 
-        Preference codeLibImportPref = findPreference(ArtistAppConfig.PREF_KEY_CODELIB_IMPORT);
-        mPresenter.setupCodeLibImport(getActivity(), codeLibImportPref);
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        boolean isNewInstance = savedInstanceState == null;
+        mPresenter.setupLoggingListener(isNewInstance, mLogLevelPref);
+        mPresenter.bindPrefValueToSummary(isNewInstance, mCompilerThreadsPref);
 
+        mPresenter.setupCodeLibImport(getActivity(), mCodeLibImportPref);
+
+        if (!isNewInstance) {
+            restoreSavedInstance(savedInstanceState);
+        } else {
+            mPresenter.setupCodeLibSelection(mCodeLibSelectionPref);
+        }
+
+        mPresenter.bindPrefValueToSummary(isNewInstance, mCodeLibSelectionPref);
+    }
+
+    private void restoreSavedInstance(Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+        String logLevel = savedInstanceState.getString(LOG_LEVEL_STATE_KEY);
+        mLogLevelPref.setSummary(logLevel);
+
+        String compilerThreads = savedInstanceState.getString(COMPILER_THREADS_STATE_KEY);
+        mCompilerThreadsPref.setSummary(compilerThreads);
+
+        // CodeLibSelection pref has no default value
+        String chosenCodeLib = savedInstanceState.getString(CHOSEN_CODELIB_STATE_KEY, "");
+        mCodeLibSelectionPref.setSummary(chosenCodeLib);
+
+        CharSequence[] codeLibSelectionEntries = savedInstanceState
+                .getCharSequenceArray(SELECTABLE_CODELIB_ENTRIES_STATE_KEY);
+        mCodeLibSelectionPref.setEntries(codeLibSelectionEntries);
+
+        CharSequence[] codeLibEntryValues = savedInstanceState
+                .getCharSequenceArray(SELECTABLE_CODELIB_ENTRY_VALUES_STATE_KEY);
+        mCodeLibSelectionPref.setEntryValues(codeLibEntryValues);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(LOG_LEVEL_STATE_KEY, mLogLevelPref.getSummary().toString());
+        outState.putString(COMPILER_THREADS_STATE_KEY, mCompilerThreadsPref.getSummary()
+                .toString());
+        outState.putString(CHOSEN_CODELIB_STATE_KEY, mCodeLibSelectionPref.getSummary()
+                .toString());
+
+        outState.putCharSequenceArray(SELECTABLE_CODELIB_ENTRIES_STATE_KEY,
+                mCodeLibSelectionPref.getEntries());
+        outState.putCharSequenceArray(SELECTABLE_CODELIB_ENTRY_VALUES_STATE_KEY,
+                mCodeLibSelectionPref.getEntryValues());
     }
 
     @Override

@@ -47,6 +47,7 @@ public class MainActivity extends AppCompatActivity
     private static final String TAG = "MainActivity";
 
     public static final String EXTRA_PACKAGE = "INTENT_EXTRA_PACKAGE";
+    public static final String SELECTED_FRAGMENT_STATE_KEY = "selected_fragment";
 
     private MainActivityContract.Presenter mPresenter;
     private FragmentManager mFragmentManager;
@@ -70,21 +71,33 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         mFragmentManager = getSupportFragmentManager();
-
-        final Intent intent = getIntent();
         mPresenter = new MainActivityPresenter(getApplicationContext(), this);
-        if (intent != null && intent.hasExtra(MainActivity.EXTRA_PACKAGE)) {
-            mPresenter.processIntent(intent);
+
+        if (savedInstanceState == null) {
+            mPresenter.checkCompatibility();
+
+            final Intent intent = getIntent();
+            if (intent != null) {
+                mPresenter.processIntent(intent);
+            }
+
         } else {
-            mPresenter.selectFragment(R.id.nav_home);
+            int selectedFragmentId = savedInstanceState.getInt(SELECTED_FRAGMENT_STATE_KEY);
+            Fragment lastSelectedFragment = mFragmentManager.findFragmentById(R.id.content_frame);
+            mPresenter.onRestoreSavedInstance(selectedFragmentId, lastSelectedFragment);
         }
     }
 
     @Override
-    protected void onPostCreate(@Nullable Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
+    protected void onStart() {
+        super.onStart();
         mPresenter.start();
-        mPresenter.checkCompatibility();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(SELECTED_FRAGMENT_STATE_KEY, mPresenter.getSelectedFragmentId());
     }
 
     @Override
@@ -96,7 +109,8 @@ public class MainActivity extends AppCompatActivity
     public void onIncompatibleAndroidVersion() {
         new AlertDialog.Builder(this).setTitle(R.string.incompatible_android_version)
                 .setMessage(R.string.unsupported_android_version_info)
-                .setPositiveButton("Close", (dialog, which) -> {}).show();
+                .setPositiveButton("Close", (dialog, which) -> {
+                }).show();
     }
 
     @Override
@@ -105,8 +119,10 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
         switch (id) {
             case R.id.nav_home:
+                mPresenter.selectFragment(MainActivityPresenter.INFO_FRAGMENT);
+                break;
             case R.id.nav_compiler:
-                mPresenter.selectFragment(id);
+                mPresenter.selectFragment(MainActivityPresenter.COMPILATION_FRAGMENT);
                 break;
             case R.id.nav_settings:
                 final Intent generalSettings = new Intent(this, SettingsActivity.class);

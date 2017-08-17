@@ -70,13 +70,11 @@ public class CompileFragment extends Fragment implements CompilationContract.Vie
         ApkListAdapter mAdapter = new ApkListAdapter(getContext(), mPresenter);
         mRecyclerView.setAdapter(mAdapter);
 
-        return mRecyclerView;
-    }
+        if (savedInstanceState == null) {
+            mPresenter.checkIfCodeLibIsChosen();
+        }
 
-    @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        mPresenter.checkIfCodeLibIsChosen();
+        return mRecyclerView;
     }
 
     @Override

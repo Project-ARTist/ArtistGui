@@ -34,9 +34,9 @@ interface SettingsContract {
     }
 
     interface Presenter extends BasePresenter {
-        void bindPrefValueToSummary(Preference preference);
+        void bindPrefValueToSummary(boolean isNewInstance, Preference preference);
 
-        void setupLoggingListener(Preference preference);
+        void setupLoggingListener(boolean isNewInstance, Preference preference);
 
         void setupCodeLibSelection(ListPreference codeLibSelection);
 

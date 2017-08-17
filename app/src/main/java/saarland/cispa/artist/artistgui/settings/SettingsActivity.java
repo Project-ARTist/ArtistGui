@@ -20,6 +20,7 @@
 package saarland.cispa.artist.artistgui.settings;
 
 import android.app.Activity;
+import android.app.FragmentManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -32,19 +33,26 @@ public class SettingsActivity extends Activity {
     private static final String TAG = "SettingsActivity";
 
     private SettingsPresenter mPresenter;
-    private SettingsFragment mFragment;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setTheme(android.R.style.Theme_Material_Settings);
 
-        mFragment = new SettingsFragment();
-        mPresenter = new SettingsPresenter(this, mFragment);
+        FragmentManager fragmentManager = getFragmentManager();
+        SettingsFragment mFragment;
 
-        getFragmentManager().beginTransaction()
-                .replace(android.R.id.content, mFragment)
-                .commit();
+        if (savedInstanceState != null) {
+            mFragment = (SettingsFragment) fragmentManager.findFragmentById(android.R.id.content);
+            mPresenter = new SettingsPresenter(this, mFragment);
+        } else {
+            mFragment = new SettingsFragment();
+            mPresenter = new SettingsPresenter(this, mFragment);
+
+            fragmentManager.beginTransaction()
+                    .replace(android.R.id.content, mFragment)
+                    .commit();
+        }
     }
 
     @Override

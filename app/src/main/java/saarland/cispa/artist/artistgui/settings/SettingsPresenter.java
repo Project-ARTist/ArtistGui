@@ -83,9 +83,19 @@ class SettingsPresenter implements SettingsContract.Presenter {
     }
 
     @Override
-    public void bindPrefValueToSummary(Preference preference) {
+    public void bindPrefValueToSummary(boolean isNewInstance, Preference preference) {
         preference.setOnPreferenceChangeListener(mBindValueToSummaryListener);
-        triggerInitialOnPreferenceChange(preference, mBindValueToSummaryListener);
+        if (isNewInstance) {
+            triggerInitialOnPreferenceChange(preference, mBindValueToSummaryListener);
+        }
+    }
+
+    @Override
+    public void setupLoggingListener(boolean isNewInstance, Preference preference) {
+        preference.setOnPreferenceChangeListener(mLoggingPrefListener);
+        if (isNewInstance) {
+            triggerInitialOnPreferenceChange(preference, mLoggingPrefListener);
+        }
     }
 
     private void bindValueToSummary(Preference preference, Object value) {
@@ -104,12 +114,6 @@ class SettingsPresenter implements SettingsContract.Presenter {
                 PreferenceManager
                         .getDefaultSharedPreferences(preference.getContext())
                         .getString(preference.getKey(), ""));
-    }
-
-    @Override
-    public void setupLoggingListener(Preference preference) {
-        preference.setOnPreferenceChangeListener(mLoggingPrefListener);
-        triggerInitialOnPreferenceChange(preference, mLoggingPrefListener);
     }
 
     @Override
