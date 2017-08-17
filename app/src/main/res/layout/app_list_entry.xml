@@ -5,8 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:minHeight="@dimen/app_list_entry_height"
-    android:padding="@dimen/activity_horizontal_margin"
+    android:minHeight="@dimen/list_entry_height"
+    android:paddingStart="@dimen/activity_horizontal_margin"
+    android:paddingEnd="@dimen/activity_horizontal_margin"
     android:background="?attr/selectableItemBackground">
 
     <ImageView
@@ -14,6 +15,10 @@
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
+        android:maxWidth="@dimen/app_icon_metrics"
+        android:maxHeight="@dimen/app_icon_metrics"
+        android:adjustViewBounds="true"
+        android:scaleType="centerInside"
         android:id="@+id/app_icon"
         android:contentDescription="@string/app_icon"
         tools:src="@drawable/ic_icon_compiler" />

@@ -23,8 +23,10 @@ import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,6 +39,7 @@ import saarland.cispa.artist.artistgui.R;
 
 class ApkListAdapter extends RecyclerView.Adapter<ApkListAdapter.ViewHolder> {
 
+    private Context mContext;
     private CompilationContract.Presenter mPresenter;
     private PackageManager mPackageManager;
     private List<PackageInfo> mPackageInfoList;
@@ -56,6 +59,7 @@ class ApkListAdapter extends RecyclerView.Adapter<ApkListAdapter.ViewHolder> {
     }
 
     ApkListAdapter(Context context, CompilationContract.Presenter presenter) {
+        mContext = context;
         mPackageManager = context.getPackageManager();
         mPackageInfoList = mPackageManager.getInstalledPackages(PackageManager.GET_ACTIVITIES);
         mPresenter = presenter;
@@ -78,7 +82,21 @@ class ApkListAdapter extends RecyclerView.Adapter<ApkListAdapter.ViewHolder> {
         PackageInfo packageInfo = mPackageInfoList.get(position);
         ApplicationInfo applicationInfo = packageInfo.applicationInfo;
 
-        Drawable appIcon = mPackageManager.getApplicationIcon(applicationInfo);
+        Drawable appIcon = null;
+        Context mdpiContext = null;
+        try {
+            mdpiContext = mContext.createPackageContext(applicationInfo.packageName,
+                    Context.CONTEXT_IGNORE_SECURITY);
+            appIcon = mdpiContext.getResources().getDrawableForDensity(applicationInfo.icon,
+                    DisplayMetrics.DENSITY_XHIGH, null);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        } catch (Resources.NotFoundException e) {
+            if (mdpiContext != null) {
+                appIcon = mdpiContext.getDrawable(android.R.mipmap.sym_def_app_icon);
+            }
+        }
+
         String appName = mPackageManager.getApplicationLabel(applicationInfo).toString();
         String packageName = packageInfo.packageName;
 
