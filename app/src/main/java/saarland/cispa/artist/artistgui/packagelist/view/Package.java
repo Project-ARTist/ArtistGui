@@ -21,27 +21,47 @@ package saarland.cispa.artist.artistgui.packagelist.view;
 
 import android.support.annotation.DrawableRes;
 
-public class Package {
+class Package {
 
     private String appName;
     private String packageName;
     private int appIconId;
 
-    public Package(String appName, String packageName, @DrawableRes int appIconId) {
+    Package(String appName, String packageName, @DrawableRes int appIconId) {
         this.appName = appName;
         this.packageName = packageName;
         this.appIconId = appIconId;
     }
 
-    public String getAppName() {
+    String getAppName() {
         return appName;
     }
 
-    public String getPackageName() {
+    String getPackageName() {
         return packageName;
     }
 
-    public int getAppIconId() {
+    int getAppIconId() {
         return appIconId;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Package aPackage = (Package) o;
+        return appIconId == aPackage.appIconId &&
+                appName.equals(aPackage.appName) &&
+                packageName.equals(aPackage.packageName);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = appName.hashCode();
+        result = 31 * result + packageName.hashCode();
+        result = 31 * result + appIconId;
+        return result;
     }
 }

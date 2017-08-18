@@ -20,11 +20,8 @@
 package saarland.cispa.artist.artistgui.packagelist.view;
 
 import android.content.Context;
-import android.content.pm.PackageManager;
-import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
-import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,7 +34,8 @@ import saarland.cispa.artist.artistgui.R;
 
 public class PackageListAdapter extends RecyclerView.Adapter<PackageListAdapter.ViewHolder> {
 
-    private Context mContext;
+    private AppIconCache mAppIconCache;
+
     private List<Package> mPackageList;
     private List<PackageListView.OnPackageSelectedListener> mListeners;
 
@@ -57,7 +55,7 @@ public class PackageListAdapter extends RecyclerView.Adapter<PackageListAdapter.
 
     PackageListAdapter(Context context, List<Package> packageList,
                        List<PackageListView.OnPackageSelectedListener> listeners) {
-        mContext = context;
+        mAppIconCache = new AppIconCache(context);
         mPackageList = packageList;
         mListeners = listeners;
     }
@@ -79,31 +77,13 @@ public class PackageListAdapter extends RecyclerView.Adapter<PackageListAdapter.
         Package packageEntry = mPackageList.get(position);
 
         String packageName = packageEntry.getPackageName();
-        Drawable appIcon = loadAppIcon(packageName, packageEntry.getAppIconId());
+        Drawable appIcon = mAppIconCache.get(packageEntry);
 
         holder.mAppIcon.setImageDrawable(appIcon);
         holder.mAppName.setText(packageEntry.getAppName());
         holder.mPackageName.setText(packageName);
         holder.itemView.setOnClickListener((view) -> mListeners
                 .forEach(l -> l.onPackageSelected(packageName)));
-    }
-
-    private Drawable loadAppIcon(String packageName, int appIconId) {
-        Context mdpiContext = null;
-        Drawable appIcon = null;
-        try {
-            mdpiContext = mContext.createPackageContext(packageName,
-                    Context.CONTEXT_IGNORE_SECURITY);
-            appIcon = mdpiContext.getResources().getDrawableForDensity(appIconId,
-                    DisplayMetrics.DENSITY_XHIGH, null);
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-        } catch (Resources.NotFoundException e) {
-            if (mdpiContext != null) {
-                appIcon = mdpiContext.getDrawable(android.R.mipmap.sym_def_app_icon);
-            }
-        }
-        return appIcon;
     }
 
     @Override
