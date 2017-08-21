@@ -19,7 +19,10 @@
 
 package saarland.cispa.artist.artistgui.packagelist.view;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
@@ -29,15 +32,21 @@ import android.util.AttributeSet;
 import java.util.ArrayList;
 import java.util.List;
 
+import saarland.cispa.artist.artistgui.packagelist.view.broadcastreceiver.PackageModifiedReceiver;
+
 public class PackageListView extends RecyclerView implements ReadInstalledPackagesAsyncTask
         .OnReadInstalledPackages {
+
 
     public interface OnPackageSelectedListener {
         void onPackageSelected(String packageName);
     }
 
     private Context mContext;
+    private IntentFilter mIntentFilter;
     private List<OnPackageSelectedListener> mListeners;
+
+    private BroadcastReceiver mPackageInstalledOrRemoved;
 
     public PackageListView(Context context) {
         this(context, null);
@@ -58,6 +67,41 @@ public class PackageListView extends RecyclerView implements ReadInstalledPackag
 
         PackageManager packageManager = context.getPackageManager();
         new ReadInstalledPackagesAsyncTask(this).execute(packageManager);
+    }
+
+    @Override
+    public void setAdapter(Adapter adapter) {
+        super.setAdapter(adapter);
+        if (mPackageInstalledOrRemoved == null) {
+            mPackageInstalledOrRemoved = new PackageModifiedReceiver((PackageListAdapter) adapter);
+        }
+        registerPackageModifiedBroadcastReceiver();
+    }
+
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        if (mPackageInstalledOrRemoved != null) {
+            registerPackageModifiedBroadcastReceiver();
+        }
+    }
+
+    private void registerPackageModifiedBroadcastReceiver() {
+        if (mIntentFilter == null) {
+            mIntentFilter = new IntentFilter();
+            mIntentFilter.addAction(Intent.ACTION_PACKAGE_ADDED);
+            mIntentFilter.addAction(Intent.ACTION_PACKAGE_REMOVED);
+            mIntentFilter.addDataScheme("package");
+        }
+        mContext.registerReceiver(mPackageInstalledOrRemoved, mIntentFilter);
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        if (mPackageInstalledOrRemoved != null) {
+            mContext.unregisterReceiver(mPackageInstalledOrRemoved);
+        }
     }
 
     @Override

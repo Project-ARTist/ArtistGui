@@ -20,6 +20,8 @@
 package saarland.cispa.artist.artistgui.packagelist.view;
 
 import android.content.Context;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -31,9 +33,14 @@ import android.widget.TextView;
 import java.util.List;
 
 import saarland.cispa.artist.artistgui.R;
+import saarland.cispa.artist.artistgui.packagelist.view.broadcastreceiver.OnPackageModifiedListener;
 
-public class PackageListAdapter extends RecyclerView.Adapter<PackageListAdapter.ViewHolder> {
+class PackageListAdapter extends RecyclerView.Adapter<PackageListAdapter.ViewHolder>
+        implements OnPackageModifiedListener {
 
+    private static final int PACKAGE_MANAGER_EMPTY_FLAG = 0;
+
+    private PackageManager mPackageManager;
     private AppIconCache mAppIconCache;
 
     private List<Package> mPackageList;
@@ -58,6 +65,7 @@ public class PackageListAdapter extends RecyclerView.Adapter<PackageListAdapter.
         mAppIconCache = new AppIconCache(context);
         mPackageList = packageList;
         mListeners = listeners;
+        mPackageManager = context.getPackageManager();
     }
 
     @Override
@@ -84,6 +92,32 @@ public class PackageListAdapter extends RecyclerView.Adapter<PackageListAdapter.
         holder.mPackageName.setText(packageName);
         holder.itemView.setOnClickListener((view) -> mListeners
                 .forEach(l -> l.onPackageSelected(packageName)));
+    }
+
+    @Override
+    public void onPackageInstalled(String packageName) {
+        try {
+            ApplicationInfo info = mPackageManager.getApplicationInfo(packageName,
+                    PACKAGE_MANAGER_EMPTY_FLAG);
+            String appName = mPackageManager.getApplicationLabel(info).toString();
+
+            mPackageList.add(new Package(appName, info.packageName, info.icon));
+            notifyItemInserted(mPackageList.size() - 1);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onPackageRemoved(String packageName) {
+        String p;
+        for (int i = 0; i < mPackageList.size(); i++) {
+            p = mPackageList.get(i).getPackageName();
+            if (p.equals(packageName)) {
+                mPackageList.remove(i);
+                notifyItemRemoved(i);
+            }
+        }
     }
 
     @Override
