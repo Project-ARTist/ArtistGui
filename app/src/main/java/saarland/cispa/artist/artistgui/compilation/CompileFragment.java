@@ -85,10 +85,10 @@ public class CompileFragment extends Fragment implements CompilationContract.Vie
     }
 
     @Override
-    public void showCompilationResult(boolean isSuccess) {
+    public void showCompilationResult(boolean isSuccess, String packageName) {
         int stringResourceId = isSuccess ? R.string.snack_compilation_success :
                 R.string.snack_compilation_failed;
-        String userMessage = getResources().getString(stringResourceId);
+        String userMessage = getResources().getString(stringResourceId) + packageName;
         GuiUtils.displaySnackLong(mRecyclerView, userMessage);
     }
 }

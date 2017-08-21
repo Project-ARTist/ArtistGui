@@ -196,14 +196,14 @@ public class CompilationPresenter implements CompilationContract.Presenter {
 
     @Override
     public void onCompilationFinished(int resultCode, Intent data) {
-        String applicationName = "";
+        String applicationName = " ";
         if (data != null) {
-            applicationName = data.getStringExtra(ArtistImpl.INTENT_EXTRA_APP_NAME);
+            applicationName += data.getStringExtra(ArtistImpl.INTENT_EXTRA_APP_NAME);
         }
 
         boolean success = resultCode == RESULT_OK;
         writeResultFile(applicationName, success);
-        mView.showCompilationResult(success);
+        mView.showCompilationResult(success, applicationName);
 
         if (success) {
             maybeStartRecompiledApp(applicationName);

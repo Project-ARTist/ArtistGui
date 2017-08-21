@@ -30,7 +30,7 @@ public interface CompilationContract {
     interface View extends BaseView<Presenter> {
         void showNoCodeLibChosenMessage();
 
-        void showCompilationResult(boolean isSuccess);
+        void showCompilationResult(boolean isSuccess, String packageName);
     }
 
     interface Presenter extends BasePresenter {
