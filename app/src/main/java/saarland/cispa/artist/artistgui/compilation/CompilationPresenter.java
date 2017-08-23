@@ -196,7 +196,7 @@ public class CompilationPresenter implements CompilationContract.Presenter {
 
     @Override
     public void onCompilationFinished(int resultCode, Intent data) {
-        String applicationName = " ";
+        String applicationName = "";
         if (data != null) {
             applicationName += data.getStringExtra(ArtistImpl.INTENT_EXTRA_APP_NAME);
         }
