@@ -32,7 +32,7 @@ public class Logg {
     public static final String TAG = "ArtistGui";
 
     public static final String HR = "############################################";
-    public static final String PREF_KEY_LOGLEVEL = "pref_general_loglevel";
+    public static final String PREF_KEY_LOGLEVEL = "pref_general_log_level";
 
 
     public static void setUserLogLevel(final Context context) {
