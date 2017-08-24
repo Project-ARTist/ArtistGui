@@ -17,16 +17,13 @@
  *
  */
 
-package saarland.cispa.artist.artistgui.compilation;
+package saarland.cispa.artist.artistgui.packagelist.view;
 
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
-import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,13 +33,18 @@ import android.widget.TextView;
 import java.util.List;
 
 import saarland.cispa.artist.artistgui.R;
+import saarland.cispa.artist.artistgui.packagelist.view.broadcastreceiver.OnPackageModifiedListener;
 
-class ApkListAdapter extends RecyclerView.Adapter<ApkListAdapter.ViewHolder> {
+class PackageListAdapter extends RecyclerView.Adapter<PackageListAdapter.ViewHolder>
+        implements OnPackageModifiedListener {
 
-    private Context mContext;
-    private CompilationContract.Presenter mPresenter;
+    private static final int PACKAGE_MANAGER_EMPTY_FLAG = 0;
+
     private PackageManager mPackageManager;
-    private List<PackageInfo> mPackageInfoList;
+    private AppIconCache mAppIconCache;
+
+    private List<Package> mPackageList;
+    private List<PackageListView.OnPackageSelectedListener> mListeners;
 
     // Reference for performance instead of slow findByView lookup
     static class ViewHolder extends RecyclerView.ViewHolder {
@@ -58,15 +60,16 @@ class ApkListAdapter extends RecyclerView.Adapter<ApkListAdapter.ViewHolder> {
         }
     }
 
-    ApkListAdapter(Context context, CompilationContract.Presenter presenter) {
-        mContext = context;
+    PackageListAdapter(Context context, List<Package> packageList,
+                       List<PackageListView.OnPackageSelectedListener> listeners) {
+        mAppIconCache = new AppIconCache(context);
+        mPackageList = packageList;
+        mListeners = listeners;
         mPackageManager = context.getPackageManager();
-        mPackageInfoList = mPackageManager.getInstalledPackages(PackageManager.GET_ACTIVITIES);
-        mPresenter = presenter;
     }
 
     @Override
-    public ApkListAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public PackageListAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.app_list_entry,
                 parent, false);
 
@@ -79,35 +82,46 @@ class ApkListAdapter extends RecyclerView.Adapter<ApkListAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        PackageInfo packageInfo = mPackageInfoList.get(position);
-        ApplicationInfo applicationInfo = packageInfo.applicationInfo;
+        Package packageEntry = mPackageList.get(position);
 
-        Drawable appIcon = null;
-        Context mdpiContext = null;
-        try {
-            mdpiContext = mContext.createPackageContext(applicationInfo.packageName,
-                    Context.CONTEXT_IGNORE_SECURITY);
-            appIcon = mdpiContext.getResources().getDrawableForDensity(applicationInfo.icon,
-                    DisplayMetrics.DENSITY_XHIGH, null);
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-        } catch (Resources.NotFoundException e) {
-            if (mdpiContext != null) {
-                appIcon = mdpiContext.getDrawable(android.R.mipmap.sym_def_app_icon);
-            }
-        }
-
-        String appName = mPackageManager.getApplicationLabel(applicationInfo).toString();
-        String packageName = packageInfo.packageName;
+        String packageName = packageEntry.getPackageName();
+        Drawable appIcon = mAppIconCache.get(packageEntry);
 
         holder.mAppIcon.setImageDrawable(appIcon);
-        holder.mAppName.setText(appName);
+        holder.mAppName.setText(packageEntry.getAppName());
         holder.mPackageName.setText(packageName);
-        holder.itemView.setOnClickListener((view) -> mPresenter.queueCompilation(packageName));
+        holder.itemView.setOnClickListener((view) -> mListeners
+                .forEach(l -> l.onPackageSelected(packageName)));
+    }
+
+    @Override
+    public void onPackageInstalled(String packageName) {
+        try {
+            ApplicationInfo info = mPackageManager.getApplicationInfo(packageName,
+                    PACKAGE_MANAGER_EMPTY_FLAG);
+            String appName = mPackageManager.getApplicationLabel(info).toString();
+
+            mPackageList.add(new Package(appName, info.packageName, info.icon));
+            notifyItemInserted(mPackageList.size() - 1);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onPackageRemoved(String packageName) {
+        String p;
+        for (int i = 0; i < mPackageList.size(); i++) {
+            p = mPackageList.get(i).getPackageName();
+            if (p.equals(packageName)) {
+                mPackageList.remove(i);
+                notifyItemRemoved(i);
+            }
+        }
     }
 
     @Override
     public int getItemCount() {
-        return mPackageInfoList.size();
+        return mPackageList.size();
     }
 }

@@ -22,20 +22,19 @@ package saarland.cispa.artist.artistgui.compilation;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import saarland.cispa.artist.artistgui.R;
+import saarland.cispa.artist.artistgui.packagelist.view.PackageListView;
 import saarland.cispa.artist.utils.GuiUtils;
 
-public class CompileFragment extends Fragment implements CompilationContract.View {
+public class CompileFragment extends Fragment implements CompilationContract.View,
+        PackageListView.OnPackageSelectedListener {
 
     private CompilationContract.Presenter mPresenter;
-
-    private RecyclerView mRecyclerView;
+    private PackageListView mPackageListView;
 
     @Override
     public void onStart() {
@@ -58,18 +57,10 @@ public class CompileFragment extends Fragment implements CompilationContract.Vie
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        mRecyclerView = (RecyclerView) inflater
-                .inflate(R.layout.fragment_compiler, container, false);
-
-        // content does not change the layout size of the RecyclerView
-        mRecyclerView.setHasFixedSize(true);
-
-        LinearLayoutManager mLayoutManager = new LinearLayoutManager(getContext());
-        mRecyclerView.setLayoutManager(mLayoutManager);
-
-        ApkListAdapter mAdapter = new ApkListAdapter(getContext(), mPresenter);
-        mRecyclerView.setAdapter(mAdapter);
-        return mRecyclerView;
+        mPackageListView = (PackageListView) inflater
+                .inflate(R.layout.fragment_package_list, container, false);
+        mPackageListView.addOnPackageSelectedListener(this);
+        return mPackageListView;
     }
 
     @Override
@@ -80,8 +71,13 @@ public class CompileFragment extends Fragment implements CompilationContract.Vie
     }
 
     @Override
+    public void onPackageSelected(String packageName) {
+        mPresenter.queueCompilation(packageName);
+    }
+
+    @Override
     public void showNoCodeLibChosenMessage() {
-        GuiUtils.displaySnackForever(mRecyclerView, getString(R.string.no_codelib_chosen));
+        GuiUtils.displaySnackForever(mPackageListView, getString(R.string.no_codelib_chosen));
     }
 
     @Override
@@ -89,6 +85,6 @@ public class CompileFragment extends Fragment implements CompilationContract.Vie
         int stringResourceId = isSuccess ? R.string.snack_compilation_success :
                 R.string.snack_compilation_failed;
         String userMessage = getResources().getString(stringResourceId) + packageName;
-        GuiUtils.displaySnackLong(mRecyclerView, userMessage);
+        GuiUtils.displaySnackLong(mPackageListView, userMessage);
     }
 }
