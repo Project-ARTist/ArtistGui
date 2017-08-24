@@ -32,9 +32,9 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
-import com2.android.dex.Dex;
-import com2.android.dex.DexFormat;
-import com2.android.dex.util.FileUtils;
+import comm.android.dex.Dex;
+import comm.android.dex.DexFormat;
+import comm.android.dex.util.FileUtils;
 import saarland.cispa.artist.log.Logg;
 import trikita.log.Log;
 

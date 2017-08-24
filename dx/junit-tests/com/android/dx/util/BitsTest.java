@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com2.android.dx.util;
+package comm.android.dx.util;
 
 import junit.framework.TestCase;
 

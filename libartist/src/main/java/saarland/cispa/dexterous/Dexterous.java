@@ -40,9 +40,9 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
-import com2.android.dex.Dex;
-import com2.android.dx.merge.CollisionPolicy;
-import com2.android.dx.merge.DexMerger;
+import comm.android.dex.Dex;
+import comm.android.dx.merge.CollisionPolicy;
+import comm.android.dx.merge.DexMerger;
 import saarland.cispa.artist.ArtistCompilationTask;
 import saarland.cispa.artist.log.Logg;
 import saarland.cispa.artist.settings.ArtistRunConfig;

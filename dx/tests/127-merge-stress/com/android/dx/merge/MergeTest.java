@@ -1,4 +1,4 @@
-package com2.android.dx.merge;
+package comm.android.dx.merge;
 
 import com.android.dex.Dex;
 import com.android.dex.DexIndexOverflowException;

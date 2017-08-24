@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com2.android.dx.multidex;
+package comm.android.dx.multidex;
 
 /**
  * Test that DexMerge works by merging dex files, and then loading them into
