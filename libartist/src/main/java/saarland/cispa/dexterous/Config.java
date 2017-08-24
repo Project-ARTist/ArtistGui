@@ -21,10 +21,21 @@
  */
 package saarland.cispa.dexterous;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class Config {
+
+    public static boolean analyze_apk = true;
+
+    public static boolean build_apk = false;
+    public static boolean sign_apk = false;
+
+    public static File codelib = null;
+
+    public static List<File> dexFiles = new ArrayList<>();
 
     final public static List<String> NO_COMPRESS_EXTENSIONS = Arrays.asList(
             ".jpg", ".jpeg", ".png", ".gif",
