@@ -24,12 +24,12 @@ package saarland.cispa.artist.artistgui.compilation.notification;
 import android.content.Context;
 
 import saarland.cispa.artist.gui.artist.ArtistGuiProgress;
-import saarland.cispa.artist.log.Logg;
+import saarland.cispa.log.LogG;
 import trikita.log.Log;
 
 public class CompileNotification implements ArtistGuiProgress {
 
-    private static final String TAG = Logg.TAG;
+    private static final String TAG = LogG.TAG;
     
     private Context appContext;
 

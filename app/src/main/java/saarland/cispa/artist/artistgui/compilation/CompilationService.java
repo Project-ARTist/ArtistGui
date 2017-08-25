@@ -47,7 +47,7 @@ import saarland.cispa.artist.artistgui.compilation.notification.CompileNotificat
 import saarland.cispa.artist.artistgui.compilation.notification.CompileNotificationManager;
 import saarland.cispa.artist.artistgui.settings.config.ArtistConfigFactory;
 import saarland.cispa.artist.gui.artist.ArtistGuiProgress;
-import saarland.cispa.artist.log.Logg;
+import saarland.cispa.artist.log.LogA;
 import saarland.cispa.artist.settings.ArtistRunConfig;
 import saarland.cispa.artist.utils.ProcessExecutor;
 import trikita.log.Log;
@@ -95,13 +95,13 @@ public class CompilationService extends Service {
     @Override
     public IBinder onBind(Intent intent) {
         Log.d(TAG, "onBind()");
-        Logg.setUserLogLevel(getApplicationContext());
+        LogA.setUserLogLevel(getApplicationContext());
         return mBinder;
     }
 
     @Override
     public int onStartCommand(final Intent intent, final int flags, final int startId) {
-        Logg.setUserLogLevel(getApplicationContext());
+        LogA.setUserLogLevel(getApplicationContext());
         Log.d(TAG, "onStartCommand()");
         if (intent != null) {
             final String appName = intent.getStringExtra(EXTRA_APP_NAME);
@@ -116,13 +116,13 @@ public class CompilationService extends Service {
     @Override
     public void onCreate() {
         Log.d(TAG, "onCreate()");
-        Logg.setUserLogLevel(getApplicationContext());
+        LogA.setUserLogLevel(getApplicationContext());
     }
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        Logg.setUserLogLevel(getApplicationContext());
+        LogA.setUserLogLevel(getApplicationContext());
     }
 
     @Override

@@ -25,12 +25,12 @@ import android.net.Uri;
 
 import java.io.File;
 
-import saarland.cispa.artist.log.Logg;
+import saarland.cispa.log.LogG;
 import trikita.log.Log;
 
 public class UriUtils {
 
-    private static final String TAG = Logg.TAG;
+    private static final String TAG = LogG.TAG;
 
     public static String getFilenameFromUri(final Uri uri) {
         Log.v(TAG, "Uri: " + uri.toString());

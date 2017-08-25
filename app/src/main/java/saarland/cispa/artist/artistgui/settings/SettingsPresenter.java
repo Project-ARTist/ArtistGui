@@ -39,7 +39,7 @@ import java.util.List;
 import saarland.cispa.artist.artistgui.R;
 import saarland.cispa.artist.artistgui.settings.config.ArtistAppConfig;
 import saarland.cispa.artist.artistgui.utils.UriUtils;
-import saarland.cispa.artist.log.Logg;
+import saarland.cispa.artist.log.LogA;
 import saarland.cispa.artist.utils.AndroidUtils;
 import saarland.cispa.artist.utils.ArtistUtils;
 import trikita.log.Log;
@@ -67,7 +67,7 @@ class SettingsPresenter implements SettingsContract.Presenter {
     private Preference.OnPreferenceChangeListener mLoggingPrefListener =
             (preference, value) -> {
                 bindValueToSummary(preference, value);
-                Logg.setUserLogLevel(value.toString());
+                LogA.setUserLogLevel(value.toString());
                 return true;
             };
 

@@ -32,7 +32,7 @@ import java.lang.annotation.RetentionPolicy;
 import saarland.cispa.artist.artistgui.compilation.CompilationContract;
 import saarland.cispa.artist.artistgui.compilation.CompilationPresenter;
 import saarland.cispa.artist.artistgui.compilation.CompileFragment;
-import saarland.cispa.artist.log.Logg;
+import saarland.cispa.artist.log.LogA;
 
 class MainActivityPresenter implements MainActivityContract.Presenter {
 
@@ -63,7 +63,7 @@ class MainActivityPresenter implements MainActivityContract.Presenter {
 
     @Override
     public void start() {
-        Logg.setUserLogLevel(mAppContext);
+        LogA.setUserLogLevel(mAppContext);
     }
 
     @Override

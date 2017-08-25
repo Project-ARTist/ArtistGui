@@ -46,7 +46,7 @@ import saarland.cispa.artist.CompilationResultReceiver;
 import saarland.cispa.artist.artistgui.R;
 import saarland.cispa.artist.artistgui.compilation.notification.CompileNotification;
 import saarland.cispa.artist.gui.artist.ArtistGuiProgress;
-import saarland.cispa.artist.log.Logg;
+import saarland.cispa.artist.log.LogA;
 import trikita.log.Log;
 
 public class CompileDialogActivity
@@ -330,7 +330,7 @@ public class CompileDialogActivity
     protected void onResume() {
         super.onResume();
         Log.d(TAG, "onResume()");
-        Logg.setUserLogLevel(getApplicationContext());
+        LogA.setUserLogLevel(getApplicationContext());
     }
 
     @Override

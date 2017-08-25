@@ -34,10 +34,10 @@ import java.io.File;
 import java.lang.reflect.Field;
 
 import saarland.cispa.artist.Artist;
-import saarland.cispa.artist.log.Logg;
 import saarland.cispa.artist.settings.ArtistRunConfig;
 import saarland.cispa.artist.utils.AndroidUtils;
 import saarland.cispa.artist.utils.ArtistUtils;
+import saarland.cispa.log.LogG;
 import trikita.log.Log;
 
 /**
@@ -47,7 +47,7 @@ import trikita.log.Log;
 
 public class ArtistConfigFactory {
 
-    private static final String TAG = Logg.TAG;
+    private static final String TAG = LogG.TAG;
 
     public final static String PATH_ASSET_ARTIST_ROOT = "artist";
     public final static String PATH_ASSET_ARTIST_BIN_PREFIX = PATH_ASSET_ARTIST_ROOT + File.separator + "android-";
