@@ -33,9 +33,9 @@ import android.support.annotation.Nullable;
 import java.io.File;
 import java.lang.reflect.Field;
 
-import saarland.cispa.artist.Artist;
+import saarland.cispa.artist.android.Artist;
 import saarland.cispa.artist.settings.ArtistRunConfig;
-import saarland.cispa.artist.utils.AndroidUtils;
+import saarland.cispa.artist.android.AndroidUtils;
 import saarland.cispa.artist.utils.ArtistUtils;
 import saarland.cispa.log.LogG;
 import trikita.log.Log;

@@ -32,11 +32,11 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-import saarland.cispa.artist.ArtistImpl;
+import saarland.cispa.artist.android.ArtistImpl;
 import saarland.cispa.artist.artistgui.MainActivity;
 import saarland.cispa.artist.artistgui.compilation.notification.CompileNotificationManager;
 import saarland.cispa.artist.artistgui.settings.config.ArtistAppConfig;
-import saarland.cispa.artist.utils.AndroidUtils;
+import saarland.cispa.artist.android.AndroidUtils;
 import trikita.log.Log;
 
 import static android.app.Activity.RESULT_OK;

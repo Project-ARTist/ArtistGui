@@ -41,12 +41,12 @@ import android.widget.TextView;
 import java.util.Locale;
 import java.util.Objects;
 
-import saarland.cispa.artist.ArtistImpl;
-import saarland.cispa.artist.CompilationResultReceiver;
+import saarland.cispa.artist.android.ArtistImpl;
+import saarland.cispa.artist.android.CompilationResultReceiver;
 import saarland.cispa.artist.artistgui.R;
 import saarland.cispa.artist.artistgui.compilation.notification.CompileNotification;
 import saarland.cispa.artist.gui.artist.ArtistGuiProgress;
-import saarland.cispa.artist.log.LogA;
+import saarland.cispa.artist.android.LogA;
 import trikita.log.Log;
 
 public class CompileDialogActivity

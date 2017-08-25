@@ -40,16 +40,16 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import saarland.cispa.artist.ArtistCompilationTask;
-import saarland.cispa.artist.ArtistImpl;
-import saarland.cispa.artist.CompilationResultReceiver;
+import saarland.cispa.artist.android.ArtistCompilationTask;
+import saarland.cispa.artist.android.ArtistImpl;
+import saarland.cispa.artist.android.CompilationResultReceiver;
 import saarland.cispa.artist.artistgui.compilation.notification.CompileNotification;
 import saarland.cispa.artist.artistgui.compilation.notification.CompileNotificationManager;
 import saarland.cispa.artist.artistgui.settings.config.ArtistConfigFactory;
 import saarland.cispa.artist.gui.artist.ArtistGuiProgress;
-import saarland.cispa.artist.log.LogA;
+import saarland.cispa.artist.android.LogA;
 import saarland.cispa.artist.settings.ArtistRunConfig;
-import saarland.cispa.artist.utils.ProcessExecutor;
+import saarland.cispa.artist.android.ProcessExecutor;
 import trikita.log.Log;
 
 public class CompilationService extends Service {
