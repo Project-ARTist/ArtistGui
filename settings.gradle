@@ -1,4 +1,2 @@
 include ':app',
-        ':libartist',
-        ':dx',
-        ':dex'
+        ':libartist'
