@@ -28,7 +28,7 @@ import android.view.ViewGroup;
 
 import saarland.cispa.artist.artistgui.R;
 import saarland.cispa.artist.artistgui.packagelist.view.PackageListView;
-import saarland.cispa.artist.utils.GuiUtils;
+import saarland.cispa.artist.android.GuiUtils;
 
 public class CompileFragment extends Fragment implements CompilationContract.View,
         PackageListView.OnPackageSelectedListener {
