@@ -32,6 +32,7 @@ import android.util.AttributeSet;
 import java.util.ArrayList;
 import java.util.List;
 
+import saarland.cispa.artist.artistgui.Package;
 import saarland.cispa.artist.artistgui.packagelist.view.broadcastreceiver.PackageModifiedReceiver;
 
 public class PackageListView extends RecyclerView implements ReadInstalledPackagesAsyncTask

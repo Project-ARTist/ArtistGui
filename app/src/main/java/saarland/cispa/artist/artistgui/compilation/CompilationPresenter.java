@@ -25,6 +25,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 
@@ -37,6 +38,7 @@ import saarland.cispa.artist.artistgui.MainActivity;
 import saarland.cispa.artist.artistgui.compilation.notification.CompileNotificationManager;
 import saarland.cispa.artist.artistgui.settings.config.ArtistAppConfig;
 import saarland.cispa.artist.android.AndroidUtils;
+import saarland.cispa.artist.artistgui.settings.db.AddInstrumentedPackageToDbAsyncTask;
 import trikita.log.Log;
 
 import static android.app.Activity.RESULT_OK;
@@ -206,6 +208,7 @@ public class CompilationPresenter implements CompilationContract.Presenter {
         mView.showCompilationResult(success, applicationName);
 
         if (success) {
+            new AddInstrumentedPackageToDbAsyncTask(mActivity).execute(applicationName);
             maybeStartRecompiledApp(applicationName);
         }
     }
