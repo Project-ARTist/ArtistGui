@@ -45,7 +45,7 @@ import saarland.cispa.artist.android.ArtistImpl;
 import saarland.cispa.artist.android.CompilationResultReceiver;
 import saarland.cispa.artist.artistgui.R;
 import saarland.cispa.artist.artistgui.compilation.notification.CompileNotification;
-import saarland.cispa.artist.gui.artist.ArtistGuiProgress;
+import saarland.cispa.artist.android.ArtistGuiProgress;
 import saarland.cispa.artist.android.LogA;
 import trikita.log.Log;
 

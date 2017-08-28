@@ -25,7 +25,7 @@ import android.net.Uri;
 
 import java.io.File;
 
-import saarland.cispa.log.LogG;
+import saarland.cispa.artist.log.LogG;
 import trikita.log.Log;
 
 public class UriUtils {

@@ -37,7 +37,7 @@ import saarland.cispa.artist.android.Artist;
 import saarland.cispa.artist.settings.ArtistRunConfig;
 import saarland.cispa.artist.android.AndroidUtils;
 import saarland.cispa.artist.utils.ArtistUtils;
-import saarland.cispa.log.LogG;
+import saarland.cispa.artist.log.LogG;
 import trikita.log.Log;
 
 /**

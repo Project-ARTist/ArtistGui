@@ -29,12 +29,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import org.w3c.dom.Text;
-
 import java.io.IOException;
 import java.io.InputStream;
 
-import saarland.cispa.artist.StringUtils;
+import saarland.cispa.artist.utils.StringUtils;
 import trikita.log.Log;
 
 public class InfoFragment extends Fragment {

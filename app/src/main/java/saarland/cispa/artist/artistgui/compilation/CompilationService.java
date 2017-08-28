@@ -46,7 +46,7 @@ import saarland.cispa.artist.android.CompilationResultReceiver;
 import saarland.cispa.artist.artistgui.compilation.notification.CompileNotification;
 import saarland.cispa.artist.artistgui.compilation.notification.CompileNotificationManager;
 import saarland.cispa.artist.artistgui.settings.config.ArtistConfigFactory;
-import saarland.cispa.artist.gui.artist.ArtistGuiProgress;
+import saarland.cispa.artist.android.ArtistGuiProgress;
 import saarland.cispa.artist.android.LogA;
 import saarland.cispa.artist.settings.ArtistRunConfig;
 import saarland.cispa.artist.android.ProcessExecutor;
