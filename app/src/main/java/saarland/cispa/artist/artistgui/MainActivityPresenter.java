@@ -55,9 +55,9 @@ class MainActivityPresenter implements MainActivityContract.Presenter {
     private CompileFragment mCompileFragment;
     private CompilationContract.Presenter mCompilationPresenter;
 
-    MainActivityPresenter(Context context, MainActivityContract.View view) {
+    MainActivityPresenter(Context context, Activity activity, MainActivityContract.View view) {
         mAppContext = context;
-        mActivity = (Activity) view;
+        mActivity = activity;
         mView = view;
     }
 
@@ -76,8 +76,8 @@ class MainActivityPresenter implements MainActivityContract.Presenter {
     @Override
     public void processIntent(Intent intent) {
         if (intent.hasExtra(MainActivity.EXTRA_PACKAGE)) {
-            mCompilationPresenter.executeIntentTasks(intent);
             selectFragment(COMPILATION_FRAGMENT);
+            mCompilationPresenter.executeIntentTasks(intent);
         } else {
             selectFragment(INFO_FRAGMENT);
         }

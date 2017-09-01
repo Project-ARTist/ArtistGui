@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         mFragmentManager = getSupportFragmentManager();
-        mPresenter = new MainActivityPresenter(getApplicationContext(), this);
+        mPresenter = new MainActivityPresenter(getApplicationContext(), this, this);
 
         if (savedInstanceState == null) {
             mPresenter.checkCompatibility();
