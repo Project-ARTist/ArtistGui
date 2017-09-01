@@ -23,7 +23,6 @@ import android.content.Intent;
 import android.os.Build;
 import android.support.v4.app.Fragment;
 
-import org.apache.commons.io.filefilter.FalseFileFilter;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -35,6 +34,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 
 import saarland.cispa.artist.artistgui.compilation.CompileFragment;
+import saarland.cispa.artist.artistgui.settings.manager.SettingsManager;
 
 import static junit.framework.Assert.assertTrue;
 import static org.mockito.Mockito.verify;
@@ -55,6 +55,9 @@ public class MainActivityPresenterTest {
     private MainActivityContract.View mView;
 
     @Mock
+    private SettingsManager mSettingsManager;
+
+    @Mock
     private Intent mIntent;
 
     @Before
@@ -62,7 +65,7 @@ public class MainActivityPresenterTest {
         // Mockito has a very convenient way to inject mocks by using the @Mock annotation. To
         // inject the mocks in the test the initMocks method needs to be called.
         MockitoAnnotations.initMocks(this);
-        mPresenter = new MainActivityPresenter(null, null, mView);
+        mPresenter = new MainActivityPresenter(null, null, mView, mSettingsManager);
     }
 
     @Test

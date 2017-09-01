@@ -38,6 +38,7 @@ import java.util.Locale;
 
 import saarland.cispa.artist.artistgui.compilation.CompileDialogActivity;
 import saarland.cispa.artist.artistgui.settings.SettingsActivity;
+import saarland.cispa.artist.artistgui.settings.manager.SettingsManagerImpl;
 import trikita.log.Log;
 
 public class MainActivity extends AppCompatActivity
@@ -71,7 +72,8 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         mFragmentManager = getSupportFragmentManager();
-        mPresenter = new MainActivityPresenter(getApplicationContext(), this, this);
+        mPresenter = new MainActivityPresenter(getApplicationContext(), this, this,
+                new SettingsManagerImpl(this));
 
         if (savedInstanceState == null) {
             mPresenter.checkCompatibility();
