@@ -38,7 +38,8 @@ class SQLiteDbHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("CREATE TABLE " + DbContract.PackageEntry.TABLE_NAME + " ("
                 + DbContract.PackageEntry.COLUMN_NAME_PACKAGE_NAME + " TEXT PRIMARY KEY,"
-                + DbContract.PackageEntry.COLUMN_NAME_TIMESTAMP + " INTEGER"
+                + DbContract.PackageEntry.COLUMN_NAME_TIMESTAMP + " INTEGER,"
+                + DbContract.PackageEntry.COLUMN_NAME_KEEP_INSTRUMENTED + " INTEGER"
                 + ") WITHOUT ROWID;");
     }
 

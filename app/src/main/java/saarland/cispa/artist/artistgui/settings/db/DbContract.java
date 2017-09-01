@@ -27,6 +27,7 @@ public final class DbContract {
     static class PackageEntry {
         static final String TABLE_NAME = "instrumented_apps";
         static final String COLUMN_NAME_PACKAGE_NAME = "package_name";
-        static final String COLUMN_NAME_TIMESTAMP = "timestamp";
+        static final String COLUMN_NAME_TIMESTAMP = "last_instrumented_timestamp";
+        static final String COLUMN_NAME_KEEP_INSTRUMENTED = "keep_instrumented";
     }
 }
