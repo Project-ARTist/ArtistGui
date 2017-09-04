@@ -47,8 +47,7 @@ public class InfoFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_info, container, false);
-        mTextView = (TextView) view.findViewById(R.id.main_activity_textview);
+        mTextView = (TextView) inflater.inflate(R.layout.fragment_info, container, false);
 
         if (savedInstanceState == null) {
             setupTextView();
@@ -57,7 +56,7 @@ public class InfoFragment extends Fragment {
             mTextView.setText(versionText);
         }
 
-        return view;
+        return mTextView;
     }
 
     @Override
