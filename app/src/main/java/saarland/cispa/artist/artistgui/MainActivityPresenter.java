@@ -29,16 +29,19 @@ import android.support.v4.app.Fragment;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
+import saarland.cispa.artist.android.LogA;
 import saarland.cispa.artist.artistgui.compilation.CompilationContract;
 import saarland.cispa.artist.artistgui.compilation.CompilationPresenter;
 import saarland.cispa.artist.artistgui.compilation.CompileFragment;
-import saarland.cispa.artist.android.LogA;
+import saarland.cispa.artist.artistgui.settings.manager.SettingsManager;
 
 class MainActivityPresenter implements MainActivityContract.Presenter {
 
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({INFO_FRAGMENT, COMPILATION_FRAGMENT})
-    @interface selectableFragment {}
+    @interface selectableFragment {
+    }
+
     static final int INFO_FRAGMENT = 0;
     static final int COMPILATION_FRAGMENT = 1;
 
@@ -48,6 +51,7 @@ class MainActivityPresenter implements MainActivityContract.Presenter {
     private Context mAppContext;
     private Activity mActivity;
     private MainActivityContract.View mView;
+    private SettingsManager mSettingsManager;
 
     private int mSelectedFragmentId;
     private InfoFragment mInfoFragment;
@@ -55,10 +59,12 @@ class MainActivityPresenter implements MainActivityContract.Presenter {
     private CompileFragment mCompileFragment;
     private CompilationContract.Presenter mCompilationPresenter;
 
-    MainActivityPresenter(Context context, MainActivityContract.View view) {
+    MainActivityPresenter(Context context, Activity activity, MainActivityContract.View view,
+                          SettingsManager settingsManager) {
         mAppContext = context;
-        mActivity = (Activity) view;
+        mActivity = activity;
         mView = view;
+        mSettingsManager = settingsManager;
     }
 
     @Override
@@ -76,8 +82,8 @@ class MainActivityPresenter implements MainActivityContract.Presenter {
     @Override
     public void processIntent(Intent intent) {
         if (intent.hasExtra(MainActivity.EXTRA_PACKAGE)) {
-            mCompilationPresenter.executeIntentTasks(intent);
             selectFragment(COMPILATION_FRAGMENT);
+            mCompilationPresenter.executeIntentTasks(intent);
         } else {
             selectFragment(INFO_FRAGMENT);
         }
@@ -101,7 +107,8 @@ class MainActivityPresenter implements MainActivityContract.Presenter {
             case COMPILATION_FRAGMENT:
                 if (mCompileFragment == null) {
                     mCompileFragment = new CompileFragment();
-                    mCompilationPresenter = new CompilationPresenter(mActivity, mCompileFragment);
+                    mCompilationPresenter = new CompilationPresenter(mActivity,
+                            mCompileFragment, mSettingsManager);
                 }
                 selectedFragment = mCompileFragment;
                 break;
@@ -118,7 +125,8 @@ class MainActivityPresenter implements MainActivityContract.Presenter {
                 break;
             case COMPILATION_FRAGMENT:
                 mCompileFragment = (CompileFragment) selectedFragment;
-                mCompilationPresenter = new CompilationPresenter(mActivity, mCompileFragment);
+                mCompilationPresenter = new CompilationPresenter(mActivity,
+                        mCompileFragment, mSettingsManager);
                 mCompileFragment.setPresenter(mCompilationPresenter);
                 break;
         }

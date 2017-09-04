@@ -42,8 +42,6 @@ public interface CompilationContract {
 
         ServiceConnection getCompileServiceConnection();
 
-        boolean writeResultFile(String packageName, boolean success);
-
         void maybeStartRecompiledApp(final String applicationName);
 
         void queueCompilation(String packageName);
