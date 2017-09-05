@@ -24,21 +24,15 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.IBinder;
-import android.preference.PreferenceManager;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-
+import saarland.cispa.artist.android.AndroidUtils;
 import saarland.cispa.artist.android.ArtistImpl;
 import saarland.cispa.artist.artistgui.MainActivity;
 import saarland.cispa.artist.artistgui.compilation.notification.CompileNotificationManager;
 import saarland.cispa.artist.artistgui.settings.config.ArtistAppConfig;
-import saarland.cispa.artist.android.AndroidUtils;
 import saarland.cispa.artist.artistgui.settings.db.AddInstrumentedPackageToDbAsyncTask;
+import saarland.cispa.artist.artistgui.settings.manager.SettingsManager;
 import trikita.log.Log;
 
 import static android.app.Activity.RESULT_OK;
@@ -49,6 +43,7 @@ public class CompilationPresenter implements CompilationContract.Presenter {
 
     private final CompilationContract.View mView;
     private final Activity mActivity;
+    private final SettingsManager mSettingsManager;
 
     private ArtistAppConfig mConfig = null;
     private CompilationService compileService;
@@ -58,10 +53,12 @@ public class CompilationPresenter implements CompilationContract.Presenter {
      */
     private ServiceConnection mCompileServiceConnection;
 
-    public CompilationPresenter(Activity activity, CompilationContract.View view) {
+    public CompilationPresenter(Activity activity, CompilationContract.View view,
+                                SettingsManager settingsManager) {
         mConfig = new ArtistAppConfig();
         mActivity = activity;
         mView = view;
+        mSettingsManager = settingsManager;
 
         mView.setPresenter(this);
 
@@ -105,14 +102,10 @@ public class CompilationPresenter implements CompilationContract.Presenter {
 
     @Override
     public void checkIfCodeLibIsChosen() {
-        final SharedPreferences sharedPref = PreferenceManager
-                .getDefaultSharedPreferences(mActivity);
-        final String userCodeLib = sharedPref
-                .getString(ArtistAppConfig.PREF_KEY_CODELIB_SELECTION, null);
+        final String userCodeLib = mSettingsManager.getSelectedCodeLib();
 
         final boolean codeLibChosen = userCodeLib != null && !userCodeLib.equals("-1");
-        final boolean shouldMerge = sharedPref
-                .getBoolean(ArtistAppConfig.KEY_PREF_COMPILER_INJECT_CODELIB, true);
+        final boolean shouldMerge = mSettingsManager.shouldInjectCodeLib();
         // warn the user IF no code lib is chosen AND code lib should be merged
         if (!codeLibChosen && shouldMerge) {
             mView.showNoCodeLibChosenMessage();
@@ -145,43 +138,9 @@ public class CompilationPresenter implements CompilationContract.Presenter {
     }
 
     @Override
-    public boolean writeResultFile(String packageName, boolean success) {
-        final File resultsDir = new File(mActivity.getExternalFilesDir(null), "ArtistResults");
-        if (!resultsDir.exists()) {
-            if (!resultsDir.mkdir()) {
-                Log.e(TAG, "Could not create results dir.");
-                return false;
-            }
-        }
-        final File resultsFile = new File(resultsDir, packageName.replaceAll("/", "_").replace(".apk", ""));
-        Log.d(TAG, "Writing success '" + success + "' to file " + resultsFile.getAbsolutePath());
-        try {
-            if (resultsFile.exists()) {
-                if (!resultsFile.delete()) {
-                    Log.e(TAG, "Could not delete existing results file.");
-                    return false;
-                }
-            }
-            if (!resultsFile.createNewFile()) {
-                Log.e(TAG, "Could not create new results file.");
-                return false;
-            }
-            try (FileOutputStream fos = new FileOutputStream(resultsFile)) {
-                fos.write((success + "").getBytes());
-            }
-        } catch (IOException e) {
-            Log.e(TAG, "Could not write results file.", e);
-            return false;
-        }
-        return true;
-    }
-
-    @Override
     public void maybeStartRecompiledApp(String applicationName) {
         Log.d(TAG, "maybeStartRecompiledApp() ? " + applicationName);
-        final SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(mActivity);
-        final boolean launchActivity =
-                sharedPref.getBoolean(ArtistAppConfig.KEY_PREF_COMPILER_LAUNCH_ACTIVITY, false);
+        final boolean launchActivity = mSettingsManager.shouldLaunchActivityAfterCompilation();
         if (launchActivity) {
             Log.d(TAG, "Starting compiled app: " + applicationName);
             final Intent launchIntent = mActivity.getPackageManager()
@@ -204,7 +163,6 @@ public class CompilationPresenter implements CompilationContract.Presenter {
         }
 
         boolean success = resultCode == RESULT_OK;
-        writeResultFile(applicationName, success);
         mView.showCompilationResult(success, applicationName);
 
         if (success) {
