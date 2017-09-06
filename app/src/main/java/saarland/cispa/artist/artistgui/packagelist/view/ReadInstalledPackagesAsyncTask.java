@@ -48,14 +48,14 @@ class ReadInstalledPackagesAsyncTask extends
                 .getInstalledPackages(PackageManager.GET_ACTIVITIES);
 
         List<Package> packageList = new ArrayList<>();
-        packageInfoList.forEach(packageInfo -> {
+        for (PackageInfo packageInfo : packageInfoList) {
             if (!isCancelled()) {
                 ApplicationInfo applicationInfo = packageInfo.applicationInfo;
                 String appName = packageManager.getApplicationLabel(applicationInfo).toString();
                 packageList.add(new Package(appName, packageInfo.packageName,
                         applicationInfo.icon));
             }
-        });
+        }
 
         return packageList;
     }
