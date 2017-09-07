@@ -39,9 +39,9 @@ import java.util.List;
 import saarland.cispa.artist.artistgui.R;
 import saarland.cispa.artist.artistgui.settings.config.ArtistAppConfig;
 import saarland.cispa.artist.artistgui.utils.UriUtils;
-import saarland.cispa.artist.android.LogA;
-import saarland.cispa.artist.android.AndroidUtils;
-import saarland.cispa.artist.utils.ArtistUtils;
+import saarland.cispa.artist.artistgui.utils.LogA;
+import saarland.cispa.artist.artistgui.utils.AndroidUtils;
+import saarland.cispa.artist.artistgui.utils.ArtistUtils;
 import trikita.log.Log;
 
 class SettingsPresenter implements SettingsContract.Presenter {
