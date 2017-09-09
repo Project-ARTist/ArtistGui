@@ -36,7 +36,7 @@ class ReadInstalledPackagesAsyncTask extends
 
     private OnReadInstalledPackages mResultCallback;
 
-    public ReadInstalledPackagesAsyncTask(OnReadInstalledPackages callback) {
+    ReadInstalledPackagesAsyncTask(OnReadInstalledPackages callback) {
         super();
         mResultCallback = callback;
     }
@@ -48,12 +48,17 @@ class ReadInstalledPackagesAsyncTask extends
                 .getInstalledPackages(PackageManager.GET_ACTIVITIES);
 
         List<Package> packageList = new ArrayList<>();
+        ApplicationInfo applicationInfo;
+        String appName;
+        int appIconId;
         for (PackageInfo packageInfo : packageInfoList) {
             if (!isCancelled()) {
-                ApplicationInfo applicationInfo = packageInfo.applicationInfo;
-                String appName = packageManager.getApplicationLabel(applicationInfo).toString();
-                packageList.add(new Package(appName, packageInfo.packageName,
-                        applicationInfo.icon));
+                applicationInfo = packageInfo.applicationInfo;
+                appName = packageManager.getApplicationLabel(applicationInfo).toString();
+                appIconId = applicationInfo.icon == 0 ?
+                        android.R.mipmap.sym_def_app_icon : applicationInfo.icon;
+
+                packageList.add(new Package(appName, packageInfo.packageName, appIconId));
             }
         }
 

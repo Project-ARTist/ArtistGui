@@ -21,29 +21,29 @@ package saarland.cispa.artist.artistgui.packagelist.view;
 
 import android.content.Context;
 import android.content.pm.PackageManager;
-import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.util.DisplayMetrics;
 import android.util.LruCache;
 
-class AppIconCache extends LruCache<Package,Drawable> {
+class AppIconCache extends LruCache<Package, Drawable> {
 
     private static final int MAX_SIZE = 15;
+    private static final Package sDefaultIconPackage =
+            new Package("Default_Icon", "default_app_icon", 0);
 
     private Context mContext;
-    private Package mDefaultAppIconKey;
-
 
     AppIconCache(Context context) {
         super(MAX_SIZE);
         mContext = context;
-        mDefaultAppIconKey = new Package("Default Icon", "default_app_icon", 0);
     }
 
     @Override
     protected Drawable create(Package packageEntry) {
-        if (packageEntry.equals(mDefaultAppIconKey)) {
+        if (packageEntry.equals(sDefaultIconPackage)) {
             return mContext.getDrawable(android.R.mipmap.sym_def_app_icon);
+        } else if (packageEntry.getAppIconId() == android.R.mipmap.sym_def_app_icon) {
+            return get(sDefaultIconPackage);
         }
 
         Drawable appIcon = null;
@@ -56,8 +56,6 @@ class AppIconCache extends LruCache<Package,Drawable> {
 
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
-        } catch (Resources.NotFoundException e) {
-            return get(mDefaultAppIconKey);
         }
 
         return appIcon;
