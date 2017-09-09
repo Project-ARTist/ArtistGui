@@ -21,7 +21,12 @@ package saarland.cispa.artist.artistgui.packagelist.view;
 
 import android.support.annotation.DrawableRes;
 
+import java.util.Comparator;
+
 class Package {
+
+    public static final Comparator<Package> sComparator =
+            (p1, p2) -> p1.getAppName().compareTo(p2.getAppName());
 
     private String appName;
     private String packageName;
