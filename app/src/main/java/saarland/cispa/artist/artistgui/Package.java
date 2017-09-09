@@ -19,21 +19,27 @@
 
 package saarland.cispa.artist.artistgui;
 
-import android.support.annotation.DrawableRes;
+import android.os.Parcel;
+import android.os.Parcelable;
+import android.support.annotation.NonNull;
 
-public class Package {
+public class Package implements Parcelable {
 
     private String appName;
     private String packageName;
     private int appIconId;
     private long lastInstrumentationTimestamp;
 
-    public Package(String packageName, long lastInstrumentationTimestamp) {
+    public Package(@NonNull String packageName) {
+        this.packageName = packageName;
+    }
+
+    public Package(@NonNull String packageName, long lastInstrumentationTimestamp) {
         this.packageName = packageName;
         this.lastInstrumentationTimestamp = lastInstrumentationTimestamp;
     }
 
-    public Package(String appName, String packageName, @DrawableRes int appIconId) {
+    public Package(@NonNull String appName, @NonNull String packageName, int appIconId) {
         this.appName = appName;
         this.packageName = packageName;
         this.appIconId = appIconId;
@@ -53,6 +59,44 @@ public class Package {
 
     public long getLastInstrumentationTimestamp() {
         return lastInstrumentationTimestamp;
+    }
+
+    public void setAppName(String appName) {
+        this.appName = appName;
+    }
+
+    public void setAppIconId(int appIconId) {
+        this.appIconId = appIconId;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(appName);
+        dest.writeString(packageName);
+        dest.writeInt(appIconId);
+        dest.writeLong(lastInstrumentationTimestamp);
+    }
+
+    public static final Parcelable.Creator<Package> CREATOR = new Parcelable.Creator<Package>() {
+        public Package createFromParcel(Parcel in) {
+            return new Package(in);
+        }
+
+        public Package[] newArray(int size) {
+            return new Package[size];
+        }
+    };
+
+    private Package(Parcel in) {
+        appName = in.readString();
+        packageName = in.readString();
+        appIconId = in.readInt();
+        lastInstrumentationTimestamp = in.readLong();
     }
 
     @Override
