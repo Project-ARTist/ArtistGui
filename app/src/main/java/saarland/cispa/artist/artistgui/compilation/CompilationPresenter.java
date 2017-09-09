@@ -155,7 +155,9 @@ public class CompilationPresenter implements CompilationContract.Presenter {
     }
 
     @Override
-    public void onCompilationFinished(int resultCode, Intent data) {
+    public void onCompilationFinished(int resultCode, Intent data,
+                                      AddInstrumentedPackageToDbAsyncTask
+                                              addInstrumentedPackageToDbAsyncTask) {
         String applicationName = "";
         if (data != null) {
             applicationName += data.getStringExtra(ArtistImpl.INTENT_EXTRA_APP_NAME);
@@ -165,7 +167,9 @@ public class CompilationPresenter implements CompilationContract.Presenter {
         mView.showCompilationResult(success, applicationName);
 
         if (success) {
-            new AddInstrumentedPackageToDbAsyncTask(mActivity).execute(applicationName);
+            if (addInstrumentedPackageToDbAsyncTask != null) {
+                addInstrumentedPackageToDbAsyncTask.execute(applicationName);
+            }
             maybeStartRecompiledApp(applicationName);
         }
     }
