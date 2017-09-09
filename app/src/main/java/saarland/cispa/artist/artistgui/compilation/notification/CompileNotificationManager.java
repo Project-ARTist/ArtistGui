@@ -29,7 +29,6 @@ import android.content.Intent;
 
 import saarland.cispa.artist.artistgui.compilation.CompileDialogActivity;
 import saarland.cispa.artist.artistgui.R;
-import saarland.cispa.artist.log.LogG;
 import trikita.log.Log;
 
 public class CompileNotificationManager {
@@ -38,7 +37,7 @@ public class CompileNotificationManager {
 
     private final static int PROGRESS_MAX = 100;
 
-    public static final String TAG = LogG.TAG;
+    public static final String TAG = "CompileNotificationManager";
 
 
     private static Notification.Builder buildDefault(final Context context) {

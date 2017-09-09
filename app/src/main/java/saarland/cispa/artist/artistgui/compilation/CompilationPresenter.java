@@ -26,13 +26,12 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
 
-import saarland.cispa.artist.android.AndroidUtils;
-import saarland.cispa.artist.android.ArtistImpl;
 import saarland.cispa.artist.artistgui.MainActivity;
 import saarland.cispa.artist.artistgui.compilation.notification.CompileNotificationManager;
 import saarland.cispa.artist.artistgui.settings.config.ArtistAppConfig;
 import saarland.cispa.artist.artistgui.settings.db.AddInstrumentedPackageToDbAsyncTask;
 import saarland.cispa.artist.artistgui.settings.manager.SettingsManager;
+import saarland.cispa.artist.artistgui.utils.AndroidUtils;
 import trikita.log.Log;
 
 import static android.app.Activity.RESULT_OK;

@@ -91,8 +91,11 @@ class PackageListAdapter extends RecyclerView.Adapter<PackageListAdapter.ViewHol
         holder.mAppIcon.setImageDrawable(appIcon);
         holder.mAppName.setText(packageEntry.getAppName());
         holder.mPackageName.setText(packageName);
-        holder.itemView.setOnClickListener((view) -> mListeners
-                .forEach(l -> l.onPackageSelected(packageName)));
+        holder.itemView.setOnClickListener((view) -> {
+            for (PackageListView.OnPackageSelectedListener l : mListeners) {
+                l.onPackageSelected(packageName);
+            }
+        });
     }
 
     @Override
