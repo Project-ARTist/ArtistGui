@@ -34,7 +34,7 @@ import java.util.List;
 
 import saarland.cispa.artist.artistgui.Package;
 import saarland.cispa.artist.artistgui.R;
-import saarland.cispa.artist.artistgui.packagelist.view.broadcastreceiver.OnPackageModifiedListener;
+import saarland.cispa.artist.artistgui.broadcastreceiver.OnPackageModifiedListener;
 
 class PackageListAdapter extends RecyclerView.Adapter<PackageListAdapter.ViewHolder>
         implements OnPackageModifiedListener {
@@ -92,7 +92,7 @@ class PackageListAdapter extends RecyclerView.Adapter<PackageListAdapter.ViewHol
         holder.mAppName.setText(packageEntry.getAppName());
         holder.mPackageName.setText(packageName);
         holder.itemView.setOnClickListener((view) -> mListeners
-                .forEach(l -> l.onPackageSelected(packageName)));
+                .forEach(l -> l.onPackageSelected(packageEntry)));
     }
 
     @Override

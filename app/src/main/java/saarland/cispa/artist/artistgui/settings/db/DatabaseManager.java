@@ -29,11 +29,14 @@ import java.util.List;
 
 import saarland.cispa.artist.artistgui.Package;
 
+import static saarland.cispa.artist.artistgui.settings.db.DbContract.PackageEntry;
+
 public class DatabaseManager implements InstrumentedPackagesManager {
 
     private static String[] sInstrumentedAppsProjection = {
-            DbContract.PackageEntry.COLUMN_NAME_PACKAGE_NAME,
-            DbContract.PackageEntry.COLUMN_NAME_TIMESTAMP
+            PackageEntry.COLUMN_NAME_PACKAGE_NAME,
+            PackageEntry.COLUMN_NAME_TIMESTAMP,
+            PackageEntry.COLUMN_NAME_KEEP_INSTRUMENTED
     };
 
     private SQLiteDbHelper mDatabaseHelper;
@@ -49,21 +52,46 @@ public class DatabaseManager implements InstrumentedPackagesManager {
         }
     }
 
+    @Override
     public void addInstrumentedPackage(String packageName) {
         getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(DbContract.PackageEntry.COLUMN_NAME_PACKAGE_NAME, packageName);
-        values.put(DbContract.PackageEntry.COLUMN_NAME_TIMESTAMP, System.currentTimeMillis());
+        values.put(PackageEntry.COLUMN_NAME_PACKAGE_NAME, packageName);
+        values.put(PackageEntry.COLUMN_NAME_TIMESTAMP, System.currentTimeMillis());
+        values.put(PackageEntry.COLUMN_NAME_KEEP_INSTRUMENTED, 0);
 
         if (!isEntryInPresent(packageName)) {
-            mDatabase.insert(DbContract.PackageEntry.TABLE_NAME, null, values);
+            mDatabase.insert(PackageEntry.TABLE_NAME, null, values);
         } else {
-            String selection = DbContract.PackageEntry.COLUMN_NAME_PACKAGE_NAME + " LIKE ?";
+            String selection = PackageEntry.COLUMN_NAME_PACKAGE_NAME + " LIKE ?";
             String[] selectionArgs = {packageName};
 
             mDatabase.update(
-                    DbContract.PackageEntry.TABLE_NAME,
+                    PackageEntry.TABLE_NAME,
+                    values,
+                    selection,
+                    selectionArgs);
+        }
+    }
+
+    @Override
+    public void persistPackage(Package app) {
+        getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(PackageEntry.COLUMN_NAME_PACKAGE_NAME, app.getPackageName());
+        values.put(PackageEntry.COLUMN_NAME_TIMESTAMP, app.getLastInstrumentationTimestamp());
+        values.put(PackageEntry.COLUMN_NAME_KEEP_INSTRUMENTED, app.isKeepInstrumented());
+
+        if (!isEntryInPresent(app.getPackageName())) {
+            mDatabase.insert(PackageEntry.TABLE_NAME, null, values);
+        } else {
+            String selection = PackageEntry.COLUMN_NAME_PACKAGE_NAME + " LIKE ?";
+            String[] selectionArgs = {app.getPackageName()};
+
+            mDatabase.update(
+                    PackageEntry.TABLE_NAME,
                     values,
                     selection,
                     selectionArgs);
@@ -71,11 +99,11 @@ public class DatabaseManager implements InstrumentedPackagesManager {
     }
 
     private boolean isEntryInPresent(String packageName) {
-        String selection = DbContract.PackageEntry.COLUMN_NAME_PACKAGE_NAME + " = ?";
+        String selection = PackageEntry.COLUMN_NAME_PACKAGE_NAME + " = ?";
         String[] selectionArgs = {packageName};
 
         Cursor cursor = mDatabase.query(
-                DbContract.PackageEntry.TABLE_NAME,                     // The table to query
+                PackageEntry.TABLE_NAME,                     // The table to query
                 sInstrumentedAppsProjection,                               // The columns to return
                 selection,                                // The columns for the WHERE clause
                 selectionArgs,                            // The values for the WHERE clause
@@ -88,20 +116,22 @@ public class DatabaseManager implements InstrumentedPackagesManager {
         return isPresent;
     }
 
+    @Override
     public void removeUninstrumentedPackage(String packageName) {
         getWritableDatabase();
-        String selection = DbContract.PackageEntry.COLUMN_NAME_PACKAGE_NAME + " LIKE ?";
+        String selection = PackageEntry.COLUMN_NAME_PACKAGE_NAME + " LIKE ?";
         String[] selectionArgs = {packageName};
-        mDatabase.delete(DbContract.PackageEntry.TABLE_NAME, selection, selectionArgs);
+        mDatabase.delete(PackageEntry.TABLE_NAME, selection, selectionArgs);
     }
 
+    @Override
     public List<Package> getAllInstrumentedApps() {
         if (mDatabase == null) {
             mDatabase = mDatabaseHelper.getReadableDatabase();
         }
 
         Cursor cursor = mDatabase.query(
-                DbContract.PackageEntry.TABLE_NAME,                     // The table to query
+                PackageEntry.TABLE_NAME,                     // The table to query
                 sInstrumentedAppsProjection,                               // The columns to return
                 null,                                // The columns for the WHERE clause
                 null,                            // The values for the WHERE clause
@@ -119,16 +149,21 @@ public class DatabaseManager implements InstrumentedPackagesManager {
         List<Package> packageList = new ArrayList<>();
         String packageName;
         long lastInstrumentationTimestamp;
+        int keepInstrumented;
         while (cursor.moveToNext()) {
             packageName = cursor.getString(
-                    cursor.getColumnIndexOrThrow(DbContract.PackageEntry.COLUMN_NAME_PACKAGE_NAME));
+                    cursor.getColumnIndexOrThrow(PackageEntry.COLUMN_NAME_PACKAGE_NAME));
             lastInstrumentationTimestamp = cursor.getLong(
-                    cursor.getColumnIndexOrThrow(DbContract.PackageEntry.COLUMN_NAME_TIMESTAMP));
-            packageList.add(new Package(packageName, lastInstrumentationTimestamp));
+                    cursor.getColumnIndexOrThrow(PackageEntry.COLUMN_NAME_TIMESTAMP));
+            keepInstrumented = cursor.getInt(
+                    cursor.getColumnIndexOrThrow(PackageEntry.COLUMN_NAME_KEEP_INSTRUMENTED));
+            packageList.add(new Package(packageName, lastInstrumentationTimestamp,
+                    keepInstrumented == 1));
         }
         return packageList;
     }
 
+    @Override
     public void onDestroy() {
         mDatabaseHelper.close();
     }

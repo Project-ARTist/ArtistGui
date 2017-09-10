@@ -17,7 +17,7 @@
  *
  */
 
-package saarland.cispa.artist.artistgui.packagelist.view.broadcastreceiver;
+package saarland.cispa.artist.artistgui.broadcastreceiver;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

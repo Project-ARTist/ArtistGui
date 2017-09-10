@@ -17,35 +17,30 @@
  *
  */
 
-package saarland.cispa.artist.artistgui.compilation;
+package saarland.cispa.artist.artistgui.appdetails;
 
-import android.content.Intent;
-import android.content.ServiceConnection;
+import android.graphics.drawable.Drawable;
 
+import saarland.cispa.artist.artistgui.Package;
 import saarland.cispa.artist.artistgui.base.BasePresenter;
 import saarland.cispa.artist.artistgui.base.BaseView;
 
-public interface CompilationContract {
+interface AppDetailsDialogContract {
+    interface View extends BaseView<AppDetailsDialogContract.Presenter> {
+        void onAppIconLoaded(Drawable appIcon);
 
-    interface View extends BaseView<Presenter> {
-        void showNoCodeLibChosenMessage();
+        void updateLastInstrumentationTextView(String lastInstrumented);
 
-        void showCompilationResult(boolean isSuccess, String packageName);
+        void activateKeepInstrumentedViews(Package app);
+
+        void updateInstrumentationButton(boolean instrumented, String packageName);
     }
 
     interface Presenter extends BasePresenter {
-        void checkIfCodeLibIsChosen();
+        void loadAppIcon(Package app);
 
-        void connectToCompilationService();
+        void determineInstrumentationStatusAndUpdateViews(Package app);
 
-        void createArtistFolders();
-
-        ServiceConnection getCompileServiceConnection();
-
-        void maybeStartRecompiledApp(final String applicationName);
-
-        void executeIntentTasks(Intent intent);
-
-        void onCompilationFinished(int resultCode, Intent data);
+        void instrumentApp(String packageName);
     }
 }

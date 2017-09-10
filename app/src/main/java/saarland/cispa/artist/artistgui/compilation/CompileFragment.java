@@ -26,9 +26,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import saarland.cispa.artist.artistgui.R;
-import saarland.cispa.artist.artistgui.packagelist.view.PackageListView;
 import saarland.cispa.artist.android.GuiUtils;
+import saarland.cispa.artist.artistgui.Package;
+import saarland.cispa.artist.artistgui.R;
+import saarland.cispa.artist.artistgui.appdetails.AppDetailsDialog;
+import saarland.cispa.artist.artistgui.appdetails.AppDetailsDialogPresenter;
+import saarland.cispa.artist.artistgui.packagelist.view.PackageListView;
 
 public class CompileFragment extends Fragment implements CompilationContract.View,
         PackageListView.OnPackageSelectedListener {
@@ -71,8 +74,14 @@ public class CompileFragment extends Fragment implements CompilationContract.Vie
     }
 
     @Override
-    public void onPackageSelected(String packageName) {
-        mPresenter.queueCompilation(packageName);
+    public void onPackageSelected(Package selectedPackage) {
+        Bundle arguments = new Bundle();
+        arguments.putParcelable(AppDetailsDialog.PACKAGE_KEY, selectedPackage);
+
+        AppDetailsDialog dialog = new AppDetailsDialog();
+        new AppDetailsDialogPresenter(dialog, getActivity());
+        dialog.setArguments(arguments);
+        dialog.show(getFragmentManager(), AppDetailsDialog.TAG);
     }
 
     @Override

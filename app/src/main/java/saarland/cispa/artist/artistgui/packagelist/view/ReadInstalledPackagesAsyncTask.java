@@ -19,6 +19,7 @@
 
 package saarland.cispa.artist.artistgui.packagelist.view;
 
+import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -28,6 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import saarland.cispa.artist.artistgui.Package;
+import saarland.cispa.artist.artistgui.settings.db.DatabaseManager;
 
 class ReadInstalledPackagesAsyncTask extends
         AsyncTask<PackageManager, Void, List<Package>> {
@@ -36,10 +38,14 @@ class ReadInstalledPackagesAsyncTask extends
         void onReadInstalledPackages(List<Package> packages);
     }
 
+    private Context mContext;
     private OnReadInstalledPackages mResultCallback;
 
-    public ReadInstalledPackagesAsyncTask(OnReadInstalledPackages callback) {
+    private List<Package> mInstrumentedApps;
+
+    ReadInstalledPackagesAsyncTask(Context context, OnReadInstalledPackages callback) {
         super();
+        mContext = context;
         mResultCallback = callback;
     }
 
@@ -50,22 +56,57 @@ class ReadInstalledPackagesAsyncTask extends
                 .getInstalledPackages(PackageManager.GET_ACTIVITIES);
 
         List<Package> packageList = new ArrayList<>();
-        packageInfoList.forEach(packageInfo -> {
+        ApplicationInfo applicationInfo;
+        String appName;
+        int iconId;
+        for (PackageInfo packageInfo : packageInfoList) {
             if (!isCancelled()) {
-                ApplicationInfo applicationInfo = packageInfo.applicationInfo;
-                String appName = packageManager.getApplicationLabel(applicationInfo).toString();
-                packageList.add(new Package(appName, packageInfo.packageName,
-                        applicationInfo.icon));
+                applicationInfo = packageInfo.applicationInfo;
+                appName = packageManager.getApplicationLabel(applicationInfo).toString();
+
+                Package mPackage = getInstrumentedApp(packageInfo.packageName);
+                // Not instrumented?
+                if (mPackage == null) {
+                    mPackage = new Package(packageInfo.packageName);
+                }
+
+                mPackage.setAppName(appName);
+
+                iconId = applicationInfo.icon == 0 ?
+                        android.R.mipmap.sym_def_app_icon : applicationInfo.icon;
+                mPackage.setAppIconId(iconId);
+
+                packageList.add(mPackage);
             }
-        });
+        }
 
         return packageList;
+    }
+
+    /**
+     * Fetches app entry from db if given package has been instrumented.
+     *
+     * @return instrumented package or null
+     */
+    private Package getInstrumentedApp(String packageName) {
+        if (mInstrumentedApps == null) {
+            DatabaseManager databaseManager = new DatabaseManager(mContext);
+            mInstrumentedApps = databaseManager.getAllInstrumentedApps();
+        }
+
+        for (Package p : mInstrumentedApps) {
+            if (p.getPackageName().equals(packageName)) {
+                return p;
+            }
+        }
+
+        return null;
     }
 
     @Override
     protected void onPostExecute(List<Package> packages) {
         super.onPostExecute(packages);
-        if (mResultCallback != null) {
+        if (!isCancelled() && mResultCallback != null) {
             mResultCallback.onReadInstalledPackages(packages);
         }
     }

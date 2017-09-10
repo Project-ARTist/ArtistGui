@@ -31,7 +31,7 @@ import saarland.cispa.artist.android.ArtistImpl;
 import saarland.cispa.artist.artistgui.MainActivity;
 import saarland.cispa.artist.artistgui.compilation.notification.CompileNotificationManager;
 import saarland.cispa.artist.artistgui.settings.config.ArtistAppConfig;
-import saarland.cispa.artist.artistgui.settings.db.AddInstrumentedPackageToDbAsyncTask;
+import saarland.cispa.artist.artistgui.settings.db.operations.AddInstrumentedPackageToDbAsyncTask;
 import saarland.cispa.artist.artistgui.settings.manager.SettingsManager;
 import trikita.log.Log;
 
@@ -89,7 +89,7 @@ public class CompilationPresenter implements CompilationContract.Presenter {
             final String packageName = intent.getStringExtra(MainActivity.EXTRA_PACKAGE);
             if (packageName != null) {
                 Log.d(TAG, "CompilationTask() Execute: " + packageName);
-                queueCompilation(packageName);
+                CompileDialogActivity.compile(mActivity, packageName);
             }
         }
     }
@@ -147,12 +147,6 @@ public class CompilationPresenter implements CompilationContract.Presenter {
                     .getLaunchIntentForPackage(applicationName);
             mActivity.startActivity(launchIntent);
         }
-    }
-
-    @Override
-    public void queueCompilation(String packageName) {
-        Log.d(TAG, "compileInstalledApp(): " + packageName);
-        CompileDialogActivity.compile(mActivity, packageName);
     }
 
     @Override

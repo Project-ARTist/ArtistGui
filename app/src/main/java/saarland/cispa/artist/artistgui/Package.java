@@ -29,14 +29,17 @@ public class Package implements Parcelable {
     private String packageName;
     private int appIconId;
     private long lastInstrumentationTimestamp;
+    private boolean keepInstrumented;
 
     public Package(@NonNull String packageName) {
         this.packageName = packageName;
     }
 
-    public Package(@NonNull String packageName, long lastInstrumentationTimestamp) {
+    public Package(@NonNull String packageName, long lastInstrumentationTimestamp,
+                   boolean keepInstrumented) {
         this.packageName = packageName;
         this.lastInstrumentationTimestamp = lastInstrumentationTimestamp;
+        this.keepInstrumented = keepInstrumented;
     }
 
     public Package(@NonNull String appName, @NonNull String packageName, int appIconId) {
@@ -61,12 +64,20 @@ public class Package implements Parcelable {
         return lastInstrumentationTimestamp;
     }
 
+    public boolean isKeepInstrumented() {
+        return keepInstrumented;
+    }
+
     public void setAppName(String appName) {
         this.appName = appName;
     }
 
     public void setAppIconId(int appIconId) {
         this.appIconId = appIconId;
+    }
+
+    public void setKeepInstrumented(boolean keepInstrumented) {
+        this.keepInstrumented = keepInstrumented;
     }
 
     @Override

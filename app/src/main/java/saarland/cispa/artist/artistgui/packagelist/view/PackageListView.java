@@ -33,14 +33,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import saarland.cispa.artist.artistgui.Package;
-import saarland.cispa.artist.artistgui.packagelist.view.broadcastreceiver.PackageModifiedReceiver;
+import saarland.cispa.artist.artistgui.broadcastreceiver.PackageModifiedReceiver;
 
 public class PackageListView extends RecyclerView implements ReadInstalledPackagesAsyncTask
         .OnReadInstalledPackages {
 
-
     public interface OnPackageSelectedListener {
-        void onPackageSelected(String packageName);
+        void onPackageSelected(Package selectedPackage);
     }
 
     private Context mContext;
@@ -67,7 +66,7 @@ public class PackageListView extends RecyclerView implements ReadInstalledPackag
         setLayoutManager(mLayoutManager);
 
         PackageManager packageManager = context.getPackageManager();
-        new ReadInstalledPackagesAsyncTask(this).execute(packageManager);
+        new ReadInstalledPackagesAsyncTask(context, this).execute(packageManager);
     }
 
     @Override

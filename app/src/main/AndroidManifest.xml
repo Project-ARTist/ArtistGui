@@ -27,9 +27,18 @@
             android:theme="@android:style/Theme.DeviceDefault.Light.Dialog" />
         <activity
             android:name="saarland.cispa.artist.artistgui.settings.SettingsActivity"
+            android:label="@string/title_activity_artist_gui_settings_general"
             android:launchMode="singleInstance"
-            android:parentActivityName=".MainActivity"
-            android:label="@string/title_activity_artist_gui_settings_general" />
+            android:parentActivityName=".MainActivity" />
+
+        <receiver
+            android:name=".broadcastreceiver.PackageUpdatedReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.PACKAGE_REPLACED" />
+            </intent-filter>
+        </receiver>
 
         <service
             android:name="saarland.cispa.artist.artistgui.compilation.CompilationService"

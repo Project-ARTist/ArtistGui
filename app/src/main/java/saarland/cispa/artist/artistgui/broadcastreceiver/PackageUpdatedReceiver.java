@@ -17,20 +17,21 @@
  *
  */
 
-package saarland.cispa.artist.artistgui.settings.db;
+package saarland.cispa.artist.artistgui.broadcastreceiver;
 
-import java.util.List;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.os.AsyncTask;
 
-import saarland.cispa.artist.artistgui.Package;
+public class PackageUpdatedReceiver extends BroadcastReceiver {
 
-public interface InstrumentedPackagesManager {
-    void addInstrumentedPackage(String packageName);
+    private static final String PACKAGE_NAME_PREFIX = "package:";
 
-    void persistPackage(Package app);
-
-    void removeUninstrumentedPackage(String packageName);
-
-    List<Package> getAllInstrumentedApps();
-
-    void onDestroy();
+    @Override
+    public void onReceive(Context context, Intent intent) {
+        String packageName = intent.getDataString().replace(PACKAGE_NAME_PREFIX, "");
+        new ReinstrumentAppAsyncTask(context)
+                .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, packageName);
+    }
 }

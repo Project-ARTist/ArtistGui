@@ -17,11 +17,14 @@
  *
  */
 
-package saarland.cispa.artist.artistgui.settings.db;
+package saarland.cispa.artist.artistgui.settings.db.operations;
 
 import android.content.Context;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
+
+import saarland.cispa.artist.artistgui.settings.db.DatabaseManager;
+import saarland.cispa.artist.artistgui.settings.db.InstrumentedPackagesManager;
 
 public class AddInstrumentedPackageToDbAsyncTask extends AsyncTask<String, Void, Void> {
 

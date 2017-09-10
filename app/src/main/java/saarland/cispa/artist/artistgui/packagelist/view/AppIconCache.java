@@ -35,7 +35,6 @@ class AppIconCache extends LruCache<Package,Drawable> {
     private Context mContext;
     private Package mDefaultAppIconKey;
 
-
     AppIconCache(Context context) {
         super(MAX_SIZE);
         mContext = context;
