@@ -25,6 +25,7 @@ import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import saarland.cispa.artist.artistgui.Package;
@@ -38,7 +39,7 @@ class ReadInstalledPackagesAsyncTask extends
 
     private OnReadInstalledPackages mResultCallback;
 
-    public ReadInstalledPackagesAsyncTask(OnReadInstalledPackages callback) {
+    ReadInstalledPackagesAsyncTask(OnReadInstalledPackages callback) {
         super();
         mResultCallback = callback;
     }
@@ -59,6 +60,7 @@ class ReadInstalledPackagesAsyncTask extends
             }
         }
 
+        packageList.sort(Package.sComparator);
         return packageList;
     }
 
