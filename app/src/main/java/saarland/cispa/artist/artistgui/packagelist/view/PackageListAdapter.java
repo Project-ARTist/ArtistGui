@@ -32,6 +32,7 @@ import android.widget.TextView;
 
 import java.util.List;
 
+import saarland.cispa.artist.artistgui.Package;
 import saarland.cispa.artist.artistgui.R;
 import saarland.cispa.artist.artistgui.packagelist.view.broadcastreceiver.OnPackageModifiedListener;
 

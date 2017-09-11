@@ -24,6 +24,7 @@ import android.content.ServiceConnection;
 
 import saarland.cispa.artist.artistgui.base.BasePresenter;
 import saarland.cispa.artist.artistgui.base.BaseView;
+import saarland.cispa.artist.artistgui.settings.db.AddInstrumentedPackageToDbAsyncTask;
 
 public interface CompilationContract {
 
@@ -48,6 +49,8 @@ public interface CompilationContract {
 
         void executeIntentTasks(Intent intent);
 
-        void onCompilationFinished(int resultCode, Intent data);
+        void onCompilationFinished(int resultCode, Intent data,
+                                   AddInstrumentedPackageToDbAsyncTask
+                                           addInstrumentedPackageToDbAsyncTask);
     }
 }
