@@ -29,8 +29,9 @@ import android.os.IBinder;
 import saarland.cispa.artist.artistgui.MainActivity;
 import saarland.cispa.artist.artistgui.compilation.notification.CompileNotificationManager;
 import saarland.cispa.artist.artistgui.settings.config.ArtistAppConfig;
-import saarland.cispa.artist.artistgui.utils.AndroidUtils;
+import saarland.cispa.artist.artistgui.settings.db.AddInstrumentedPackageToDbAsyncTask;
 import saarland.cispa.artist.artistgui.settings.manager.SettingsManager;
+import saarland.cispa.artist.artistgui.utils.AndroidUtils;
 import trikita.log.Log;
 
 import static android.app.Activity.RESULT_OK;
@@ -154,7 +155,9 @@ public class CompilationPresenter implements CompilationContract.Presenter {
     }
 
     @Override
-    public void onCompilationFinished(int resultCode, Intent data) {
+    public void onCompilationFinished(int resultCode, Intent data,
+                                      AddInstrumentedPackageToDbAsyncTask
+                                              addInstrumentedPackageToDbAsyncTask) {
         String applicationName = "";
         if (data != null) {
             applicationName += data.getStringExtra(ArtistImpl.INTENT_EXTRA_APP_NAME);
@@ -164,6 +167,9 @@ public class CompilationPresenter implements CompilationContract.Presenter {
         mView.showCompilationResult(success, applicationName);
 
         if (success) {
+            if (addInstrumentedPackageToDbAsyncTask != null) {
+                addInstrumentedPackageToDbAsyncTask.execute(applicationName);
+            }
             maybeStartRecompiledApp(applicationName);
         }
     }
