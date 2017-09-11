@@ -17,32 +17,42 @@
  *
  */
 
-package saarland.cispa.artist.artistgui.packagelist.view;
+package saarland.cispa.artist.artistgui;
 
 import android.support.annotation.DrawableRes;
 
-class Package {
+public class Package {
 
     private String appName;
     private String packageName;
     private int appIconId;
+    private long lastInstrumentationTimestamp;
 
-    Package(String appName, String packageName, @DrawableRes int appIconId) {
+    public Package(String packageName, long lastInstrumentationTimestamp) {
+        this.packageName = packageName;
+        this.lastInstrumentationTimestamp = lastInstrumentationTimestamp;
+    }
+
+    public Package(String appName, String packageName, @DrawableRes int appIconId) {
         this.appName = appName;
         this.packageName = packageName;
         this.appIconId = appIconId;
     }
 
-    String getAppName() {
+    public String getAppName() {
         return appName;
     }
 
-    String getPackageName() {
+    public String getPackageName() {
         return packageName;
     }
 
-    int getAppIconId() {
+    public int getAppIconId() {
         return appIconId;
+    }
+
+    public long getLastInstrumentationTimestamp() {
+        return lastInstrumentationTimestamp;
     }
 
     @Override

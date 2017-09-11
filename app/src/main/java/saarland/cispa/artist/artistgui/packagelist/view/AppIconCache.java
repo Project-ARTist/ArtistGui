@@ -25,6 +25,8 @@ import android.graphics.drawable.Drawable;
 import android.util.DisplayMetrics;
 import android.util.LruCache;
 
+import saarland.cispa.artist.artistgui.Package;
+
 class AppIconCache extends LruCache<Package, Drawable> {
 
     private static final int MAX_SIZE = 15;
