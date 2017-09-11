@@ -30,7 +30,7 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import saarland.cispa.artist.android.ArtistImpl;
+import saarland.cispa.artist.artistgui.compilation.ArtistImpl;
 import saarland.cispa.artist.artistgui.compilation.CompilationContract;
 import saarland.cispa.artist.artistgui.compilation.CompilationPresenter;
 import saarland.cispa.artist.artistgui.settings.manager.SettingsManager;
@@ -110,7 +110,7 @@ public class CompilationPresenterTest {
         // Don't launch app. We can't test it currently.
         when(mSettingsManager.shouldLaunchActivityAfterCompilation()).thenReturn(false);
 
-        mPresenter.onCompilationFinished(Activity.RESULT_OK, mIntent);
+        mPresenter.onCompilationFinished(Activity.RESULT_OK, mIntent, null);
 
         verify(mView).showCompilationResult(mBoolArgCaptor.capture(), mStringArgCaptor.capture());
         assertTrue(mBoolArgCaptor.getValue());
@@ -124,7 +124,7 @@ public class CompilationPresenterTest {
         // Don't launch app. We can't test it currently.
         when(mSettingsManager.shouldLaunchActivityAfterCompilation()).thenReturn(false);
 
-        mPresenter.onCompilationFinished(Activity.RESULT_CANCELED, mIntent);
+        mPresenter.onCompilationFinished(Activity.RESULT_CANCELED, mIntent, null);
 
         verify(mView).showCompilationResult(mBoolArgCaptor.capture(), mStringArgCaptor.capture());
         assertFalse(mBoolArgCaptor.getValue());

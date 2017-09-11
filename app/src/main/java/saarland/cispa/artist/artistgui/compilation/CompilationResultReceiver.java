@@ -19,35 +19,33 @@
  * @author "Sebastian Weisgerber <weisgerber@cispa.saarland>"
  *
  */
-package saarland.cispa.artist.artistgui.utils;
+package saarland.cispa.artist.artistgui.compilation;
 
-import android.net.Uri;
 
-import java.io.File;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.ResultReceiver;
 
-import trikita.log.Log;
+public class CompilationResultReceiver extends ResultReceiver {
 
-public class UriUtils {
+    private Receiver mReceiver;
 
-    private static final String TAG = "UriUtils";
-
-    public static String getFilenameFromUri(final Uri uri) {
-        Log.v(TAG, "Uri: " + uri.toString());
-        Log.v(TAG, "Uri Path: " + uri.getPath());
-        Log.v(TAG, "Uri LastPathSegment: " + uri.getLastPathSegment());
-
-        final File fileFromUri = new File(uri.getPath());
-        Log.v(TAG, "Uri File Name: " + fileFromUri.getName());
-        String filename = fileFromUri.getName();
-        filename = cleanUriFilename(filename);
-        return filename;
+    public CompilationResultReceiver(Handler handler) {
+        super(handler);
     }
 
-    private static String cleanUriFilename(String filename) {
-        if (filename.startsWith("primary:")) {
-            filename = filename.replaceFirst("primary:", "");
+    public void setReceiver(Receiver receiver) {
+        mReceiver = receiver;
+    }
+
+    public interface Receiver {
+        public void onReceiveResult(int resultCode, Bundle resultData);
+    }
+
+    @Override
+    protected void onReceiveResult(int resultCode, Bundle resultData) {
+        if (mReceiver != null) {
+            mReceiver.onReceiveResult(resultCode, resultData);
         }
-        return filename;
     }
-
 }

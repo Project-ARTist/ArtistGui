@@ -1,3 +1,3 @@
 [submodule "libartist"]
-	path = libartist
+	path = dexterous
 	url = https://github.com/Project-ARTist/dexterous.git

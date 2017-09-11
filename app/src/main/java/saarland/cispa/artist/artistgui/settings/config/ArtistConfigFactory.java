@@ -33,11 +33,10 @@ import android.support.annotation.Nullable;
 import java.io.File;
 import java.lang.reflect.Field;
 
-import saarland.cispa.artist.android.Artist;
-import saarland.cispa.artist.settings.ArtistRunConfig;
-import saarland.cispa.artist.android.AndroidUtils;
-import saarland.cispa.artist.utils.ArtistUtils;
-import saarland.cispa.artist.log.LogG;
+import saarland.cispa.artist.artistgui.compilation.Artist;
+import saarland.cispa.artist.artistgui.compilation.config.ArtistRunConfig;
+import saarland.cispa.artist.artistgui.utils.AndroidUtils;
+import saarland.cispa.artist.artistgui.utils.ArtistUtils;
 import trikita.log.Log;
 
 /**
@@ -47,7 +46,7 @@ import trikita.log.Log;
 
 public class ArtistConfigFactory {
 
-    private static final String TAG = LogG.TAG;
+    private static final String TAG = "ArtistConfigFactory";
 
     public final static String PATH_ASSET_ARTIST_ROOT = "artist";
     public final static String PATH_ASSET_ARTIST_BIN_PREFIX = PATH_ASSET_ARTIST_ROOT + File.separator + "android-";

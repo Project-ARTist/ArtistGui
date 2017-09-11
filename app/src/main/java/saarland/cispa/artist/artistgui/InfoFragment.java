@@ -32,7 +32,7 @@ import android.widget.TextView;
 import java.io.IOException;
 import java.io.InputStream;
 
-import saarland.cispa.artist.utils.StringUtils;
+import saarland.cispa.artist.artistgui.utils.StringUtils;
 import trikita.log.Log;
 
 public class InfoFragment extends Fragment {

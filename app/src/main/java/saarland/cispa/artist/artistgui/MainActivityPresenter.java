@@ -29,11 +29,14 @@ import android.support.v4.app.Fragment;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-import saarland.cispa.artist.android.LogA;
 import saarland.cispa.artist.artistgui.compilation.CompilationContract;
 import saarland.cispa.artist.artistgui.compilation.CompilationPresenter;
 import saarland.cispa.artist.artistgui.compilation.CompileFragment;
+import saarland.cispa.artist.artistgui.settings.db.operations.AddInstrumentedPackageToDbAsyncTask;
 import saarland.cispa.artist.artistgui.settings.manager.SettingsManager;
+import saarland.cispa.artist.artistgui.utils.LogA;
+
+import static android.app.Activity.RESULT_OK;
 
 class MainActivityPresenter implements MainActivityContract.Presenter {
 
@@ -91,7 +94,8 @@ class MainActivityPresenter implements MainActivityContract.Presenter {
 
     @Override
     public void processCompilationResult(int resultCode, Intent data) {
-        mCompilationPresenter.onCompilationFinished(resultCode, data);
+        mCompilationPresenter.onCompilationFinished(resultCode, data, resultCode == RESULT_OK ?
+                new AddInstrumentedPackageToDbAsyncTask(mActivity) : null);
     }
 
     @Override
