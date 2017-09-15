@@ -23,7 +23,12 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 
+import java.util.Comparator;
+
 public class Package implements Parcelable {
+
+    public static final Comparator<Package> sComparator =
+            (p1, p2) -> p1.getAppName().compareTo(p2.getAppName());
 
     private String appName;
     private String packageName;

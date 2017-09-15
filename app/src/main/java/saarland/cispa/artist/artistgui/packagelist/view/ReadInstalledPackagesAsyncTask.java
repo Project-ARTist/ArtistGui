@@ -58,7 +58,7 @@ class ReadInstalledPackagesAsyncTask extends
         List<Package> packageList = new ArrayList<>();
         ApplicationInfo applicationInfo;
         String appName;
-        int iconId;
+        int appIconId;
         for (PackageInfo packageInfo : packageInfoList) {
             if (!isCancelled()) {
                 applicationInfo = packageInfo.applicationInfo;
@@ -72,14 +72,15 @@ class ReadInstalledPackagesAsyncTask extends
 
                 mPackage.setAppName(appName);
 
-                iconId = applicationInfo.icon == 0 ?
+                appIconId = applicationInfo.icon == 0 ?
                         android.R.mipmap.sym_def_app_icon : applicationInfo.icon;
-                mPackage.setAppIconId(iconId);
+                mPackage.setAppIconId(appIconId);
 
                 packageList.add(mPackage);
             }
         }
 
+        packageList.sort(Package.sComparator);
         return packageList;
     }
 

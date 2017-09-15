@@ -103,7 +103,8 @@ class PackageListAdapter extends RecyclerView.Adapter<PackageListAdapter.ViewHol
             String appName = mPackageManager.getApplicationLabel(info).toString();
 
             mPackageList.add(new Package(appName, info.packageName, info.icon));
-            notifyItemInserted(mPackageList.size() - 1);
+            mPackageList.sort(Package.sComparator);
+            notifyDataSetChanged();
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
