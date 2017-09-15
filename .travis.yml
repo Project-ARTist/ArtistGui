@@ -4,11 +4,11 @@ android:
     # Uncomment the lines below if you want to
     # use the latest revision of Android SDK Tools
     - tools
+    # The BuildTools version used by your project
+    - build-tools-25.0.2
     - platform-tools
     - tools
 
-    # The BuildTools version used by your project
-    - build-tools-25.0.2
 
     # The SDK version used to compile your project
     - android-25
@@ -23,3 +23,9 @@ android:
     # if you need to run emulator(s) during your tests
     # - sys-img-armeabi-v7a-android-22
     # - sys-img-armeabi-v7a-android-17
+
+install:
+  # List and delete unnecessary components to free space
+  - sdkmanager --list || true
+  - echo yes | sdkmanager "extras;m2repository;com;android;support;constraint;constraint-layout;1.0.2"
+  - echo yes | sdkmanager "extras;m2repository;com;android;support;constraint;constraint-layout-solver;1.0.2"
