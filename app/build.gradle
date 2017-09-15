@@ -42,15 +42,18 @@ android {
     }
 }
 
-task artistGuiVersion << {
-    def git_commit = ['sh', '-c', 'git log -1 | grep commit'].execute().text.trim()
-    def git_status = ['sh', '-c', 'git status --porcelain'].execute().text.trim()
-    ext.versionfile = new File('app/src/main/assets/VERSION_ARTISTGUI.md')
+task artistGuiVersion {
+    doLast {
 
-    println git_commit
-    println git_status
+        def git_commit = ['sh', '-c', 'git log -1 | grep commit'].execute().text.trim()
+        def git_status = ['sh', '-c', 'git status --porcelain'].execute().text.trim()
+        ext.versionfile = new File('app/src/main/assets/VERSION_ARTISTGUI.md')
 
-    versionfile.text = git_commit + '\n' + git_status
+        println git_commit
+        println git_status
+
+        versionfile.text = git_commit + '\n' + git_status
+    }
 }
 
 assemble.dependsOn 'artistGuiVersion'
