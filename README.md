@@ -4,6 +4,10 @@
 
 For further information, please visit the [ARTist project website](https://artist.cispa.saarland).
 
+
+[![Build Status](https://travis-ci.org/Project-ARTist/ArtistGui.svg?branch=master)](https://travis-ci.org/Project-ARTist/ArtistGui)
+
+
 ## Third-party Code and Dependencies
 
 All Third-party code has a valid license (Apache-2.0) and is either included or defined as
