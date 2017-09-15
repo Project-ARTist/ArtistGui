@@ -104,6 +104,7 @@ public class CompilationService extends Service {
             if (appName != null) {
                 Log.d(TAG, "onStartCommand() Extra: " + appName);
                 Toast.makeText(this, "Artist: CompilationService Started", Toast.LENGTH_SHORT).show();
+                compileInstalledApp(null, appName);
             }
         }
         return mStartMode;

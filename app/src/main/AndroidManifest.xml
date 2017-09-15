@@ -31,12 +31,10 @@
             android:launchMode="singleInstance"
             android:parentActivityName=".MainActivity" />
 
-        <receiver
-            android:name=".broadcastreceiver.PackageUpdatedReceiver"
-            android:enabled="true"
-            android:exported="true">
+        <receiver android:name=".broadcastreceiver.PackageUpdatedReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.PACKAGE_REPLACED" />
+                <data android:scheme="package" />
             </intent-filter>
         </receiver>
 
