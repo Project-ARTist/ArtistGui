@@ -60,8 +60,6 @@ public class ArtistRunConfig {
 
     public int COMPILER_THREADS = -1;
 
-    public boolean CODELIB_SETTINGS_APPCOMPART = false;
-
     public boolean BACKUP_APK_ORIGINAL = false;
     public boolean BACKUP_APK_MERGED = false;
 
@@ -113,7 +111,6 @@ public class ArtistRunConfig {
                 ", app_package_name=                 '" + app_package_name + '\'' + "\n" +
                 ", app_oat_architecture=             '" + app_oat_architecture + '\'' + "\n" +
                 ", COMPILER_THREADS=                 '" + COMPILER_THREADS + "'\n" +
-                ", CODELIB_SETTINGS_APPCOMPART=      '" + CODELIB_SETTINGS_APPCOMPART + "'\n" +
                 ", BACKUP_APK_ORIGINAL=              '" + BACKUP_APK_ORIGINAL + "'\n" +
                 ", BACKUP_APK_MERGED=                '" + BACKUP_APK_MERGED + "'\n" +
                 ", MULTIDEX_ABORT=                   '" + MULTIDEX_ABORT + "'\n" +

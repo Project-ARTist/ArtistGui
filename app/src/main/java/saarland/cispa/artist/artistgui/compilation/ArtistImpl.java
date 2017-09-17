@@ -416,12 +416,6 @@ public class ArtistImpl implements Artist {
 
         Log.d(TAG, "Dex2oat: Compiler Threads: " + config.COMPILER_THREADS);
 
-        if (config.CODELIB_SETTINGS_APPCOMPART) {
-            String launchActivity = getAppEntrance(context, config.app_name);
-            Log.d(TAG, "Dex2oat: CodeLib Special: --launch-activity: " + launchActivity);
-            cmd_dex2oat_compile += " --launch-activity=" + launchActivity;
-        }
-
         if (config.app_oat_architecture.contains("arm64")) {
             // ARM64 Special Flags
             cmd_dex2oat_compile += " --instruction-set=arm64";

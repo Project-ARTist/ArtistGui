@@ -74,7 +74,6 @@ public class ArtistConfigFactory {
         artistConfig.MULTIDEX_ABORT = sharedPref.getBoolean(ArtistAppConfig.KEY_PREF_COMPILER_ABORT_MULTIDEX, false);
         artistConfig.BACKUP_APK_MERGED = sharedPref.getBoolean(ArtistAppConfig.KEY_PREF_BACKUP_APK_MERGED, false);
         artistConfig.BACKUP_APK_ORIGINAL = sharedPref.getBoolean(ArtistAppConfig.KEY_PREF_BACKUP_APK_ORIGINAL, false);
-        artistConfig.CODELIB_SETTINGS_APPCOMPART = sharedPref.getBoolean(ArtistAppConfig.KEY_PREF_COMPILER_CODELIB_APPCOMPART, false);
 
         final PackageInfo packageInfo = getPackageInfo(context, artistConfig.app_name);
 
