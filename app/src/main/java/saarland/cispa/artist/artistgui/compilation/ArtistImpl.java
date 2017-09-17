@@ -163,10 +163,8 @@ public class ArtistImpl implements Artist {
 
     @Override
     public boolean Run(final Context context) {
-        Log.i(TAG, "Run() compiling and starting " + config.app_name);
-        Log.i(TAG, "> app_name:    " + config.app_name);
+        Log.i(TAG, "Run() compiling and starting " + config.app_package_name);
         Log.i(TAG, "> apkPath:     " + config.app_apk_file_path);
-        Log.i(TAG, "> packageName: " + config.app_package_name);
         Log.i(TAG, "> codeLibName: " + config.codeLibName);
         Log.i(TAG, "> Keystore:    " + config.keystore);
 
@@ -225,7 +223,7 @@ public class ArtistImpl implements Artist {
 
             ArtistThread.checkThreadCancellation();
 
-            progressUpdate(50, "Compiling: " + config.app_name);
+            progressUpdate(50, "Compiling: " + config.app_package_name);
 
             ArtistThread.checkThreadCancellation();
 
@@ -245,17 +243,17 @@ public class ArtistImpl implements Artist {
 
         } catch (final CompilationException|ArtistInterruptedException e) {
             Log.e(TAG, "Artist Run() FAILED " + e.getMessage());
-            progressFailed(String.format("Injection: %s Failed (%s)", config.app_name, e.getMessage()));
+            progressFailed(String.format("Injection: %s Failed (%s)", config.app_package_name, e.getMessage()));
             cleanBuildFiles();
             success = false;
             return success;
         } catch (final Exception e) {
             Log.e(TAG, "Artist Run() FAILED: ", e);
-            progressFailed(String.format("Injection: %s Failed", config.app_name));
+            progressFailed(String.format("Injection: %s Failed", config.app_package_name));
             success = false;
             return success;
         }
-        final String userMessage = String.format("Injection: %s OK: %b", config.app_name, success);
+        final String userMessage = String.format("Injection: %s OK: %b", config.app_package_name, success);
         Log.d(TAG, userMessage);
         progressSucess(userMessage);
         return success;
@@ -310,7 +308,7 @@ public class ArtistImpl implements Artist {
         Log.d(TAG, divider);
 
         success = ProcessExecutor.execute(cmd_dex2oat_compile, true,
-                ProcessExecutor.processName(config.app_name, "dex2artist"));
+                ProcessExecutor.processName(config.app_package_name, "dex2artist"));
 
         Log.d(TAG, divider);
         Log.d(TAG, divider);
@@ -354,7 +352,7 @@ public class ArtistImpl implements Artist {
             Log.d(TAG, "Changing the owner of the oat file to " + config.oatOwner);
 
             final String cmd_chown_oat = "chown " + config.oatOwner + " " + this.config.app_oat_file_path;
-            success = ProcessExecutor.execute(cmd_chown_oat, true, ProcessExecutor.processName(config.app_name, "chown_oatfile"));
+            success = ProcessExecutor.execute(cmd_chown_oat, true, ProcessExecutor.processName(config.app_package_name, "chown_oatfile"));
 
             if (!success) {
                 Log.d(TAG, "Could not change oat owner to " + config.oatOwner + "... ");
@@ -364,7 +362,7 @@ public class ArtistImpl implements Artist {
             Log.d(TAG, "Changing the group of the oat file to " + config.oatGroup);
 
             final String cmd_chgrp_oat = "chgrp " + config.oatGroup + " " + this.config.app_oat_file_path;
-            success = ProcessExecutor.execute(cmd_chgrp_oat, true, ProcessExecutor.processName(config.app_name, "chgrp_oatfile"));
+            success = ProcessExecutor.execute(cmd_chgrp_oat, true, ProcessExecutor.processName(config.app_package_name, "chgrp_oatfile"));
 
             if (!success) {
                 Log.d(TAG, "Could not change oat group to " + config.oatGroup + "... ");
@@ -424,7 +422,7 @@ public class ArtistImpl implements Artist {
     public boolean deleteRootFile(final String filePath) {
         boolean success = false;
         final String cmd_rm_root_file = "rm " + filePath;
-        success = ProcessExecutor.execute(cmd_rm_root_file, true, ProcessExecutor.processName(config.app_name, "rm_rootfile"));
+        success = ProcessExecutor.execute(cmd_rm_root_file, true, ProcessExecutor.processName(config.app_package_name, "rm_rootfile"));
         return success;
     }
 
@@ -465,12 +463,12 @@ public class ArtistImpl implements Artist {
 
         boolean success = false;
         final String cmd_backup_base_apk = "rm " + apkPath;
-        success = ProcessExecutor.execute(cmd_backup_base_apk, true, ProcessExecutor.processName(config.app_name, "rm_backup"));
+        success = ProcessExecutor.execute(cmd_backup_base_apk, true, ProcessExecutor.processName(config.app_package_name, "rm_backup"));
         if (!success) {
             return "";
         }
         final String cmd_copy_merged_apk = "cp " + mergedApkPath + " " + apkPath;
-        success = ProcessExecutor.execute(cmd_copy_merged_apk, true, ProcessExecutor.processName(config.app_name, "cp_backup_merged"));
+        success = ProcessExecutor.execute(cmd_copy_merged_apk, true, ProcessExecutor.processName(config.app_package_name, "cp_backup_merged"));
 
         if (!success) {
             return "";
@@ -529,7 +527,7 @@ public class ArtistImpl implements Artist {
 
         final String cmd_backup_merged_apk = "cp " + config.app_apk_merged_signed_file_path + " " + mergedApkBackupPath;
 
-        boolean success = ProcessExecutor.execute(cmd_backup_merged_apk, true, ProcessExecutor.processName(config.app_name, "cp_backup_merged"));
+        boolean success = ProcessExecutor.execute(cmd_backup_merged_apk, true, ProcessExecutor.processName(config.app_package_name, "cp_backup_merged"));
 
         if (success) {
             Log.d(TAG, "backupMergedApk() Success: " + mergedApkBackupPath);

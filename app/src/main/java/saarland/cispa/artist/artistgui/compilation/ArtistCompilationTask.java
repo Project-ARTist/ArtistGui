@@ -67,12 +67,12 @@ public class ArtistCompilationTask implements Callable, ArtistGuiProgress {
     }
 
     public String getAppName() {
-        return this.config.app_name;
+        return this.config.app_package_name;
     }
 
     @Override
     public Boolean call() throws Exception {
-        Log.d(TAG, String.format("ArtistCompilationTask.call(%s)", config.app_name));
+        Log.d(TAG, String.format("ArtistCompilationTask.call(%s)", config.app_package_name));
         final Artist artist = new ArtistImpl(config);
 
         artist.addGuiProgressListener(this);
@@ -83,14 +83,14 @@ public class ArtistCompilationTask implements Callable, ArtistGuiProgress {
             success = artist.Run(this.context);
         } catch (final Throwable t) {
             Log.e(TAG, String.format("Artist Failed: %s (%s)",
-                    this.config.app_name,
+                    this.config.app_package_name,
                     this.config.app_apk_file_path),
                     t
             );
         } finally {
             this.done();
         }
-        Log.d(TAG, String.format("ArtistCompilationTask.call(%s) DONE success[%b]", config.app_name, success));
+        Log.d(TAG, String.format("ArtistCompilationTask.call(%s) DONE success[%b]", config.app_package_name, success));
         if (resultCallback != null) {
             final Bundle data = new Bundle();
             data.putString(ArtistImpl.INTENT_EXTRA_APP_NAME, this.config.app_package_name);

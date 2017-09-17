@@ -37,7 +37,6 @@ public class ArtistRunConfig {
     /**
      * Package Name of the application
      */
-    public String app_name = "";
 
     public String app_folder_path = "";
     public String app_apk_file_path = ""; // base.apk
@@ -94,7 +93,6 @@ public class ArtistRunConfig {
     public String toString() {
         return "ArtistRunConfig {" + "\n" +
                 "  api_level=                        '" + api_level + '\'' + "\n" +
-                ", app_name=                         '" + app_name + '\'' + "\n" +
                 ", app_folder_path=                  '" + app_folder_path + '\'' + "\n" +
                 ", app_apk_file_path=                '" + app_apk_file_path + '\'' + "\n" +
                 ", app_apk_merged_file_path=         '" + app_apk_merged_file_path + '\'' + "\n" +

@@ -55,7 +55,6 @@ public class ArtistConfigFactory {
 
         final SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
 
-        artistConfig.app_name = appPackageName;
         artistConfig.api_level = String.valueOf(Build.VERSION.SDK_INT);
 
         // Asset Paths don't like a trailing '/'
@@ -73,9 +72,9 @@ public class ArtistConfigFactory {
         artistConfig.COMPILER_THREADS = Integer.parseInt(compiler_threads);
         artistConfig.BACKUP_APK_MERGED = sharedPref.getBoolean(ArtistAppConfig.KEY_PREF_BACKUP_APK_MERGED, false);
 
-        final PackageInfo packageInfo = getPackageInfo(context, artistConfig.app_name);
+        final PackageInfo packageInfo = getPackageInfo(context, artistConfig.app_package_name);
 
-        artistConfig.app_package_name = packageInfo.packageName;
+        artistConfig.app_package_name = appPackageName;
         artistConfig.app_apk_file_path = packageInfo.applicationInfo.publicSourceDir;
         artistConfig.app_apk_merged_file_path = AndroidUtils.getFilesDirLocation(context, ArtistRunConfig.BASE_APK_MERGED);
         artistConfig.app_apk_merged_signed_file_path = AndroidUtils.getFilesDirLocation(context, ArtistRunConfig.BASE_APK_SIGNED);
