@@ -60,13 +60,7 @@ public class ArtistRunConfig {
 
     public int COMPILER_THREADS = -1;
 
-    public boolean BACKUP_APK_ORIGINAL = false;
     public boolean BACKUP_APK_MERGED = false;
-
-    /**
-     * Whether compilation should abort for multidex apps.
-     */
-    public boolean MULTIDEX_ABORT;
 
     public String asset_path_artist_root = "";
     public String asset_path_dex2oat = "";
@@ -111,9 +105,7 @@ public class ArtistRunConfig {
                 ", app_package_name=                 '" + app_package_name + '\'' + "\n" +
                 ", app_oat_architecture=             '" + app_oat_architecture + '\'' + "\n" +
                 ", COMPILER_THREADS=                 '" + COMPILER_THREADS + "'\n" +
-                ", BACKUP_APK_ORIGINAL=              '" + BACKUP_APK_ORIGINAL + "'\n" +
                 ", BACKUP_APK_MERGED=                '" + BACKUP_APK_MERGED + "'\n" +
-                ", MULTIDEX_ABORT=                   '" + MULTIDEX_ABORT + "'\n" +
                 ", asset_path_artist_root=           '" + asset_path_artist_root + '\'' + "\n" +
                 ", asset_path_dex2oat=               '" + asset_path_dex2oat + '\'' + "\n" +
                 ", asset_path_dex2oat_libs=          '" + asset_path_dex2oat_libs + '\'' + "\n" +

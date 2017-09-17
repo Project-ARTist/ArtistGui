@@ -204,13 +204,6 @@ public class ArtistImpl implements Artist {
 
             ArtistThread.checkThreadCancellation();
 
-            if (ArtistUtils.isMultiDex(config.app_apk_file_path) && config.MULTIDEX_ABORT) {
-                progressUpdateVerbose(-1, "Aborting Compilation: MultiDex APK found");
-                throw new CompilationException(String.format("Run() Multidex ABORT (APK: %s)", config.app_apk_file_path));
-            }
-
-            ArtistThread.checkThreadCancellation();
-
             probeOatFilePermissions();
 
             ArtistThread.checkThreadCancellation();
@@ -231,8 +224,6 @@ public class ArtistImpl implements Artist {
             backupMergedApk(this.config);
 
             ArtistThread.checkThreadCancellation();
-
-            backupOriginalApk(this.config);
 
             progressUpdate(50, "Compiling: " + config.app_name);
 
@@ -416,6 +407,8 @@ public class ArtistImpl implements Artist {
 
         Log.d(TAG, "Dex2oat: Compiler Threads: " + config.COMPILER_THREADS);
 
+
+
         if (config.app_oat_architecture.contains("arm64")) {
             // ARM64 Special Flags
             cmd_dex2oat_compile += " --instruction-set=arm64";
@@ -542,31 +535,6 @@ public class ArtistImpl implements Artist {
             Log.d(TAG, "backupMergedApk() Success: " + mergedApkBackupPath);
         } else {
             Log.e(TAG, "backupMergedApk() Failed:  " + mergedApkBackupPath);
-        }
-    }
-
-    private void backupOriginalApk(final ArtistRunConfig config) {
-        if (!config.BACKUP_APK_ORIGINAL) {
-            Log.v(TAG, "Skip: backupOriginalApk()");
-            return;
-        }
-        Log.v(TAG, "backupOriginalApk()");
-        final File sdcard = Environment.getExternalStorageDirectory();
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss", Locale.getDefault());
-        Date date = new Date();
-
-        final String originalApkBackupPath = sdcard.getAbsolutePath() + File.separator
-                + config.app_package_name + "_original_" + dateFormat.format(date) + ".apk";
-        final String cmd_backup_merged_apk = "cp " + config.app_apk_file_path + " " + originalApkBackupPath;
-
-        progressUpdateVerbose(-1, "Backing up Merged APK: " + originalApkBackupPath);
-
-        boolean success = ProcessExecutor.execute(cmd_backup_merged_apk, true, ProcessExecutor.processName(config.app_name, "cp_backup_merged"));
-
-        if (success) {
-            Log.d(TAG, "backupOriginalApk() Success: " + originalApkBackupPath);
-        } else {
-            Log.e(TAG, "backupOriginalApk() Failed:  " + originalApkBackupPath);
         }
     }
 

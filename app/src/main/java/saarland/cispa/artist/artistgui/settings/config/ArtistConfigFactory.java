@@ -71,9 +71,7 @@ public class ArtistConfigFactory {
 
         final String compiler_threads = sharedPref.getString(ArtistAppConfig.KEY_PREF_COMPILER_THREADS, "-1");
         artistConfig.COMPILER_THREADS = Integer.parseInt(compiler_threads);
-        artistConfig.MULTIDEX_ABORT = sharedPref.getBoolean(ArtistAppConfig.KEY_PREF_COMPILER_ABORT_MULTIDEX, false);
         artistConfig.BACKUP_APK_MERGED = sharedPref.getBoolean(ArtistAppConfig.KEY_PREF_BACKUP_APK_MERGED, false);
-        artistConfig.BACKUP_APK_ORIGINAL = sharedPref.getBoolean(ArtistAppConfig.KEY_PREF_BACKUP_APK_ORIGINAL, false);
 
         final PackageInfo packageInfo = getPackageInfo(context, artistConfig.app_name);
 
