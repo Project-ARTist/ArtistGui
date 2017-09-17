@@ -1,14 +1,14 @@
 /**
  * The ARTist Project (https://artist.cispa.saarland)
- *
+ * <p>
  * Copyright (C) 2017 CISPA (https://cispa.saarland), Saarland University
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,7 +17,6 @@
  *
  * @author "Oliver Schranz <oliver.schranz@cispa.saarland>"
  * @author "Sebastian Weisgerber <weisgerber@cispa.saarland>"
- *
  */
 package saarland.cispa.artist.artistgui.settings.config;
 
@@ -73,7 +72,6 @@ public class ArtistConfigFactory {
         final String compiler_threads = sharedPref.getString(ArtistAppConfig.KEY_PREF_COMPILER_THREADS, "-1");
         artistConfig.COMPILER_THREADS = Integer.parseInt(compiler_threads);
         artistConfig.MULTIDEX_ABORT = sharedPref.getBoolean(ArtistAppConfig.KEY_PREF_COMPILER_ABORT_MULTIDEX, false);
-        artistConfig.INJECT_CODELIB = sharedPref.getBoolean(ArtistAppConfig.KEY_PREF_COMPILER_INJECT_CODELIB, false);
         artistConfig.BACKUP_APK_MERGED = sharedPref.getBoolean(ArtistAppConfig.KEY_PREF_BACKUP_APK_MERGED, false);
         artistConfig.BACKUP_APK_ORIGINAL = sharedPref.getBoolean(ArtistAppConfig.KEY_PREF_BACKUP_APK_ORIGINAL, false);
         artistConfig.CODELIB_SETTINGS_APPCOMPART = sharedPref.getBoolean(ArtistAppConfig.KEY_PREF_COMPILER_CODELIB_APPCOMPART, false);
@@ -89,7 +87,7 @@ public class ArtistConfigFactory {
         artistConfig.app_apk_file_path_alternative = artistConfig.app_folder_path + File.separator + ArtistRunConfig.BASE_APK_ALTERNATIVE;
 
         artistConfig.app_oat_folder_path = artistConfig.app_folder_path + File.separator + "oat" + File.separator;
-        artistConfig.app_oat_architecture = AndroidUtils.probeArchitetureFolderName(artistConfig.app_oat_folder_path );
+        artistConfig.app_oat_architecture = AndroidUtils.probeArchitetureFolderName(artistConfig.app_oat_folder_path);
         artistConfig.app_oat_file_path = artistConfig.app_oat_folder_path
                 + artistConfig.app_oat_architecture
                 + File.separator + ArtistRunConfig.OAT_FILE;
@@ -100,25 +98,23 @@ public class ArtistConfigFactory {
 
         artistConfig.keystore = new File(AndroidUtils.getFilesDirLocation(context, ArtistRunConfig.KEYSTORE_NAME));
 
-        artistConfig.REPLACE_BASE_APK = sharedPref.getBoolean("pref_key_compiler_replace_base_apk", false);
-
         try {
             Field fieldNativeLibraryRootDir = ApplicationInfo.class.getDeclaredField("nativeLibraryRootDir");
-            artistConfig.nativeLibraryRootDir = (String)fieldNativeLibraryRootDir.get(context.getApplicationInfo());
+            artistConfig.nativeLibraryRootDir = (String) fieldNativeLibraryRootDir.get(context.getApplicationInfo());
             artistConfig.nativeLibraryDir = artistConfig.nativeLibraryRootDir
-                                            + File.separator + "arm" + File.separator;
+                    + File.separator + "arm" + File.separator;
             Field fieldSecondaryNativeLibraryDir = ApplicationInfo.class.getDeclaredField("secondaryNativeLibraryDir");
-            artistConfig.secondaryNativeLibraryDir = (String)fieldSecondaryNativeLibraryDir.get(context.getApplicationInfo());
+            artistConfig.secondaryNativeLibraryDir = (String) fieldSecondaryNativeLibraryDir.get(context.getApplicationInfo());
 
             Field fieldNativeLibraryRootRequiresIsa = ApplicationInfo.class.getDeclaredField("nativeLibraryRootRequiresIsa");
-            artistConfig.nativeLibraryRootRequiresIsa = (Boolean)fieldNativeLibraryRootRequiresIsa.get(context.getApplicationInfo());
+            artistConfig.nativeLibraryRootRequiresIsa = (Boolean) fieldNativeLibraryRootRequiresIsa.get(context.getApplicationInfo());
 
             Field fieldPrimaryCpuAbi = ApplicationInfo.class.getDeclaredField("primaryCpuAbi");
-            artistConfig.primaryCpuAbi = (String)fieldPrimaryCpuAbi.get(context.getApplicationInfo());
+            artistConfig.primaryCpuAbi = (String) fieldPrimaryCpuAbi.get(context.getApplicationInfo());
 
             Field fieldSecondaryCpuAbi = ApplicationInfo.class.getDeclaredField("secondaryCpuAbi");
-            artistConfig.secondaryCpuAbi = (String)fieldSecondaryCpuAbi.get(context.getApplicationInfo());
-        } catch (final NoSuchFieldException|IllegalAccessException e) {
+            artistConfig.secondaryCpuAbi = (String) fieldSecondaryCpuAbi.get(context.getApplicationInfo());
+        } catch (final NoSuchFieldException | IllegalAccessException e) {
             Log.e(TAG, "Getting ApplicationInfo FAILED", e);
         }
         Log.i(TAG, artistConfig.toString());

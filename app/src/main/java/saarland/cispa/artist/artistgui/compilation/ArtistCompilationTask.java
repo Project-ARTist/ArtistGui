@@ -83,7 +83,7 @@ public class ArtistCompilationTask implements Callable, ArtistGuiProgress {
             success = artist.Run(this.context);
         } catch (final Throwable t) {
             Log.e(TAG, String.format("Artist Failed: %s (%s)",
-                    this.config.app_apk_name,
+                    this.config.app_name,
                     this.config.app_apk_file_path),
                     t
             );

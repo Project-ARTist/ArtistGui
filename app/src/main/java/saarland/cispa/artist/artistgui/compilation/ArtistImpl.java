@@ -119,7 +119,7 @@ public class ArtistImpl implements Artist {
 
         String pathToApkSigned;
         // deactivate injection upon user wish or if no code lib is provided
-        if (runConfig.INJECT_CODELIB && runConfig.codeLib != null) {
+        if (runConfig.codeLib != null) {
             progressUpdateVerbose(-1, "Injecting CodeLib");
             final File appApk = new File(runConfig.app_apk_file_path);
             final File codeLibApk = runConfig.codeLib;
@@ -141,9 +141,7 @@ public class ArtistImpl implements Artist {
             return !pathToApkSigned.isEmpty();
         } else {
             progressUpdateVerbose(-1, "Not Injecting CodeLib");
-            Log.i(TAG, String.format("Skip CodeLib Injection " +
-                    "(Inject CodeLib: %b)",
-                    runConfig.INJECT_CODELIB));
+            Log.i(TAG, "Skip CodeLib Injection");
             Log.d(TAG, "MergeCodeLib SKIPPED");
             return true;
         }
@@ -236,12 +234,6 @@ public class ArtistImpl implements Artist {
 
             backupOriginalApk(this.config);
 
-            if (this.config.REPLACE_BASE_APK) {
-                Log.i(TAG, "Replacing the original base.apk");
-                replaceAppApkWithMergedApk(config);
-            } else {
-                Log.i(TAG, "Leaving the original base.apk untouched");
-            }
             progressUpdate(50, "Compiling: " + config.app_name);
 
             ArtistThread.checkThreadCancellation();
@@ -413,13 +405,10 @@ public class ArtistImpl implements Artist {
                         + " --compiler-filter=everything"
                         + " --generate-debug-info"
                         + " --compile-pic";
-        if (this.config.REPLACE_BASE_APK) {
-            cmd_dex2oat_compile += " --dex-file="  + config.app_apk_file_path;
-        } else {
-            cmd_dex2oat_compile += " --dex-file="  + (config.INJECT_CODELIB ? config.app_apk_merged_signed_file_path : config.app_apk_file_path);
-            cmd_dex2oat_compile += " --checksum-rewriting";
-        }
-        cmd_dex2oat_compile += " --dex-location="  + config.app_apk_file_path;
+
+        cmd_dex2oat_compile += " --dex-file=" + (config.app_apk_file_path);
+        cmd_dex2oat_compile += " --checksum-rewriting";
+        cmd_dex2oat_compile += " --dex-location=" + config.app_apk_file_path;
 
         if (config.COMPILER_THREADS != -1) {
             cmd_dex2oat_compile += " -j" + config.COMPILER_THREADS;
