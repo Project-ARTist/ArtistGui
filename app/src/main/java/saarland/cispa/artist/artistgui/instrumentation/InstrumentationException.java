@@ -19,33 +19,24 @@
  * @author "Sebastian Weisgerber <weisgerber@cispa.saarland>"
  *
  */
-package saarland.cispa.artist.artistgui.compilation;
+package saarland.cispa.artist.artistgui.instrumentation;
 
+public class InstrumentationException extends Exception {
 
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.ResultReceiver;
-
-public class CompilationResultReceiver extends ResultReceiver {
-
-    private Receiver mReceiver;
-
-    public CompilationResultReceiver(Handler handler) {
-        super(handler);
+    public InstrumentationException() {
+        super();
     }
 
-    public void setReceiver(Receiver receiver) {
-        mReceiver = receiver;
+    public InstrumentationException(Throwable cause) {
+        super(cause);
     }
 
-    public interface Receiver {
-        public void onReceiveResult(int resultCode, Bundle resultData);
+    public InstrumentationException(String message) {
+        super(message);
     }
 
-    @Override
-    protected void onReceiveResult(int resultCode, Bundle resultData) {
-        if (mReceiver != null) {
-            mReceiver.onReceiveResult(resultCode, resultData);
-        }
+    public InstrumentationException(String message, Throwable cause) {
+        super(message, cause);
     }
+
 }

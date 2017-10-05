@@ -1,4 +1,4 @@
-/**
+/*
  * The ARTist Project (https://artist.cispa.saarland)
  *
  * Copyright (C) 2017 CISPA (https://cispa.saarland), Saarland University
@@ -15,27 +15,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * @author "Oliver Schranz <oliver.schranz@cispa.saarland>"
- * @author "Sebastian Weisgerber <weisgerber@cispa.saarland>"
- *
  */
-package saarland.cispa.artist.artistgui.compilation.thread;
 
-public class ArtistInterruptedException extends RuntimeException {
+package saarland.cispa.artist.artistgui.instrumentation.stages;
 
-    public ArtistInterruptedException() {
-        super();
-    }
+import saarland.cispa.artist.artistgui.instrumentation.InstrumentationException;
 
-    public ArtistInterruptedException(Throwable cause) {
-        super(cause);
-    }
+public interface InstrumentationStages {
+    String prepareEnvironment() throws InstrumentationException;
 
-    public ArtistInterruptedException(String message) {
-        super(message);
-    }
+    void probePermissionAndDeleteOatFile();
 
-    public ArtistInterruptedException(String message, Throwable cause) {
-        super(message, cause);
-    }
+    void mergeCodeLib() throws InstrumentationException;
+
+    void backupMergedApk();
+
+    void runDex2OatCompilation(String pathDex2oat) throws InstrumentationException;
+
+    boolean setOatFilePermissions();
 }

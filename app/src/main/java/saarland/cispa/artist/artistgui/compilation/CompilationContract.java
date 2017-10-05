@@ -19,12 +19,11 @@
 
 package saarland.cispa.artist.artistgui.compilation;
 
+import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
 
 import saarland.cispa.artist.artistgui.base.BasePresenter;
 import saarland.cispa.artist.artistgui.base.BaseView;
-import saarland.cispa.artist.artistgui.settings.db.AddInstrumentedPackageToDbAsyncTask;
 
 public interface CompilationContract {
 
@@ -37,11 +36,7 @@ public interface CompilationContract {
     interface Presenter extends BasePresenter {
         void checkIfCodeLibIsChosen();
 
-        void connectToCompilationService();
-
         void createArtistFolders();
-
-        ServiceConnection getCompileServiceConnection();
 
         void maybeStartRecompiledApp(final String applicationName);
 
@@ -49,8 +44,6 @@ public interface CompilationContract {
 
         void executeIntentTasks(Intent intent);
 
-        void onCompilationFinished(int resultCode, Intent data,
-                                   AddInstrumentedPackageToDbAsyncTask
-                                           addInstrumentedPackageToDbAsyncTask);
+        void handleInstrumentationResult(Context context, boolean isSuccess, String packageName);
     }
 }

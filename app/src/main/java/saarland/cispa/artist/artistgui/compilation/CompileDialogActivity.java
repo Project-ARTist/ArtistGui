@@ -1,14 +1,14 @@
 /**
  * The ARTist Project (https://artist.cispa.saarland)
- *
+ * <p>
  * Copyright (C) 2017 CISPA (https://cispa.saarland), Saarland University
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,19 +17,20 @@
  *
  * @author "Oliver Schranz <oliver.schranz@cispa.saarland>"
  * @author "Sebastian Weisgerber <weisgerber@cispa.saarland>"
- *
  */
 package saarland.cispa.artist.artistgui.compilation;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.IBinder;
 import android.os.PersistableBundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.text.method.ScrollingMovementMethod;
 import android.view.MotionEvent;
 import android.view.View;
@@ -42,25 +43,20 @@ import java.util.Locale;
 import java.util.Objects;
 
 import saarland.cispa.artist.artistgui.R;
-import saarland.cispa.artist.artistgui.compilation.notification.CompileNotification;
+import saarland.cispa.artist.artistgui.instrumentation.InstrumentationService;
+import saarland.cispa.artist.artistgui.instrumentation.progress.ProgressPublisher;
 import saarland.cispa.artist.artistgui.utils.LogA;
 import trikita.log.Log;
 
-public class CompileDialogActivity
-        extends Activity
-        implements CompilationResultReceiver.Receiver, ArtistGuiProgress {
+public class CompileDialogActivity extends Activity {
 
     private static final String TAG = "CompileDialogActivity";
 
-    public static final int COMPILE_DIALOG_ID = 555;
-
-    public CompilationResultReceiver mReceiver = null;
-
-    private int activityResult = RESULT_CANCELED;
+    private static final String EXTRA_APP_NAME = "app_name";
 
     private String APP_NAME = null;
 
-    CompilationService compileService;
+    InstrumentationService compileService;
     boolean boundToService = false;
 
     TextView compileStatus = null;
@@ -78,16 +74,14 @@ public class CompileDialogActivity
             Log.d(TAG, "onServiceConnected()");
 
             // We've bound to LocalService, cast the IBinder and get LocalService instance
-            CompilationService.CompilationServiceBinder binder =
-                    (CompilationService.CompilationServiceBinder) service;
+            InstrumentationService.InstrumentationServiceBinder binder =
+                    (InstrumentationService.InstrumentationServiceBinder) service;
             compileService = binder.getService();
             boundToService = true;
 
             if (APP_NAME != null) {
                 setDefaultTitle();
                 startCompilation();
-            } else {
-                reconnectGuiToService();
             }
         }
 
@@ -99,84 +93,50 @@ public class CompileDialogActivity
     };
 
     private void startCompilation() {
-        compileService.compileInstalledApp(mReceiver, APP_NAME);
-        compileService.registerArtistGuiProgress(CompileDialogActivity.this);
+        compileService.instrumentApp(APP_NAME);
     }
 
-    private void closeActivity() {
-        Log.i(TAG, "CompileDialogActivity closing, nothing is compiling");
-        CompileDialogActivity.this.finish();
-        CompileNotification notification =
-                new CompileNotification(getApplicationContext());
-        notification.kill("");
-    }
+    private BroadcastReceiver mResultReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent != null) {
+                String action = intent.getAction();
 
-    private void reconnectGuiToService() {
-        Log.d(TAG, "reconnectGuiToService()");
-        final String appName = compileService.reconnectGuiToService(this, mReceiver);
-        final String lastStatusMessage = compileService.getLastStatusMessage();
-        setTitle(appName);
-        updateProgress(-1, lastStatusMessage);
-        if (appName == null || appName.isEmpty()) {
-            Log.d(TAG, "reconnectGuiToService() => closeActivity()");
-            closeActivity();
-        }
-    }
+                if (action.equals(ProgressPublisher.ACTION_INSTRUMENTATION_STATUS_UPDATE)) {
+                    int progress = intent
+                            .getIntExtra(ProgressPublisher.EXTRA_INSTRUMENTATION_STATUS_PROGRESS, -1);
+                    String message = intent
+                            .getStringExtra(ProgressPublisher.EXTRA_INSTRUMENTATION_STATUS_MESSAGE);
 
-    @Override
-    public void onReceiveResult(int resultCode, Bundle resultData) {
-        String appPackageName = "";
-        if (resultData != null) {
-            appPackageName = resultData.getString(ArtistImpl.INTENT_EXTRA_APP_NAME);
-        }
-        Log.d(TAG, String.format(Locale.getDefault(),
-                "CompileDialogActivity.onReceiveResult() resultcode[%d] APP[%s]",
-                resultCode, appPackageName));
-
-        if (appPackageName != null && !appPackageName.isEmpty()) {
-            compileService.compilationCleanup(appPackageName);
-        } else {
-            compileService.compilationCleanup(APP_NAME);
-        }
-        switch (resultCode) {
-            case ArtistImpl.COMPILATION_CANCELED:
-            case ArtistImpl.COMPILATION_ERROR:
-                activityResult = RESULT_CANCELED;
-                setActivityResult();
-                finish();
-                break;
-            case ArtistImpl.COMPILATION_SUCCESS:
-                activityResult = RESULT_OK;
-                setActivityResult();
-                finish();
-                break;
-            default:
-                break;
-        }
-    }
-
-    @Override
-    public void updateProgress(int progress, String message) {
-        Log.d(TAG, "updateProgress() " + progress + ": " + message);
-        runOnUiThread(() -> {
-            setCompilationProgress(progress);
-            if (progress >= 0 ) {
-                this.compileStatus.setText(progress + ": " + message);
-            } else {
-                this.compileStatus.setText(message);
+                    if (progress != -1) {
+                        updateProgress(progress, message);
+                    } else {
+                        updateProgressVerbose(progress, message);
+                    }
+                } else if (action.equals(ProgressPublisher.ACTION_INSTRUMENTATION_RESULT)) {
+                    finish();
+                }
             }
-            this.compileStatusExtended.append(message + "\n");
-        });
+        }
+    };
+
+
+    private void updateProgress(int progress, String message) {
+        Log.d(TAG, "reportProgressStage() " + progress + ": " + message);
+        setCompilationProgress(progress);
+        if (progress >= 0) {
+            this.compileStatus.setText(progress + ": " + message);
+        } else {
+            this.compileStatus.setText(message);
+        }
+        this.compileStatusExtended.append(message + "\n");
     }
 
-    @Override
-    public void updateProgressVerbose(int progress, String message) {
+    private void updateProgressVerbose(int progress, String message) {
         Log.d(TAG, "updateProgressVerbose() " + progress + ": " + message);
-        runOnUiThread(() -> {
-            setCompilationProgress(progress);
-            this.progressBar.setProgress(progress);
-            this.compileStatusExtended.append("> " + message + "\n");
-        });
+        setCompilationProgress(progress);
+        this.progressBar.setProgress(progress);
+        this.compileStatusExtended.append("> " + message + "\n");
     }
 
     private void setCompilationProgress(int progress) {
@@ -191,39 +151,6 @@ public class CompileDialogActivity
     }
 
     @Override
-    public void kill(final String message) {
-        Log.d(TAG, "kill() " + message);
-        runOnUiThread(() -> {
-            this.compileStatus.setText(message);
-            this.compileStatusExtended.setText(message);
-        });
-    }
-
-    @Override
-    public void doneSuccess(final String message) {
-        Log.d(TAG, "doneSuccess() " + message);
-        runOnUiThread(() -> {
-            setCompilationProgress(100);
-            this.compileStatus.setText(message);
-            this.compileStatusExtended.setText(message);
-        });
-    }
-
-    @Override
-    public void doneFailed(final String message) {
-        Log.d(TAG, "doneFailed() " + message);
-        runOnUiThread(() -> {
-            this.compileStatus.setText(message);
-            this.compileStatusExtended.setText(message);
-        });
-    }
-
-    @Override
-    public void done() {
-        Log.d(TAG, "done()");
-    }
-
-    @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate()");
@@ -231,12 +158,9 @@ public class CompileDialogActivity
             Log.d(TAG, "onCreate() savedInstanceState: " + savedInstanceState.toString());
         }
 
-        this.mReceiver = new CompilationResultReceiver(new Handler());
-        this.mReceiver.setReceiver(this);
-
         final Bundle bundle = getIntent().getExtras();
-        if(bundle != null) {
-            this.APP_NAME = bundle.getString(CompilationService.EXTRA_APP_NAME);
+        if (bundle != null) {
+            this.APP_NAME = bundle.getString(EXTRA_APP_NAME);
             Log.d(TAG, "onCreate() Bundle APP_NAME: " + this.APP_NAME);
         }
         setContentView(R.layout.dialog_compilation);
@@ -277,7 +201,7 @@ public class CompileDialogActivity
     }
 
     private void setupButtons() {
-        final Button buttonVerbose = (Button)findViewById(R.id.button_compile_verbose);
+        final Button buttonVerbose = (Button) findViewById(R.id.button_compile_verbose);
         buttonVerbose.setOnClickListener(onClickListener -> {
             if (this.compileStatusExtended.isShown()) {
                 this.compileStatusExtended.setVisibility(View.GONE);
@@ -296,21 +220,22 @@ public class CompileDialogActivity
             }
         });
 
-        final Button buttonCancel = (Button)findViewById(R.id.button_compile_cancel);
+        final Button buttonCancel = (Button) findViewById(R.id.button_compile_cancel);
         buttonCancel.setOnClickListener(onClickListener -> {
             Log.d(TAG, "Button: Cancel()");
             if (boundToService
                     && compileService != null
                     && APP_NAME != null) {
-                compileService.cancelCompilation(APP_NAME);
+                compileService.cancel();
             }
             Log.d(TAG, "Button: Cancel() DONE_ finish()");
+            finish();
         });
     }
 
     private void setupTextViews() {
-        this.compileStatus = (TextView)findViewById(R.id.compile_status);
-        this.compileStatusExtended = (TextView)findViewById(R.id.compile_status_extended);
+        this.compileStatus = (TextView) findViewById(R.id.compile_status);
+        this.compileStatusExtended = (TextView) findViewById(R.id.compile_status_extended);
         this.compileStatusExtended.setMovementMethod(new ScrollingMovementMethod());
     }
 
@@ -318,9 +243,15 @@ public class CompileDialogActivity
     protected void onStart() {
         super.onStart();
         Log.d(TAG, "onStart()");
-        Intent intent = new Intent(this, CompilationService.class);
-        CompilationService.startService(getApplicationContext(), null);
+
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(ProgressPublisher.ACTION_INSTRUMENTATION_STATUS_UPDATE);
+        intentFilter.addAction(ProgressPublisher.ACTION_INSTRUMENTATION_RESULT);
+        LocalBroadcastManager.getInstance(this).registerReceiver(mResultReceiver, intentFilter);
+
+        Intent intent = new Intent(this, InstrumentationService.class);
         bindService(intent, compileServiceConnection, Context.BIND_AUTO_CREATE);
+        boundToService = true;
     }
 
     @Override
@@ -337,17 +268,7 @@ public class CompileDialogActivity
         if (boundToService) {
             unbindService(compileServiceConnection);
         }
-    }
-
-    private void setActivityResult() {
-        final Intent resultData = new Intent();
-        resultData.putExtra(ArtistImpl.INTENT_EXTRA_APP_NAME, APP_NAME);
-        if (getParent() == null) {
-            setResult(activityResult, resultData);
-        } else {
-            getParent().setResult(activityResult, resultData);
-        }
-        Log.d(TAG,"setActivityResult() : " + activityResult);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mResultReceiver);
     }
 
     @Override
@@ -387,10 +308,10 @@ public class CompileDialogActivity
     public static void compile(final Activity activity, final String apkPackageName) {
         final Intent intent = new Intent(activity, CompileDialogActivity.class);
         final Bundle bundle = new Bundle();
-        bundle.putString(CompilationService.EXTRA_APP_NAME, apkPackageName);
+        bundle.putString(EXTRA_APP_NAME, apkPackageName);
         intent.putExtras(bundle); //Put your id to your next Intent
         Log.i(TAG, String.format("LaunchActivity: %s for Artist App: %s",
                 CompileDialogActivity.class.toString(), apkPackageName));
-        activity.startActivityForResult(intent, COMPILE_DIALOG_ID);
+        activity.startActivity(intent);
     }
 }

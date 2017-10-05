@@ -1,3 +1,7 @@
+package saarland.cispa.artist.artistgui.instrumentation.thread;
+
+import trikita.log.Log;
+
 /**
  * The ARTist Project (https://artist.cispa.saarland)
  *
@@ -15,25 +19,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * @author "Oliver Schranz <oliver.schranz@cispa.saarland>"
- * @author "Sebastian Weisgerber <weisgerber@cispa.saarland>"
+  * @author "Sebastian Weisgerber <weisgerber@cispa.saarland>"
  *
  */
-package saarland.cispa.artist.artistgui.compilation;
 
-import android.content.Context;
+public class ArtistThread {
 
-import saarland.cispa.artist.artistgui.compilation.config.ArtistRunConfig;
+    private static final String TAG = "ArtistThread";
 
-
-public interface Artist {
-
-    String CODE_LIB_ASSET = "assetcodelib.apk";
-
-    void init(final Context context);
-    void addGuiProgressListener(final ArtistGuiProgress callback);
-
-    boolean mergeCodeLib(final Context context, final ArtistRunConfig config);
-
-    boolean Run(final Context context);
+    public static void checkThreadCancellation() throws ArtistInterruptedException {
+        if (Thread.currentThread().isInterrupted()) {
+            Log.d(TAG, String.format("checkThreadCancellation() interrupted[%b]",
+                    Thread.currentThread().isInterrupted()));
+            throw new ArtistInterruptedException("Thread is interrupted.");
+        }
+    }
 }

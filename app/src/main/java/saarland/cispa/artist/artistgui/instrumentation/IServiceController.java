@@ -1,8 +1,4 @@
-package saarland.cispa.artist.artistgui.compilation.thread;
-
-import trikita.log.Log;
-
-/**
+/*
  * The ARTist Project (https://artist.cispa.saarland)
  *
  * Copyright (C) 2017 CISPA (https://cispa.saarland), Saarland University
@@ -19,19 +15,20 @@ import trikita.log.Log;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
-  * @author "Sebastian Weisgerber <weisgerber@cispa.saarland>"
- *
  */
 
-public class ArtistThread {
+package saarland.cispa.artist.artistgui.instrumentation;
 
-    private static final String TAG = "ArtistThread";
+import android.app.Service;
 
-    public static void checkThreadCancellation() throws ArtistInterruptedException {
-        if (Thread.currentThread().isInterrupted()) {
-            Log.d(TAG, String.format("checkThreadCancellation() interrupted[%b]",
-                    Thread.currentThread().isInterrupted()));
-            throw new ArtistInterruptedException("Thread is interrupted.");
-        }
-    }
+interface IServiceController {
+    void moveToForeground(Service service);
+
+    void instrument(String packageName);
+
+    void cancel();
+
+    boolean isInstrumenting();
+
+    void processResult(String packageName);
 }

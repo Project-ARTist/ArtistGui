@@ -18,7 +18,7 @@
  * @author "Oliver Schranz <oliver.schranz@cispa.saarland>"
  * @author "Sebastian Weisgerber <weisgerber@cispa.saarland>"
  */
-package saarland.cispa.artist.artistgui.compilation.config;
+package saarland.cispa.artist.artistgui.instrumentation.config;
 
 import java.io.File;
 

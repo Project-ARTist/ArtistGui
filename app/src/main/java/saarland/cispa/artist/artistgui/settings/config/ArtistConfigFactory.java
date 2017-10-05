@@ -32,8 +32,7 @@ import android.support.annotation.Nullable;
 import java.io.File;
 import java.lang.reflect.Field;
 
-import saarland.cispa.artist.artistgui.compilation.Artist;
-import saarland.cispa.artist.artistgui.compilation.config.ArtistRunConfig;
+import saarland.cispa.artist.artistgui.instrumentation.config.ArtistRunConfig;
 import saarland.cispa.artist.artistgui.utils.AndroidUtils;
 import saarland.cispa.artist.artistgui.utils.ArtistUtils;
 import trikita.log.Log;
@@ -46,6 +45,7 @@ import trikita.log.Log;
 public class ArtistConfigFactory {
 
     private static final String TAG = "ArtistConfigFactory";
+    private static final String CODE_LIB_ASSET = "assetcodelib.apk";
 
     public final static String PATH_ASSET_ARTIST_ROOT = "artist";
     public final static String PATH_ASSET_ARTIST_BIN_PREFIX = PATH_ASSET_ARTIST_ROOT + File.separator + "android-";
@@ -72,7 +72,7 @@ public class ArtistConfigFactory {
         artistConfig.COMPILER_THREADS = Integer.parseInt(compiler_threads);
         artistConfig.BACKUP_APK_MERGED = sharedPref.getBoolean(ArtistAppConfig.KEY_PREF_BACKUP_APK_MERGED, false);
 
-        final PackageInfo packageInfo = getPackageInfo(context, artistConfig.app_package_name);
+        final PackageInfo packageInfo = getPackageInfo(context, appPackageName);
 
         artistConfig.app_package_name = appPackageName;
         artistConfig.app_apk_file_path = packageInfo.applicationInfo.publicSourceDir;
@@ -127,7 +127,7 @@ public class ArtistConfigFactory {
                 codeLibPath = AndroidUtils.getFilesDirLocation(context, ArtistAppConfig.APP_FOLDER_CODELIBS + File.separator + codeLibName);
             } else if (userCodeLib.startsWith(ArtistUtils.CODELIB_ASSET)) {
                 String codeLibName = userCodeLib.replaceFirst(ArtistUtils.CODELIB_ASSET, "");
-                codeLibPath = AndroidUtils.getFilesDirLocation(context, Artist.CODE_LIB_ASSET);
+                codeLibPath = AndroidUtils.getFilesDirLocation(context, CODE_LIB_ASSET);
             }
 
             if (codeLibPath != null) {
@@ -138,7 +138,7 @@ public class ArtistConfigFactory {
     }
 
     @Nullable
-    public static PackageInfo getPackageInfo(final Context context, final String app_name) {
+    private static PackageInfo getPackageInfo(final Context context, final String app_name) {
         PackageInfo packageInfo = null;
         try {
             packageInfo = context.getPackageManager().getPackageInfo(app_name, 0);

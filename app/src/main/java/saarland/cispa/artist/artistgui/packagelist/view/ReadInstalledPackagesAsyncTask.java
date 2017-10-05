@@ -25,7 +25,6 @@ import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 import saarland.cispa.artist.artistgui.Package;
