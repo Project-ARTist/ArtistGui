@@ -19,23 +19,24 @@
  * @author "Sebastian Weisgerber <weisgerber@cispa.saarland>"
  *
  */
-package saarland.cispa.artist.artistgui.instrumentation.thread;
+package saarland.cispa.artist.artistgui.instrumentation.exceptions;
 
-public class ArtistInterruptedException extends RuntimeException {
+public class InstrumentationException extends Exception {
 
-    public ArtistInterruptedException() {
+    public InstrumentationException() {
         super();
     }
 
-    public ArtistInterruptedException(Throwable cause) {
+    public InstrumentationException(Throwable cause) {
         super(cause);
     }
 
-    public ArtistInterruptedException(String message) {
+    public InstrumentationException(String message) {
         super(message);
     }
 
-    public ArtistInterruptedException(String message, Throwable cause) {
+    public InstrumentationException(String message, Throwable cause) {
         super(message, cause);
     }
+
 }

@@ -40,7 +40,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.Locale;
-import java.util.Objects;
 
 import saarland.cispa.artist.artistgui.R;
 import saarland.cispa.artist.artistgui.instrumentation.InstrumentationService;
@@ -52,9 +51,7 @@ public class CompileDialogActivity extends Activity {
 
     private static final String TAG = "CompileDialogActivity";
 
-    private static final String EXTRA_APP_NAME = "app_name";
-
-    private String APP_NAME = null;
+    private String packageName;
 
     InstrumentationService compileService;
     boolean boundToService = false;
@@ -78,23 +75,13 @@ public class CompileDialogActivity extends Activity {
                     (InstrumentationService.InstrumentationServiceBinder) service;
             compileService = binder.getService();
             boundToService = true;
-
-            if (APP_NAME != null) {
-                setDefaultTitle();
-                startCompilation();
-            }
         }
 
         @Override
         public void onServiceDisconnected(ComponentName arg0) {
             Log.d(TAG, "onServiceDisconnected()");
-            boundToService = false;
         }
     };
-
-    private void startCompilation() {
-        compileService.instrumentApp(APP_NAME);
-    }
 
     private BroadcastReceiver mResultReceiver = new BroadcastReceiver() {
         @Override
@@ -158,13 +145,7 @@ public class CompileDialogActivity extends Activity {
             Log.d(TAG, "onCreate() savedInstanceState: " + savedInstanceState.toString());
         }
 
-        final Bundle bundle = getIntent().getExtras();
-        if (bundle != null) {
-            this.APP_NAME = bundle.getString(EXTRA_APP_NAME);
-            Log.d(TAG, "onCreate() Bundle APP_NAME: " + this.APP_NAME);
-        }
         setContentView(R.layout.dialog_compilation);
-
         this.compileDialogLayout = (RelativeLayout) findViewById(R.id.compile_dialog_layout);
         this.progressBar = (ProgressBar) findViewById(R.id.compile_progress);
         this.progressBar.setIndeterminate(false);
@@ -172,13 +153,46 @@ public class CompileDialogActivity extends Activity {
         setupButtons();
         setupTextViews();
         setDefaultTitle();
+
+        setupBroadcastReceiver();
     }
 
     private void setDefaultTitle() {
-        if (APP_NAME != null && !Objects.equals(APP_NAME, "")) {
-            setTitle(APP_NAME);
+        Intent intent = getIntent();
+        if (intent != null) {
+            packageName = intent.getStringExtra(InstrumentationService.INTENT_KEY_APP_NAME);
+        }
+        if (packageName != null && !packageName.isEmpty()) {
+            setTitle(packageName);
         } else {
             setTitle("Artist Compilation");
+        }
+    }
+
+    private void setupBroadcastReceiver() {
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(ProgressPublisher.ACTION_INSTRUMENTATION_STATUS_UPDATE);
+        intentFilter.addAction(ProgressPublisher.ACTION_INSTRUMENTATION_RESULT);
+        LocalBroadcastManager.getInstance(this).registerReceiver(mResultReceiver, intentFilter);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.d("onStart()");
+        if (!boundToService) {
+            Intent intent = new Intent(this, InstrumentationService.class);
+            bindService(intent, compileServiceConnection, Context.BIND_AUTO_CREATE);
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.d("onStop()");
+        if (boundToService) {
+            unbindService(compileServiceConnection);
+            boundToService = false;
         }
     }
 
@@ -186,18 +200,8 @@ public class CompileDialogActivity extends Activity {
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         Log.d(TAG, "onNewIntent(Intent intent)");
-    }
-
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        Log.d(TAG, "onRestoreInstanceState(savedInstanceState)");
-    }
-
-    @Override
-    public void onRestoreInstanceState(Bundle savedInstanceState, PersistableBundle persistentState) {
-        super.onRestoreInstanceState(savedInstanceState, persistentState);
-        Log.d(TAG, "onRestoreInstanceState(savedInstanceState, PersistableBundle persistentState)");
+        setIntent(intent);
+        setDefaultTitle();
     }
 
     private void setupButtons() {
@@ -225,7 +229,7 @@ public class CompileDialogActivity extends Activity {
             Log.d(TAG, "Button: Cancel()");
             if (boundToService
                     && compileService != null
-                    && APP_NAME != null) {
+                    && packageName != null) {
                 compileService.cancel();
             }
             Log.d(TAG, "Button: Cancel() DONE_ finish()");
@@ -240,35 +244,10 @@ public class CompileDialogActivity extends Activity {
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-        Log.d(TAG, "onStart()");
-
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(ProgressPublisher.ACTION_INSTRUMENTATION_STATUS_UPDATE);
-        intentFilter.addAction(ProgressPublisher.ACTION_INSTRUMENTATION_RESULT);
-        LocalBroadcastManager.getInstance(this).registerReceiver(mResultReceiver, intentFilter);
-
-        Intent intent = new Intent(this, InstrumentationService.class);
-        bindService(intent, compileServiceConnection, Context.BIND_AUTO_CREATE);
-        boundToService = true;
-    }
-
-    @Override
     protected void onResume() {
         super.onResume();
         Log.d(TAG, "onResume()");
         LogA.setUserLogLevel(getApplicationContext());
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        Log.d(TAG, "onStop()");
-        if (boundToService) {
-            unbindService(compileServiceConnection);
-        }
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(mResultReceiver);
     }
 
     @Override
@@ -305,13 +284,18 @@ public class CompileDialogActivity extends Activity {
         return true;
     }
 
-    public static void compile(final Activity activity, final String apkPackageName) {
-        final Intent intent = new Intent(activity, CompileDialogActivity.class);
-        final Bundle bundle = new Bundle();
-        bundle.putString(EXTRA_APP_NAME, apkPackageName);
-        intent.putExtras(bundle); //Put your id to your next Intent
+    public static void compile(final Context context, final String packageName) {
+        startCompilationService(context, packageName);
+        final Intent intent = new Intent(context, CompileDialogActivity.class);
+        intent.putExtra(InstrumentationService.INTENT_KEY_APP_NAME, packageName);
+        context.startActivity(intent);
         Log.i(TAG, String.format("LaunchActivity: %s for Artist App: %s",
-                CompileDialogActivity.class.toString(), apkPackageName));
-        activity.startActivity(intent);
+                CompileDialogActivity.class.toString(), packageName));
+    }
+
+    private static void startCompilationService(final Context context, final String packageName) {
+        final Intent intent = new Intent(context, InstrumentationService.class);
+        intent.putExtra(InstrumentationService.INTENT_KEY_APP_NAME, packageName);
+        context.startService(intent);
     }
 }

@@ -31,7 +31,7 @@ import java.util.Locale;
 
 import saarland.cispa.apksigner.ApkSigner;
 import saarland.cispa.apksigner.ApkZipSir;
-import saarland.cispa.artist.artistgui.instrumentation.InstrumentationException;
+import saarland.cispa.artist.artistgui.instrumentation.exceptions.InstrumentationException;
 import saarland.cispa.artist.artistgui.instrumentation.config.ArtistRunConfig;
 import saarland.cispa.artist.artistgui.instrumentation.progress.ProgressListener;
 import saarland.cispa.artist.artistgui.utils.AndroidUtils;

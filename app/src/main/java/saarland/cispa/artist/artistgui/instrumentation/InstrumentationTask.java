@@ -24,11 +24,11 @@ import android.content.Context;
 import java.util.List;
 
 import saarland.cispa.artist.artistgui.instrumentation.config.ArtistRunConfig;
+import saarland.cispa.artist.artistgui.instrumentation.exceptions.InstrumentationException;
 import saarland.cispa.artist.artistgui.instrumentation.progress.ProgressListener;
 import saarland.cispa.artist.artistgui.instrumentation.stages.InstrumentationStages;
 import saarland.cispa.artist.artistgui.instrumentation.stages.InstrumentationStagesImpl;
-import saarland.cispa.artist.artistgui.instrumentation.thread.ArtistInterruptedException;
-import saarland.cispa.artist.artistgui.instrumentation.thread.ArtistThread;
+import saarland.cispa.artist.artistgui.instrumentation.exceptions.ArtistInterruptedException;
 import trikita.log.Log;
 
 class InstrumentationTask implements Runnable {

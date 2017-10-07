@@ -19,7 +19,7 @@
 
 package saarland.cispa.artist.artistgui.instrumentation.stages;
 
-import saarland.cispa.artist.artistgui.instrumentation.InstrumentationException;
+import saarland.cispa.artist.artistgui.instrumentation.exceptions.InstrumentationException;
 
 public interface InstrumentationStages {
     String prepareEnvironment() throws InstrumentationException;

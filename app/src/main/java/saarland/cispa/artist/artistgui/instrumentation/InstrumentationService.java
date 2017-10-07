@@ -98,6 +98,11 @@ public class InstrumentationService extends Service {
         return START_STICKY;
     }
 
+    private void instrumentApp(String packageName) {
+        mServiceController.moveToForeground(this);
+        mServiceController.instrument(packageName);
+    }
+
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -126,11 +131,6 @@ public class InstrumentationService extends Service {
         super.onDestroy();
         Log.i(TAG, "onDestroy()");
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mResultReceiver);
-    }
-
-    public void instrumentApp(String packageName) {
-        mServiceController.moveToForeground(this);
-        mServiceController.instrument(packageName);
     }
 
     public void cancel() {

@@ -1,7 +1,3 @@
-package saarland.cispa.artist.artistgui.instrumentation.thread;
-
-import trikita.log.Log;
-
 /**
  * The ARTist Project (https://artist.cispa.saarland)
  *
@@ -19,19 +15,27 @@ import trikita.log.Log;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
-  * @author "Sebastian Weisgerber <weisgerber@cispa.saarland>"
+ * @author "Oliver Schranz <oliver.schranz@cispa.saarland>"
+ * @author "Sebastian Weisgerber <weisgerber@cispa.saarland>"
  *
  */
+package saarland.cispa.artist.artistgui.instrumentation.exceptions;
 
-public class ArtistThread {
+public class ArtistInterruptedException extends RuntimeException {
 
-    private static final String TAG = "ArtistThread";
+    public ArtistInterruptedException() {
+        super();
+    }
 
-    public static void checkThreadCancellation() throws ArtistInterruptedException {
-        if (Thread.currentThread().isInterrupted()) {
-            Log.d(TAG, String.format("checkThreadCancellation() interrupted[%b]",
-                    Thread.currentThread().isInterrupted()));
-            throw new ArtistInterruptedException("Thread is interrupted.");
-        }
+    public ArtistInterruptedException(Throwable cause) {
+        super(cause);
+    }
+
+    public ArtistInterruptedException(String message) {
+        super(message);
+    }
+
+    public ArtistInterruptedException(String message, Throwable cause) {
+        super(message, cause);
     }
 }
