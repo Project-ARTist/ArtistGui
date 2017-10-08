@@ -68,21 +68,12 @@ class ServiceController implements IServiceController {
     @Override
     public void instrument(String packageName) {
         Log.d(TAG, String.format("instrument(%s)", packageName));
-        if (!isInCompilationQueue(packageName)) {
-            InstrumentationTask instrumentationTask = createInstrumentationTask(packageName);
+        InstrumentationTask task = createInstrumentationTask(packageName);
+        if (!mInstrumentationQueue.contains(task)) {
             createOrRestartThreadPool();
-            mThreadPool.submit(instrumentationTask);
-            mInstrumentationQueue.add(instrumentationTask);
+            mThreadPool.submit(task);
+            mInstrumentationQueue.add(task);
         }
-    }
-
-    private boolean isInCompilationQueue(String packageName) {
-        for (InstrumentationTask task : mInstrumentationQueue) {
-            if (task.getPackageName().equals(packageName)) {
-                return true;
-            }
-        }
-        return false;
     }
 
     private InstrumentationTask createInstrumentationTask(String packageName) {

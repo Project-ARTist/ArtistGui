@@ -20,6 +20,7 @@
 package saarland.cispa.artist.artistgui.instrumentation;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 
 import java.util.List;
 
@@ -39,8 +40,8 @@ class InstrumentationTask implements Runnable {
     private List<ProgressListener> mProgressListeners;
     private InstrumentationStages mInstrumenationStages;
 
-    InstrumentationTask(Context context, ArtistRunConfig runConfig,
-                        List<ProgressListener> listeners) {
+    InstrumentationTask(@NonNull Context context, @NonNull ArtistRunConfig runConfig,
+                        @NonNull List<ProgressListener> listeners) {
         this.mRunConfig = runConfig;
         mProgressListeners = listeners;
         mInstrumenationStages = new InstrumentationStagesImpl(context, mRunConfig,
@@ -105,5 +106,21 @@ class InstrumentationTask implements Runnable {
 
     public String getPackageName() {
         return mRunConfig.app_package_name;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        InstrumentationTask that = (InstrumentationTask) o;
+
+        return mRunConfig.app_package_name.equals(that.mRunConfig.app_package_name);
+
+    }
+
+    @Override
+    public int hashCode() {
+        return mRunConfig.app_package_name.hashCode();
     }
 }
