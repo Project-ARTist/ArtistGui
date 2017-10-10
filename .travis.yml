@@ -24,8 +24,21 @@ android:
     # - sys-img-armeabi-v7a-android-22
     # - sys-img-armeabi-v7a-android-17
 
+before_cache:
+  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+
+cache:
+  directories:
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
+    - $HOME/.android/build-cache
+
 install:
   # List and delete unnecessary components to free space
   - sdkmanager --list || true
   - echo yes | sdkmanager "extras;m2repository;com;android;support;constraint;constraint-layout;1.0.2"
   - echo yes | sdkmanager "extras;m2repository;com;android;support;constraint;constraint-layout-solver;1.0.2"
+
+# script: travis_wait gradle build connectedCheck
+script: travis_wait ./gradlew build connectedCheck
