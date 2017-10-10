@@ -32,6 +32,8 @@ art_version_file="assets/VERSION_ARTIST-${api_level_string}.md"
 mounted_art_path="${mounted_aosp}/art/"
 mounted_art_git_path="${mounted_art_path}/.git"
 
+working_dir=`pwd`
+
 dexToOatLibs=(
     "libc.so"
     "libc++.so"
@@ -59,6 +61,10 @@ if [ "${arch_64}" = true ]; then
     echo "Connecting to ${server_alias}, building Android [arm64]"
 else
     echo "Connecting to ${server_alias}, building Android [arm32]"
+fi
+
+if [ "${debug_binaries}" = true ]; then
+    [ -d "debug/android-${api_level}" ] || mkdir -p "debug/android-${api_level}"
 fi
 
 if [ "${arch_64}" = true ]; then
@@ -94,6 +100,7 @@ if [ $? -eq 0 ]; then
         echo "Copy dex2oat (32bit) -> ./assets/artist/${api_level_string}/dex2oat"
         cp ${mounted_aosp}/out/target/product/generic/symbols/system/bin/dex2oat ./assets/artist/${api_level_string}/dex2oat
     fi
+    cp ./assets/artist/${api_level_string}/dex2oat ${working_dir}/debug/android-${api_level}/dex2oat
 
     ## now loop through the above array
     for lib in "${dexToOatLibs[@]}"
@@ -108,10 +115,11 @@ if [ $? -eq 0 ]; then
         if [ "${debug_binaries}" = true ]; then
             echo " > ${lib}: Keeping debug symbols"
         else
-        echo " > ${lib}: Stripping debug symbols"
+            echo " > ${lib}: Stripping debug symbols"
             ${ndk_binary_strip} ./assets/artist/${api_level_string}/lib/${lib}
         fi
-
+        cp ./assets/artist/${api_level_string}/lib/${lib} ${working_dir}/debug/android-${api_level}/${lib}
+        # /home/weisgerber/mount/colossus04/weisgerber/aosp/aosp_8.0.0_r9_arm-eng/out/target/product/generic_arm64/obj/lib/
     done
     echo ""
     echo "Copying files DONE"
