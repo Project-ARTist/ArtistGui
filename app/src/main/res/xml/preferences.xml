@@ -64,5 +64,20 @@
             android:summary="@string/pref_compiler_inject_codelib_summary"
             android:title="@string/pref_compiler_inject_codelib" />
 
+        <SwitchPreference
+            android:key="pref_key_compiler_replace_base_apk"
+            android:title="@string/pref_compiler_replace_base_apk"
+            android:summary="@string/pref_compiler_replace_base_apk_summary"
+            android:defaultValue="false" />
+
     </PreferenceCategory>
+    <!--
+    <PreferenceCategory android:title="@string/pref_category_apps">
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="pref_key_apps_filter_google"
+            android:summary="@string/pref_apps_filter_google_summary"
+            android:title="@string/pref_apps_filter_google" />
+    </PreferenceCategory>
+    -->
 </PreferenceScreen>

@@ -63,6 +63,8 @@ public class ArtistImpl implements Artist {
     public final static int COMPILATION_CANCELED = 0;
     public final static int COMPILATION_ERROR = -1;
 
+    private static final boolean PIXEL_PHONE_ANDROID_8 = false;
+
     private ArtistRunConfig config;
 
     private ArtistGuiProgress guiProgress = null;
@@ -432,13 +434,20 @@ public class ArtistImpl implements Artist {
             Log.d(TAG, "Dex2oat: CodeLib Special: --launch-activity: " + launchActivity);
             cmd_dex2oat_compile += " --launch-activity=" + launchActivity;
         }
-
         if (config.app_oat_architecture.contains("arm64")) {
             // ARM64 Special Flags
             cmd_dex2oat_compile += " --instruction-set=arm64";
-            cmd_dex2oat_compile += " --instruction-set-features=smp,a53";
-            cmd_dex2oat_compile += " --instruction-set-variant=denver64";
-            cmd_dex2oat_compile += " --instruction-set-features=default";
+            // TODO: instruction-set features & variant needs to get set "per device" or we use generic
+            //       settings
+            if (PIXEL_PHONE_ANDROID_8) {
+                cmd_dex2oat_compile += " --instruction-set-variant=kryo";
+                cmd_dex2oat_compile += " --instruction-set-features=default";
+            } else {
+                // smp does not exist anymore on Android 8.0 Oreo
+                cmd_dex2oat_compile += " --instruction-set-features=smp,a53";
+                cmd_dex2oat_compile += " --instruction-set-variant=denver64";
+                cmd_dex2oat_compile += " --instruction-set-features=default";
+            }
             // ARM64 Special Flags END
             Log.d(TAG, "Compiling for 64bit Architecture!");
         }

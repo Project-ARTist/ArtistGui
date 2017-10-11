@@ -55,6 +55,14 @@ class ReadInstalledPackagesAsyncTask extends
         String appName;
         int appIconId;
         for (PackageInfo packageInfo : packageInfoList) {
+//            if (this.filterGapps) {
+//                if (packageInfo.packageName.startsWith("com.android.")) {
+//                    continue;
+//                }
+//                if (packageInfo.packageName.startsWith("com.google.")) {
+//                    continue;
+//                }
+//            }
             if (!isCancelled()) {
                 applicationInfo = packageInfo.applicationInfo;
                 appName = packageManager.getApplicationLabel(applicationInfo).toString();

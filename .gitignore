@@ -8,6 +8,7 @@
 /local.properties
 build/
 *.apk
+debug/
 doc/log
 doc/tombstones
 gradle/
