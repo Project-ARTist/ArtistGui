@@ -26,11 +26,7 @@ import android.support.design.widget.Snackbar;
 import android.view.View;
 import android.widget.Toast;
 
-import trikita.log.Log;
-
 public class GuiUtils {
-
-    private static final String TAG = "GuiUtils";
 
     public static void displayToast(final Activity activity, final String toastMessage) {
         if (activity != null) {

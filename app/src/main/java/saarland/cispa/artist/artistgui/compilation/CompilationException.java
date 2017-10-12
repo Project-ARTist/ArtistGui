@@ -23,6 +23,8 @@ package saarland.cispa.artist.artistgui.compilation;
 
 public class CompilationException extends Exception {
 
+    private static final long serialVersionUID = -1437266982628666410L;
+
     public CompilationException() {
         super();
     }

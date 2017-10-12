@@ -23,6 +23,8 @@ package saarland.cispa.artist.artistgui.compilation.thread;
 
 public class ArtistInterruptedException extends RuntimeException {
 
+    private static final long serialVersionUID = -5824135117314433833L;
+
     public ArtistInterruptedException() {
         super();
     }
