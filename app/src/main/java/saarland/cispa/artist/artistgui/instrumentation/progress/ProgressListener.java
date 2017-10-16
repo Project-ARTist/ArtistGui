@@ -24,11 +24,11 @@ import android.support.annotation.NonNull;
 public interface ProgressListener {
     void prepareReporter();
 
-    void reportProgressStage(String packageName, int progress, @NonNull final String stage);
+    void reportProgressStage(@NonNull String packageName, int progress, @NonNull final String stage);
 
-    void reportProgressDetails(String packageName, @NonNull final String message);
+    void reportProgressDetails(@NonNull String packageName, @NonNull final String message);
 
-    void onSuccess(String packageName);
+    void onSuccess(@NonNull String packageName);
 
-    void onFailure(String packageName);
+    void onFailure(@NonNull String packageName);
 }

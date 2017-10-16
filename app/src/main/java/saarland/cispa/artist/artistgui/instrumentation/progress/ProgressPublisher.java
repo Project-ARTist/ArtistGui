@@ -56,34 +56,37 @@ public class ProgressPublisher implements ProgressListener {
     }
 
     @Override
-    public void reportProgressStage(String packageName, int progress, @NonNull String stage) {
-        reportProgress(packageName, progress, stage);
-    }
-
-    @Override
-    public void reportProgressDetails(String packageName, @NonNull String message) {
-        reportProgress(packageName, -1, message);
-    }
-
-    private void reportProgress(String packageName, int progress, @NonNull String message) {
-        Intent intent = new Intent(ACTION_INSTRUMENTATION_STATUS_UPDATE);
-        intent.putExtra(EXTRA_PACKAGE_NAME, packageName);
+    public void reportProgressStage(@NonNull String packageName, int progress,
+                                    @NonNull String stage) {
+        Intent intent = buildIntent(packageName, stage);
         intent.putExtra(EXTRA_INSTRUMENTATION_STATUS_PROGRESS, progress);
-        intent.putExtra(EXTRA_INSTRUMENTATION_STATUS_MESSAGE, message);
         mBroadcastManager.sendBroadcast(intent);
     }
 
     @Override
-    public void onSuccess(String packageName) {
+    public void reportProgressDetails(@NonNull String packageName, @NonNull String message) {
+        Intent intent = buildIntent(packageName, message);
+        mBroadcastManager.sendBroadcast(intent);
+    }
+
+    private Intent buildIntent(@NonNull String packageName, @NonNull String message) {
+        Intent intent = new Intent(ACTION_INSTRUMENTATION_STATUS_UPDATE);
+        intent.putExtra(EXTRA_PACKAGE_NAME, packageName);
+        intent.putExtra(EXTRA_INSTRUMENTATION_STATUS_MESSAGE, message);
+        return intent;
+    }
+
+    @Override
+    public void onSuccess(@NonNull String packageName) {
         reportResult(packageName, true);
     }
 
     @Override
-    public void onFailure(String packageName) {
+    public void onFailure(@NonNull String packageName) {
         reportResult(packageName, false);
     }
 
-    private void reportResult(String packageName, boolean isSuccess) {
+    private void reportResult(@NonNull String packageName, boolean isSuccess) {
         Intent intent = new Intent(ACTION_INSTRUMENTATION_RESULT);
         intent.putExtra(EXTRA_PACKAGE_NAME, packageName);
         intent.putExtra(EXTRA_INSTRUMENTATION_RESULT, isSuccess);
