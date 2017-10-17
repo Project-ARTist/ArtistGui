@@ -40,6 +40,7 @@ public class ProgressDialogFragment extends DialogFragment implements ProgressCo
     public static final String TAG = "ProgressDialogFragment";
 
     private ProgressContract.Presenter mPresenter;
+    private boolean wasStopped;
     private TextView mStageTextView;
     private TextView mDetailsTextView;
 
@@ -50,9 +51,19 @@ public class ProgressDialogFragment extends DialogFragment implements ProgressCo
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        if (wasStopped) {
+            mPresenter.start();
+            wasStopped = false;
+        }
+    }
+
+    @Override
     public void onStop() {
         super.onStop();
         mPresenter.onStop();
+        wasStopped = true;
     }
 
     @Nullable

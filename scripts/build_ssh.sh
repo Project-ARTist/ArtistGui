@@ -1,13 +1,11 @@
 #!/usr/bin/env bash
 
-
 ### Building ARTist on a remote machine that is included locally via ssh.
 ### First argument is expected to be the file path of the corresponding ssh config for a particular sdk level.
 ### Execute from ArtistGUI root dir!
 
 # read parameter as configuration file path
 config=$1
-
 # include the config file
 
 if [ ! -f ${config} ]; then
@@ -15,7 +13,7 @@ if [ ! -f ${config} ]; then
     exit
 fi
 
-
+echo "ARTist SSH build started"
 
 # set the configuration values
 source $config
@@ -33,6 +31,8 @@ art_version_file="assets/VERSION_ARTIST-${api_level_string}.md"
 
 mounted_art_path="${mounted_aosp}/art/"
 mounted_art_git_path="${mounted_art_path}/.git"
+
+working_dir=`pwd`
 
 dexToOatLibs=(
     "libc.so"
@@ -57,9 +57,23 @@ dexToOatLibs=(
 )
 
 # do the actual building
-echo "Connecting to ${server_alias}, building Android"
+if [ "${arch_64}" = true ]; then
+    echo "Connecting to ${server_alias}, building Android [arm64]"
+else
+    echo "Connecting to ${server_alias}, building Android [arm32]"
+fi
 
-ssh ${server_alias} "cd ${server_aosp} ; . build/envsetup.sh; mmma art/ -j${threads}"
+if [ "${debug_binaries}" = true ]; then
+    [ -d "debug/android-${api_level}" ] || mkdir -p "debug/android-${api_level}"
+fi
+
+if [ "${arch_64}" = true ]; then
+#    ssh ${server_alias} "cd ${server_aosp} ; . build/envsetup.sh; lunch aosp_arm64-eng; mmma art/ -j${threads}"
+    ssh ${server_alias} "cd ${server_aosp} ; . build/envsetup.sh; lunch aosp_arm64-eng; mmm art/ -j${threads}"
+else
+    #ssh ${server_alias} "cd ${server_aosp} ; . build/envsetup.sh; lunch aosp_arm-eng; mmma art/ -j${threads}"
+    ssh ${server_alias} "cd ${server_aosp} ; . build/envsetup.sh; lunch aosp_arm-eng; mmm art/ -j${threads}"
+fi
 
 if [ $? -eq 0 ]; then
     echo ""
@@ -79,15 +93,33 @@ if [ $? -eq 0 ]; then
     echo "Copying new binaries and shared objects"
     echo ""
 
-    echo "Copy dex2oat -> ./assets/artist/${api_level_string}/dex2oat"
-    cp ${mounted_aosp}/out/target/product/generic/symbols/system/bin/dex2oat ./assets/artist/${api_level_string}/dex2oat
+    if [ "${arch_64}" = true ]; then
+        echo "Copy dex2oat (64bit) -> ./assets/artist/${api_level_string}/dex2oat"
+        cp ${mounted_aosp}/out/target/product/generic_arm64/symbols/system/bin/dex2oat ./assets/artist/${api_level_string}/dex2oat
+    else
+        echo "Copy dex2oat (32bit) -> ./assets/artist/${api_level_string}/dex2oat"
+        cp ${mounted_aosp}/out/target/product/generic/symbols/system/bin/dex2oat ./assets/artist/${api_level_string}/dex2oat
+    fi
+    cp ./assets/artist/${api_level_string}/dex2oat ${working_dir}/debug/android-${api_level}/dex2oat
 
     ## now loop through the above array
     for lib in "${dexToOatLibs[@]}"
     do
-        echo "Copy ${lib} -> './assets/artist/${api_level_string}/lib/'"
-        cp ${mounted_aosp}/out/target/product/generic/symbols/system/lib/${lib} ./assets/artist/${api_level_string}/lib/
-        ${ndk_binary_strip} ./assets/artist/${api_level_string}/lib/${lib}
+        if [ "${arch_64}" = true ]; then
+            echo "Copy ${lib} (64bit) -> './assets/artist/${api_level_string}/lib/'"
+            cp ${mounted_aosp}/out/target/product/generic_arm64/symbols/system/lib/${lib} ./assets/artist/${api_level_string}/lib/
+        else
+            echo "Copy ${lib} (32bit) -> './assets/artist/${api_level_string}/lib/'"
+            cp ${mounted_aosp}/out/target/product/generic/symbols/system/lib/${lib} ./assets/artist/${api_level_string}/lib/
+        fi
+        if [ "${debug_binaries}" = true ]; then
+            echo " > ${lib}: Keeping debug symbols"
+        else
+            echo " > ${lib}: Stripping debug symbols"
+            ${ndk_binary_strip} ./assets/artist/${api_level_string}/lib/${lib}
+        fi
+        cp ./assets/artist/${api_level_string}/lib/${lib} ${working_dir}/debug/android-${api_level}/${lib}
+        # /home/weisgerber/mount/colossus04/weisgerber/aosp/aosp_8.0.0_r9_arm-eng/out/target/product/generic_arm64/obj/lib/
     done
     echo ""
     echo "Copying files DONE"

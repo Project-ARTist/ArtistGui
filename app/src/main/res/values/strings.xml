@@ -89,4 +89,9 @@
     <string name="compile_dialog_button_show_more">Show More</string>
     <string name="compile_dialog_button_cancel">Cancel</string>
     <string name="about_text_main">The ARTist project allows for on-device modification and rewriting of apps.  ArtistGUI, in particular, ships the specialized ARTist compiler to the device to allow for simple recompilation of installed apps (root required).  For more information, please visit https://artist.cispa.saarland</string>
+    <string name="pref_category_apps">Apps</string>
+    <string name="pref_apps_filter_google_summary">Select to exclude \"com.google.\" and \"com.android.\" apps from application select view</string>
+    <string name="pref_apps_filter_google">Filter Google app</string>
+    <string name="pref_compiler_replace_base_apk">Replace base.apk</string>
+    <string name="pref_compiler_replace_base_apk_summary">Replacing the base.apk disables checksum rewriting</string>
 </resources>

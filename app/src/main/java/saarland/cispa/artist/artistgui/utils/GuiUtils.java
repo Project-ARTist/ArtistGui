@@ -24,7 +24,6 @@ import android.support.design.widget.Snackbar;
 import android.view.View;
 
 public class GuiUtils {
-
     public static void displaySnackForever(final View view, final String snackMessage) {
         if (view != null) {
             Snackbar.make(view, snackMessage, Snackbar.LENGTH_INDEFINITE)

@@ -45,8 +45,12 @@ class MainActivityPresenter implements MainActivityContract.Presenter {
     static final int INFO_FRAGMENT = 0;
     static final int COMPILATION_FRAGMENT = 1;
 
-    private static final int[] supportedSdks = {Build.VERSION_CODES.M, Build.VERSION_CODES.N,
-            Build.VERSION_CODES.N_MR1};
+    private static final int[] supportedSdks = {
+            Build.VERSION_CODES.M,
+            Build.VERSION_CODES.N,
+            Build.VERSION_CODES.N_MR1,
+            Build.VERSION_CODES.O
+    };
 
     private Context mAppContext;
     private Activity mActivity;
