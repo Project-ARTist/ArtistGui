@@ -20,13 +20,10 @@
 package saarland.cispa.artist.artistgui.instrumentation.progress;
 
 import android.app.Notification;
-import android.app.PendingIntent;
 import android.content.Context;
-import android.content.Intent;
 import android.support.annotation.NonNull;
 
 import saarland.cispa.artist.artistgui.R;
-import saarland.cispa.artist.artistgui.compilation.CompileDialogActivity;
 
 import static android.app.Notification.EXTRA_PROGRESS;
 import static android.app.Notification.EXTRA_PROGRESS_INDETERMINATE;
@@ -57,15 +54,10 @@ public class NotificationManager implements ProgressListener {
     public static Notification getNotification(Context mContext) {
         Notification.Builder notificationBuilder = new Notification.Builder(mContext)
                 .setSmallIcon(R.drawable.ic_icon_compiler)
-                .setContentTitle(mContext.getString(R.string.notification_compilation_title))
+                .setContentTitle(mContext.getString(R.string.notification_instrumentation_title))
                 .setProgress(PROGRESS_MAX, 0, false)
                 .setOngoing(true)
                 .setAutoCancel(false);
-
-        Intent compileDialogActivity = new Intent(mContext, CompileDialogActivity.class);
-        PendingIntent compileDialogActivityPending = PendingIntent
-                .getActivity(mContext, 0, compileDialogActivity, 0);
-        notificationBuilder.setContentIntent(compileDialogActivityPending);
 
         return notificationBuilder.build();
     }

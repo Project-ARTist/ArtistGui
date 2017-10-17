@@ -106,7 +106,7 @@ class ServiceController implements IServiceController {
     @Override
     public void processResult(String packageName) {
         InstrumentationTask task = mInstrumentationQueue.peek();
-        if (packageName.equals(task.getPackageName())) {
+        if (task == null || packageName.equals(task.getPackageName())) {
             mInstrumentationQueue.poll();
         }
     }

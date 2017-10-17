@@ -82,7 +82,7 @@
     <string name="external_storage_permission_denied">Can\'t access external storage. Please grant the permission.</string>
     <string name="pref_title_codelib_selection">CodeLib (Choose)</string>
     <string name="pref_summary_codelib_selection">Please choose a CodeLib for injection.</string>
-    <string name="notification_compilation_title">Artist Compilation</string>
+    <string name="notification_instrumentation_title">Artist Instrumentation</string>
 
     <string name="snack_compilation_success">Compilation Success: </string>
     <string name="snack_compilation_failed">Compilation Failed: </string>

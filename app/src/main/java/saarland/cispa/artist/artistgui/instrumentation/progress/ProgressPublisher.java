@@ -28,13 +28,16 @@ public class ProgressPublisher implements ProgressListener {
     /**
      * Instrumentation status broadcast constants
      */
-    public static final String ACTION_INSTRUMENTATION_STATUS_UPDATE =
-            "saarland.cispa.artist.artistgui.action.INSTRUMENTATION_STATUS_UPDATE";
+    public static final String ACTION_STAGE_UPDATE =
+            "saarland.cispa.artist.artistgui.action.STAGE_UPDATE";
+    public static final String ACTION_DETAILED_UPDATE =
+            "saarland.cispa.artist.artistgui.action.DETAILED_UPDATE";
+
     public static final String EXTRA_PACKAGE_NAME =
             "saarland.cispa.artist.artistgui.extra.PACKAGE_NAME";
-    public static final String EXTRA_INSTRUMENTATION_STATUS_PROGRESS =
-            "saarland.cispa.artist.artistgui.extra.INSTRUMENTATION_STATUS_PROGRESS";
-    public static final String EXTRA_INSTRUMENTATION_STATUS_MESSAGE =
+    public static final String EXTRA_PROGRESS =
+            "saarland.cispa.artist.artistgui.extra.PROGRESS";
+    public static final String EXTRA_STATUS_MESSAGE =
             "saarland.cispa.artist.artistgui.extra.INSTRUMENTATION_STATUS_MESSAGE";
 
     /**
@@ -58,21 +61,22 @@ public class ProgressPublisher implements ProgressListener {
     @Override
     public void reportProgressStage(@NonNull String packageName, int progress,
                                     @NonNull String stage) {
-        Intent intent = buildIntent(packageName, stage);
-        intent.putExtra(EXTRA_INSTRUMENTATION_STATUS_PROGRESS, progress);
+        Intent intent = buildIntent(ACTION_STAGE_UPDATE, packageName, stage);
+        intent.putExtra(EXTRA_PROGRESS, progress);
         mBroadcastManager.sendBroadcast(intent);
     }
 
     @Override
     public void reportProgressDetails(@NonNull String packageName, @NonNull String message) {
-        Intent intent = buildIntent(packageName, message);
+        Intent intent = buildIntent(ACTION_DETAILED_UPDATE, packageName, message);
         mBroadcastManager.sendBroadcast(intent);
     }
 
-    private Intent buildIntent(@NonNull String packageName, @NonNull String message) {
-        Intent intent = new Intent(ACTION_INSTRUMENTATION_STATUS_UPDATE);
+    private Intent buildIntent(@NonNull String action, @NonNull String packageName,
+                               @NonNull String message) {
+        Intent intent = new Intent(action);
         intent.putExtra(EXTRA_PACKAGE_NAME, packageName);
-        intent.putExtra(EXTRA_INSTRUMENTATION_STATUS_MESSAGE, message);
+        intent.putExtra(EXTRA_STATUS_MESSAGE, message);
         return intent;
     }
 

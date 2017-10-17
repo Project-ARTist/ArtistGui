@@ -30,7 +30,9 @@ public interface CompilationContract {
     interface View extends BaseView<Presenter> {
         void showNoCodeLibChosenMessage();
 
-        void showCompilationResult(boolean isSuccess, String packageName);
+        void showInstrumentationProgress();
+
+        void showInstrumentationResult(boolean isSuccess, String packageName);
     }
 
     interface Presenter extends BasePresenter {
@@ -40,7 +42,7 @@ public interface CompilationContract {
 
         void maybeStartRecompiledApp(final String applicationName);
 
-        void queueCompilation(String packageName);
+        void queueInstrumentation(String packageName);
 
         void executeIntentTasks(Intent intent);
 

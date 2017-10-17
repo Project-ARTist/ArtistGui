@@ -34,6 +34,8 @@ import android.view.ViewGroup;
 import saarland.cispa.artist.artistgui.R;
 import saarland.cispa.artist.artistgui.instrumentation.progress.ProgressPublisher;
 import saarland.cispa.artist.artistgui.packagelist.view.PackageListView;
+import saarland.cispa.artist.artistgui.progress.ProgressDialogFragment;
+import saarland.cispa.artist.artistgui.progress.ProgressPresenter;
 import saarland.cispa.artist.artistgui.utils.GuiUtils;
 
 public class CompileFragment extends Fragment implements CompilationContract.View,
@@ -96,7 +98,7 @@ public class CompileFragment extends Fragment implements CompilationContract.Vie
 
     @Override
     public void onPackageSelected(String packageName) {
-        mPresenter.queueCompilation(packageName);
+        mPresenter.queueInstrumentation(packageName);
     }
 
     @Override
@@ -105,7 +107,15 @@ public class CompileFragment extends Fragment implements CompilationContract.Vie
     }
 
     @Override
-    public void showCompilationResult(boolean isSuccess, String packageName) {
+    public void showInstrumentationProgress() {
+        ProgressDialogFragment dialogFragment = new ProgressDialogFragment();
+        new ProgressPresenter(getContext(), dialogFragment);
+        dialogFragment.setCancelable(false);
+        dialogFragment.show(getFragmentManager(), ProgressDialogFragment.TAG);
+    }
+
+    @Override
+    public void showInstrumentationResult(boolean isSuccess, String packageName) {
         int stringResourceId = isSuccess ? R.string.snack_compilation_success :
                 R.string.snack_compilation_failed;
         String userMessage = getResources().getString(stringResourceId) + packageName;
