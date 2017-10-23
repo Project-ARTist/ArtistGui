@@ -21,11 +21,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="saarland.cispa.artist.artistgui.progress.ProgressDialogFragment"
-            android:label="@string/compile_dialog_activity_name"
-            android:launchMode="singleInstance"
-            android:theme="@android:style/Theme.DeviceDefault.Light.Dialog" />
-        <activity
             android:name="saarland.cispa.artist.artistgui.settings.SettingsActivity"
             android:label="@string/title_activity_artist_gui_settings_general"
             android:launchMode="singleInstance"
