@@ -68,7 +68,7 @@ task artistGuiVersion {
 assemble.dependsOn 'artistGuiVersion'
 
 ext {
-    supportLibVersion = '25.3.1'
+    supportLibVersion = '26.1.0'
     junitVersion = '4.12'
     mockitoVersion = '1.10.19'
     hamcrestVersion = '1.3'
