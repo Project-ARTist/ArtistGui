@@ -23,7 +23,9 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -35,8 +37,8 @@ import java.util.List;
 import saarland.cispa.artist.artistgui.Package;
 import saarland.cispa.artist.artistgui.broadcastreceiver.PackageModifiedReceiver;
 
-public class PackageListView extends RecyclerView implements ReadInstalledPackagesAsyncTask
-        .OnReadInstalledPackages {
+public class PackageListView extends RecyclerView
+        implements ReadInstalledPackagesAsyncTask.OnReadInstalledPackages {
 
     public interface OnPackageSelectedListener {
         void onPackageSelected(Package selectedPackage);
@@ -67,6 +69,11 @@ public class PackageListView extends RecyclerView implements ReadInstalledPackag
 
         PackageManager packageManager = context.getPackageManager();
         new ReadInstalledPackagesAsyncTask(context, this).execute(packageManager);
+    }
+
+    private boolean shouldFilterApps(final Context context) {
+        final SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
+        return sharedPref.getBoolean("pref_key_apps_filter_google", false);
     }
 
     @Override

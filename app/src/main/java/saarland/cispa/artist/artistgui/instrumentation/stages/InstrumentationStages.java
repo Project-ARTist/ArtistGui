@@ -1,8 +1,4 @@
-package saarland.cispa.artist.artistgui.compilation.thread;
-
-import trikita.log.Log;
-
-/**
+/*
  * The ARTist Project (https://artist.cispa.saarland)
  *
  * Copyright (C) 2017 CISPA (https://cispa.saarland), Saarland University
@@ -19,19 +15,22 @@ import trikita.log.Log;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
-  * @author "Sebastian Weisgerber <weisgerber@cispa.saarland>"
- *
  */
 
-public class ArtistThread {
+package saarland.cispa.artist.artistgui.instrumentation.stages;
 
-    private static final String TAG = "ArtistThread";
+import saarland.cispa.artist.artistgui.instrumentation.exceptions.InstrumentationException;
 
-    public static void checkThreadCancellation() throws ArtistInterruptedException {
-        if (Thread.currentThread().isInterrupted()) {
-            Log.d(TAG, String.format("checkThreadCancellation() interrupted[%b]",
-                    Thread.currentThread().isInterrupted()));
-            throw new ArtistInterruptedException("Thread is interrupted.");
-        }
-    }
+public interface InstrumentationStages {
+    String prepareEnvironment() throws InstrumentationException;
+
+    void probePermissionAndDeleteOatFile();
+
+    void mergeCodeLib() throws InstrumentationException;
+
+    void backupMergedApk();
+
+    void runDex2OatCompilation(String pathDex2oat) throws InstrumentationException;
+
+    boolean setOatFilePermissions();
 }

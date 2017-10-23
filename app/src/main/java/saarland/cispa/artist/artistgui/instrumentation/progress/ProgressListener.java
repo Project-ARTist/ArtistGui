@@ -1,4 +1,4 @@
-/**
+/*
  * The ARTist Project (https://artist.cispa.saarland)
  *
  * Copyright (C) 2017 CISPA (https://cispa.saarland), Saarland University
@@ -15,25 +15,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * @author "Oliver Schranz <oliver.schranz@cispa.saarland>"
- * @author "Sebastian Weisgerber <weisgerber@cispa.saarland>"
- *
  */
-package saarland.cispa.artist.artistgui.compilation;
 
-import android.content.Context;
+package saarland.cispa.artist.artistgui.instrumentation.progress;
 
-import saarland.cispa.artist.artistgui.compilation.config.ArtistRunConfig;
+import android.support.annotation.NonNull;
 
+public interface ProgressListener {
+    void prepareReporter();
 
-public interface Artist {
+    void reportProgressStage(@NonNull String packageName, int progress, @NonNull final String stage);
 
-    String CODE_LIB_ASSET = "assetcodelib.apk";
+    void reportProgressDetails(@NonNull String packageName, @NonNull final String message);
 
-    void init(final Context context);
-    void addGuiProgressListener(final ArtistGuiProgress callback);
+    void onSuccess(@NonNull String packageName);
 
-    boolean mergeCodeLib(final Context context, final ArtistRunConfig config);
-
-    boolean Run(final Context context);
+    void onFailure(@NonNull String packageName);
 }

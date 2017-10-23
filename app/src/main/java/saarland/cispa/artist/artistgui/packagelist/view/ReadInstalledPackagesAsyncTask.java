@@ -26,6 +26,7 @@ import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import saarland.cispa.artist.artistgui.Package;
@@ -60,6 +61,14 @@ class ReadInstalledPackagesAsyncTask extends
         String appName;
         int appIconId;
         for (PackageInfo packageInfo : packageInfoList) {
+//            if (this.filterGapps) {
+//                if (packageInfo.packageName.startsWith("com.android.")) {
+//                    continue;
+//                }
+//                if (packageInfo.packageName.startsWith("com.google.")) {
+//                    continue;
+//                }
+//            }
             if (!isCancelled()) {
                 applicationInfo = packageInfo.applicationInfo;
                 appName = packageManager.getApplicationLabel(applicationInfo).toString();
@@ -79,8 +88,7 @@ class ReadInstalledPackagesAsyncTask extends
                 packageList.add(mPackage);
             }
         }
-
-        packageList.sort(Package.sComparator);
+        Collections.sort(packageList, Package.sComparator);
         return packageList;
     }
 

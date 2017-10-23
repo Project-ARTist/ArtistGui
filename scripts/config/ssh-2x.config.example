@@ -24,8 +24,12 @@ api_level=2x
 # how many threads are available for compilation on the build server
 threads=1
 
+# Select the target architectures: 32bit (false) / 64bit (true)
+# => needs to get selected from Android 8.0 Oreo onwards
+arch_64=false
 
-
+# Strip debug symbols / shrink binaries
+debug_binaries=true
 
 
 

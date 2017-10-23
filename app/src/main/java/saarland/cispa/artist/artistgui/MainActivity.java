@@ -34,12 +34,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
-import java.util.Locale;
-
-import saarland.cispa.artist.artistgui.compilation.CompileDialogActivity;
 import saarland.cispa.artist.artistgui.settings.SettingsActivity;
 import saarland.cispa.artist.artistgui.settings.manager.SettingsManagerImpl;
-import trikita.log.Log;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
@@ -150,17 +146,6 @@ public class MainActivity extends AppCompatActivity
             mDrawerLayout.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
-        }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, final Intent data) {
-        Log.d(TAG, String.format(Locale.US,
-                "onActivityResult() requestcode[%d] resultcode[%d] Data[%s]",
-                requestCode, resultCode, data));
-
-        if (requestCode == CompileDialogActivity.COMPILE_DIALOG_ID) {
-            mPresenter.processCompilationResult(resultCode, data);
         }
     }
 }

@@ -32,11 +32,8 @@ import java.lang.annotation.RetentionPolicy;
 import saarland.cispa.artist.artistgui.compilation.CompilationContract;
 import saarland.cispa.artist.artistgui.compilation.CompilationPresenter;
 import saarland.cispa.artist.artistgui.compilation.CompileFragment;
-import saarland.cispa.artist.artistgui.settings.db.operations.AddInstrumentedPackageToDbAsyncTask;
 import saarland.cispa.artist.artistgui.settings.manager.SettingsManager;
 import saarland.cispa.artist.artistgui.utils.LogA;
-
-import static android.app.Activity.RESULT_OK;
 
 class MainActivityPresenter implements MainActivityContract.Presenter {
 
@@ -48,8 +45,12 @@ class MainActivityPresenter implements MainActivityContract.Presenter {
     static final int INFO_FRAGMENT = 0;
     static final int COMPILATION_FRAGMENT = 1;
 
-    private static final int[] supportedSdks = {Build.VERSION_CODES.M, Build.VERSION_CODES.N,
-            Build.VERSION_CODES.N_MR1};
+    private static final int[] supportedSdks = {
+            Build.VERSION_CODES.M,
+            Build.VERSION_CODES.N,
+            Build.VERSION_CODES.N_MR1,
+            Build.VERSION_CODES.O
+    };
 
     private Context mAppContext;
     private Activity mActivity;
@@ -90,12 +91,6 @@ class MainActivityPresenter implements MainActivityContract.Presenter {
         } else {
             selectFragment(INFO_FRAGMENT);
         }
-    }
-
-    @Override
-    public void processCompilationResult(int resultCode, Intent data) {
-        mCompilationPresenter.onCompilationFinished(resultCode, data, resultCode == RESULT_OK ?
-                new AddInstrumentedPackageToDbAsyncTask(mActivity) : null);
     }
 
     @Override

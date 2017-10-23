@@ -37,8 +37,6 @@ interface MainActivityContract {
 
         void processIntent(Intent intent);
 
-        void processCompilationResult(int resultCode, final Intent data);
-
         void selectFragment(@MainActivityPresenter.selectableFragment int id);
 
         void onRestoreSavedInstance(int selectedFragmentId, Fragment selectedFragment);

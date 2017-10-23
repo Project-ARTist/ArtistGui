@@ -18,6 +18,8 @@ allprojects {
     }
 }
 
+
+
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
@@ -35,4 +37,9 @@ task buildArtNougat(type:Exec) {
 task buildArtNougat_7_1(type:Exec) {
 
     commandLine './scripts/build_nougat_7.1.sh'
+}
+
+task buildArtOreo(type:Exec) {
+
+    commandLine './scripts/build_oreo.sh'
 }

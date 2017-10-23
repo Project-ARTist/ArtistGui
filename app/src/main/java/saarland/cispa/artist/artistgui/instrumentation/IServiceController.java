@@ -1,4 +1,4 @@
-/**
+/*
  * The ARTist Project (https://artist.cispa.saarland)
  *
  * Copyright (C) 2017 CISPA (https://cispa.saarland), Saarland University
@@ -15,28 +15,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * @author "Oliver Schranz <oliver.schranz@cispa.saarland>"
- * @author "Sebastian Weisgerber <weisgerber@cispa.saarland>"
- *
  */
-package saarland.cispa.artist.artistgui.compilation;
 
-public interface ArtistGuiProgress {
+package saarland.cispa.artist.artistgui.instrumentation;
 
-    /**
-     *
-     * @param progress in persent from 0-100%
-     * @param message
-     */
-    void updateProgress(int progress, final String message);
+import android.app.Service;
 
-    void updateProgressVerbose(int progress, final String message);
+interface IServiceController {
+    void moveToForeground(Service service);
 
-    void kill(final String message);
+    void instrument(String packageName);
 
-    void doneSuccess(final String message);
+    void cancel();
 
-    void doneFailed(final String message);
+    boolean isInstrumenting();
 
-    void done();
+    void processResult(String packageName);
 }

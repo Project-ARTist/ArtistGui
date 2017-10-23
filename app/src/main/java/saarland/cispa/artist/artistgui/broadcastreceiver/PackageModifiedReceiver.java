@@ -26,7 +26,7 @@ import android.support.annotation.NonNull;
 
 public class PackageModifiedReceiver extends BroadcastReceiver {
 
-    private static final String PACKAGE_NAME_PREFIX = "package:";
+    public static final String PACKAGE_NAME_PREFIX = "package:";
 
     private OnPackageModifiedListener mListener;
 

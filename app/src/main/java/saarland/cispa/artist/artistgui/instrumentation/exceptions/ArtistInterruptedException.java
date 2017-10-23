@@ -19,33 +19,25 @@
  * @author "Sebastian Weisgerber <weisgerber@cispa.saarland>"
  *
  */
-package saarland.cispa.artist.artistgui.compilation;
+package saarland.cispa.artist.artistgui.instrumentation.exceptions;
 
+public class ArtistInterruptedException extends RuntimeException {
 
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.ResultReceiver;
+    private static final long serialVersionUID = -5824135117314433833L;
 
-public class CompilationResultReceiver extends ResultReceiver {
-
-    private Receiver mReceiver;
-
-    public CompilationResultReceiver(Handler handler) {
-        super(handler);
+    public ArtistInterruptedException() {
+        super();
     }
 
-    public void setReceiver(Receiver receiver) {
-        mReceiver = receiver;
+    public ArtistInterruptedException(Throwable cause) {
+        super(cause);
     }
 
-    public interface Receiver {
-        public void onReceiveResult(int resultCode, Bundle resultData);
+    public ArtistInterruptedException(String message) {
+        super(message);
     }
 
-    @Override
-    protected void onReceiveResult(int resultCode, Bundle resultData) {
-        if (mReceiver != null) {
-            mReceiver.onReceiveResult(resultCode, resultData);
-        }
+    public ArtistInterruptedException(String message, Throwable cause) {
+        super(message, cause);
     }
 }

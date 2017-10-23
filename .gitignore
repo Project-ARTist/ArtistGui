@@ -1,4 +1,5 @@
 *.iml
+.backup
 .DS_Store
 .gradle
 .idea/
@@ -7,6 +8,7 @@
 /local.properties
 build/
 *.apk
+debug/
 doc/log
 doc/tombstones
 gradle/
@@ -18,11 +20,20 @@ app/src/main/libs
 libs/
 src/main/assets/artist/android-21/lib/
 src/main/assets/artist/android-22/lib/
-src/main/assets/artist/android-23/dex2oat
 src/main/assets/artist/android-23/lib/
-src/main/assets/artist/android-24/dex2oat
 src/main/assets/artist/android-24/lib/
 src/main/assets/artist/android-25/lib/
+src/main/assets/artist/android-26/lib/
+src/main/assets/artist/android-27/lib/
+src/main/assets/artist/android-28/lib/
+src/main/assets/artist/android-21/dex2oat
+src/main/assets/artist/android-22/dex2oat
+src/main/assets/artist/android-23/dex2oat
+src/main/assets/artist/android-24/dex2oat
+src/main/assets/artist/android-25/dex2oat
+src/main/assets/artist/android-26/dex2oat
+src/main/assets/artist/android-27/dex2oat
+src/main/assets/artist/android-28/dex2oat
 gradle.properties
 
 # version numbers for debugging
