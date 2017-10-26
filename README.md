@@ -1,4 +1,4 @@
-# ArtistGui 
+# ArtistGui [![Build Status](https://travis-ci.org/Project-ARTist/ArtistGui.svg?branch=master)](https://travis-ci.org/Project-ARTist/ArtistGui)
 
 > This is the current deployment App / GUI for the modified dex2oat compiler.
 
