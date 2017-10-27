@@ -109,7 +109,6 @@ public class CompileFragment extends Fragment implements CompilationContract.Vie
     @Override
     public void showInstrumentationProgress() {
         ProgressDialogFragment dialogFragment = new ProgressDialogFragment();
-        new ProgressPresenter(getContext(), dialogFragment);
         dialogFragment.setCancelable(false);
         dialogFragment.show(getFragmentManager(), ProgressDialogFragment.TAG);
     }
