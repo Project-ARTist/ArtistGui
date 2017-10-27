@@ -19,26 +19,25 @@
  * @author "Sebastian Weisgerber <weisgerber@cispa.saarland>"
  *
  */
-package saarland.cispa.artist.artistgui.compilation;
+package saarland.cispa.artist.artistgui.instrumentation.exceptions;
 
-public class CompilationException extends Exception {
+public class ArtistInterruptedException extends RuntimeException {
 
-    private static final long serialVersionUID = -1437266982628666410L;
+    private static final long serialVersionUID = -5824135117314433833L;
 
-    public CompilationException() {
+    public ArtistInterruptedException() {
         super();
     }
 
-    public CompilationException(Throwable cause) {
+    public ArtistInterruptedException(Throwable cause) {
         super(cause);
     }
 
-    public CompilationException(String message) {
+    public ArtistInterruptedException(String message) {
         super(message);
     }
 
-    public CompilationException(String message, Throwable cause) {
+    public ArtistInterruptedException(String message, Throwable cause) {
         super(message, cause);
     }
-
 }

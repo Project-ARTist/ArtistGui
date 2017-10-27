@@ -1,4 +1,4 @@
-/**
+/*
  * The ARTist Project (https://artist.cispa.saarland)
  *
  * Copyright (C) 2017 CISPA (https://cispa.saarland), Saarland University
@@ -15,25 +15,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * @author "Oliver Schranz <oliver.schranz@cispa.saarland>"
- * @author "Sebastian Weisgerber <weisgerber@cispa.saarland>"
- *
  */
-package saarland.cispa.artist.artistgui.compilation;
 
-import android.content.Context;
+package saarland.cispa.artist.artistgui.instrumentation.stages;
 
-import saarland.cispa.artist.artistgui.compilation.config.ArtistRunConfig;
+import saarland.cispa.artist.artistgui.instrumentation.exceptions.InstrumentationException;
 
+public interface InstrumentationStages {
+    String prepareEnvironment() throws InstrumentationException;
 
-public interface Artist {
+    void probePermissionAndDeleteOatFile();
 
-    String CODE_LIB_ASSET = "assetcodelib.apk";
+    void mergeCodeLib() throws InstrumentationException;
 
-    void init(final Context context);
-    void addGuiProgressListener(final ArtistGuiProgress callback);
+    void backupMergedApk();
 
-    boolean mergeCodeLib(final Context context, final ArtistRunConfig config);
+    void runDex2OatCompilation(String pathDex2oat) throws InstrumentationException;
 
-    boolean Run(final Context context);
+    boolean setOatFilePermissions();
 }

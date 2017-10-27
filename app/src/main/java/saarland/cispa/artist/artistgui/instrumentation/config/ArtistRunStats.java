@@ -19,7 +19,7 @@
  * @author "Sebastian Weisgerber <weisgerber@cispa.saarland>"
  *
  */
-package saarland.cispa.artist.artistgui.compilation.config;
+package saarland.cispa.artist.artistgui.instrumentation.config;
 
 public class ArtistRunStats {
 

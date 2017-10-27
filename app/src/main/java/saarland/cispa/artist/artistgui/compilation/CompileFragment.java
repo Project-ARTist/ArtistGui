@@ -19,15 +19,23 @@
 
 package saarland.cispa.artist.artistgui.compilation;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import saarland.cispa.artist.artistgui.R;
+import saarland.cispa.artist.artistgui.instrumentation.progress.ProgressPublisher;
 import saarland.cispa.artist.artistgui.packagelist.view.PackageListView;
+import saarland.cispa.artist.artistgui.progress.ProgressDialogFragment;
+import saarland.cispa.artist.artistgui.progress.ProgressPresenter;
 import saarland.cispa.artist.artistgui.utils.GuiUtils;
 
 public class CompileFragment extends Fragment implements CompilationContract.View,
@@ -36,16 +44,34 @@ public class CompileFragment extends Fragment implements CompilationContract.Vie
     private CompilationContract.Presenter mPresenter;
     private PackageListView mPackageListView;
 
+    private BroadcastReceiver mResultReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent != null &&
+                    intent.getAction().equals(ProgressPublisher.ACTION_INSTRUMENTATION_RESULT)) {
+                String packageName = intent.getStringExtra(ProgressPublisher.EXTRA_PACKAGE_NAME);
+                boolean isSuccess = intent
+                        .getBooleanExtra(ProgressPublisher.EXTRA_INSTRUMENTATION_RESULT, false);
+                mPresenter.handleInstrumentationResult(context, isSuccess, packageName);
+            }
+        }
+    };
+
     @Override
     public void onStart() {
         super.onStart();
         mPresenter.start();
+
+        IntentFilter intentFilter = new IntentFilter(ProgressPublisher.ACTION_INSTRUMENTATION_RESULT);
+        LocalBroadcastManager.getInstance(getContext())
+                .registerReceiver(mResultReceiver, intentFilter);
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        getActivity().unbindService(mPresenter.getCompileServiceConnection());
+        LocalBroadcastManager.getInstance(getContext())
+                .unregisterReceiver(mResultReceiver);
     }
 
     @Override
@@ -72,7 +98,7 @@ public class CompileFragment extends Fragment implements CompilationContract.Vie
 
     @Override
     public void onPackageSelected(String packageName) {
-        mPresenter.queueCompilation(packageName);
+        mPresenter.queueInstrumentation(packageName);
     }
 
     @Override
@@ -81,7 +107,14 @@ public class CompileFragment extends Fragment implements CompilationContract.Vie
     }
 
     @Override
-    public void showCompilationResult(boolean isSuccess, String packageName) {
+    public void showInstrumentationProgress() {
+        ProgressDialogFragment dialogFragment = new ProgressDialogFragment();
+        dialogFragment.setCancelable(false);
+        dialogFragment.show(getFragmentManager(), ProgressDialogFragment.TAG);
+    }
+
+    @Override
+    public void showInstrumentationResult(boolean isSuccess, String packageName) {
         int stringResourceId = isSuccess ? R.string.snack_compilation_success :
                 R.string.snack_compilation_failed;
         String userMessage = getResources().getString(stringResourceId) + packageName;

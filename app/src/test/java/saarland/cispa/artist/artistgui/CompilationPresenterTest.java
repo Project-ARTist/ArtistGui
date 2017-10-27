@@ -20,7 +20,6 @@
 package saarland.cispa.artist.artistgui;
 
 
-import android.app.Activity;
 import android.content.Intent;
 
 import org.junit.Before;
@@ -30,14 +29,10 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import saarland.cispa.artist.artistgui.compilation.ArtistImpl;
 import saarland.cispa.artist.artistgui.compilation.CompilationContract;
 import saarland.cispa.artist.artistgui.compilation.CompilationPresenter;
 import saarland.cispa.artist.artistgui.settings.manager.SettingsManager;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertFalse;
-import static junit.framework.Assert.assertTrue;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -46,7 +41,6 @@ public class CompilationPresenterTest {
 
     private static final String INVALID_CODE_LIB = "-1";
     private static final String VALID_CODE_LIB = "Test CodeLib";
-    private static final String PACKAGE_NAME = "saarland.cispa.artist.testapp";
 
     @Captor
     private ArgumentCaptor<Boolean> mBoolArgCaptor;
@@ -101,33 +95,5 @@ public class CompilationPresenterTest {
         mPresenter.checkIfCodeLibIsChosen();
 
         verify(mView, never()).showNoCodeLibChosenMessage();
-    }
-
-    @Test
-    public void compilationSuccessful() throws Exception {
-        when(mIntent.getStringExtra(ArtistImpl.INTENT_EXTRA_APP_NAME))
-                .thenReturn(PACKAGE_NAME);
-        // Don't launch app. We can't test it currently.
-        when(mSettingsManager.shouldLaunchActivityAfterCompilation()).thenReturn(false);
-
-        mPresenter.onCompilationFinished(Activity.RESULT_OK, mIntent, null);
-
-        verify(mView).showCompilationResult(mBoolArgCaptor.capture(), mStringArgCaptor.capture());
-        assertTrue(mBoolArgCaptor.getValue());
-        assertEquals(PACKAGE_NAME, mStringArgCaptor.getValue());
-    }
-
-    @Test
-    public void compilationFailed() throws Exception {
-        when(mIntent.getStringExtra(ArtistImpl.INTENT_EXTRA_APP_NAME))
-                .thenReturn(PACKAGE_NAME);
-        // Don't launch app. We can't test it currently.
-        when(mSettingsManager.shouldLaunchActivityAfterCompilation()).thenReturn(false);
-
-        mPresenter.onCompilationFinished(Activity.RESULT_CANCELED, mIntent, null);
-
-        verify(mView).showCompilationResult(mBoolArgCaptor.capture(), mStringArgCaptor.capture());
-        assertFalse(mBoolArgCaptor.getValue());
-        assertEquals(PACKAGE_NAME, mStringArgCaptor.getValue());
     }
 }

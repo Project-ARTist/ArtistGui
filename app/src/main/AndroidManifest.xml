@@ -21,19 +21,12 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="saarland.cispa.artist.artistgui.compilation.CompileDialogActivity"
-            android:label="@string/compile_dialog_activity_name"
-            android:launchMode="standard"
-            android:theme="@android:style/Theme.DeviceDefault.Light.Dialog" />
-        <activity
             android:name="saarland.cispa.artist.artistgui.settings.SettingsActivity"
+            android:label="@string/title_activity_artist_gui_settings_general"
             android:launchMode="singleInstance"
-            android:parentActivityName=".MainActivity"
-            android:label="@string/title_activity_artist_gui_settings_general" />
+            android:parentActivityName=".MainActivity" />
 
-        <service
-            android:name="saarland.cispa.artist.artistgui.compilation.CompilationService"
-            android:exported="false" />
+        <service android:name=".instrumentation.InstrumentationService" />
 
     </application>
 

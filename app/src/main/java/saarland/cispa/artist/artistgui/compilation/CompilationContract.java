@@ -19,38 +19,33 @@
 
 package saarland.cispa.artist.artistgui.compilation;
 
+import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
 
 import saarland.cispa.artist.artistgui.base.BasePresenter;
 import saarland.cispa.artist.artistgui.base.BaseView;
-import saarland.cispa.artist.artistgui.settings.db.AddInstrumentedPackageToDbAsyncTask;
 
 public interface CompilationContract {
 
     interface View extends BaseView<Presenter> {
         void showNoCodeLibChosenMessage();
 
-        void showCompilationResult(boolean isSuccess, String packageName);
+        void showInstrumentationProgress();
+
+        void showInstrumentationResult(boolean isSuccess, String packageName);
     }
 
     interface Presenter extends BasePresenter {
         void checkIfCodeLibIsChosen();
 
-        void connectToCompilationService();
-
         void createArtistFolders();
-
-        ServiceConnection getCompileServiceConnection();
 
         void maybeStartRecompiledApp(final String applicationName);
 
-        void queueCompilation(String packageName);
+        void queueInstrumentation(String packageName);
 
         void executeIntentTasks(Intent intent);
 
-        void onCompilationFinished(int resultCode, Intent data,
-                                   AddInstrumentedPackageToDbAsyncTask
-                                           addInstrumentedPackageToDbAsyncTask);
+        void handleInstrumentationResult(Context context, boolean isSuccess, String packageName);
     }
 }

@@ -1,4 +1,4 @@
-/**
+/*
  * The ARTist Project (https://artist.cispa.saarland)
  *
  * Copyright (C) 2017 CISPA (https://cispa.saarland), Saarland University
@@ -15,29 +15,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * @author "Oliver Schranz <oliver.schranz@cispa.saarland>"
- * @author "Sebastian Weisgerber <weisgerber@cispa.saarland>"
- *
  */
-package saarland.cispa.artist.artistgui.compilation.thread;
 
-public class ArtistInterruptedException extends RuntimeException {
+package saarland.cispa.artist.artistgui.instrumentation.progress;
 
-    private static final long serialVersionUID = -5824135117314433833L;
+import android.support.annotation.NonNull;
 
-    public ArtistInterruptedException() {
-        super();
-    }
+public interface ProgressListener {
+    void prepareReporter();
 
-    public ArtistInterruptedException(Throwable cause) {
-        super(cause);
-    }
+    void reportProgressStage(@NonNull String packageName, int progress, @NonNull final String stage);
 
-    public ArtistInterruptedException(String message) {
-        super(message);
-    }
+    void reportProgressDetails(@NonNull String packageName, @NonNull final String message);
 
-    public ArtistInterruptedException(String message, Throwable cause) {
-        super(message, cause);
-    }
+    void onSuccess(@NonNull String packageName);
+
+    void onFailure(@NonNull String packageName);
 }

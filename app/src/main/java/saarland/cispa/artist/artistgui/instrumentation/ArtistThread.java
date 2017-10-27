@@ -1,5 +1,6 @@
-package saarland.cispa.artist.artistgui.compilation.thread;
+package saarland.cispa.artist.artistgui.instrumentation;
 
+import saarland.cispa.artist.artistgui.instrumentation.exceptions.ArtistInterruptedException;
 import trikita.log.Log;
 
 /**
@@ -23,11 +24,11 @@ import trikita.log.Log;
  *
  */
 
-public class ArtistThread {
+class ArtistThread {
 
     private static final String TAG = "ArtistThread";
 
-    public static void checkThreadCancellation() throws ArtistInterruptedException {
+    static void checkThreadCancellation() throws ArtistInterruptedException {
         if (Thread.currentThread().isInterrupted()) {
             Log.d(TAG, String.format("checkThreadCancellation() interrupted[%b]",
                     Thread.currentThread().isInterrupted()));
