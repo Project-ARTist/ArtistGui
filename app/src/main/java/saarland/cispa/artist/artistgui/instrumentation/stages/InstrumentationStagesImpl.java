@@ -290,7 +290,8 @@ public class InstrumentationStagesImpl implements InstrumentationStages {
                         + " --generate-debug-info"
                         + " --compile-pic";
 
-        cmd_dex2oat_compile += " --dex-file=" + (mRunConfig.app_apk_file_path);
+        cmd_dex2oat_compile += " --dex-file=" + (mRunConfig.codeLib != null ?
+                mRunConfig.app_apk_merged_signed_file_path : mRunConfig.app_apk_file_path);
         cmd_dex2oat_compile += " --checksum-rewriting";
         cmd_dex2oat_compile += " --dex-location=" + mRunConfig.app_apk_file_path;
 
