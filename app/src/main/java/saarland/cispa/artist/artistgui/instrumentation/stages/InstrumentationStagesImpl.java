@@ -45,6 +45,8 @@ public class InstrumentationStagesImpl implements InstrumentationStages {
 
     private static final String TAG = "InstrumentationStages";
 
+    private static final boolean PIXEL_PHONE_ANDROID_8 = false;
+
     private Context mContext;
     private ArtistRunConfig mRunConfig;
     private List<ProgressListener> mProgressListeners;
@@ -305,9 +307,19 @@ public class InstrumentationStagesImpl implements InstrumentationStages {
         if (mRunConfig.app_oat_architecture.contains("arm64")) {
             // ARM64 Special Flags
             cmd_dex2oat_compile += " --instruction-set=arm64";
-            cmd_dex2oat_compile += " --instruction-set-features=smp,a53";
-            cmd_dex2oat_compile += " --instruction-set-variant=denver64";
-            cmd_dex2oat_compile += " --instruction-set-features=default";
+
+            // TODO: instruction-set features & variant needs to get set "per device" or we use generic
+            //       settings
+            if (PIXEL_PHONE_ANDROID_8) {
+                cmd_dex2oat_compile += " --instruction-set-variant=kryo";
+                cmd_dex2oat_compile += " --instruction-set-features=default";
+            } else {
+                // smp does not exist anymore on Android 8.0 Oreo
+                cmd_dex2oat_compile += " --instruction-set-features=smp,a53";
+                cmd_dex2oat_compile += " --instruction-set-variant=denver64";
+                cmd_dex2oat_compile += " --instruction-set-features=default";
+            }
+
             // ARM64 Special Flags END
             Log.d(TAG, "Compiling for 64bit Architecture!");
         }
