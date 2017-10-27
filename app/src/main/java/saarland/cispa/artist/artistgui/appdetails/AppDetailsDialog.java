@@ -34,6 +34,7 @@ import android.widget.TextView;
 
 import saarland.cispa.artist.artistgui.Package;
 import saarland.cispa.artist.artistgui.R;
+import saarland.cispa.artist.artistgui.progress.ProgressDialogFragment;
 import saarland.cispa.artist.artistgui.settings.db.operations.PersistPackageToDbAsyncTask;
 
 public class AppDetailsDialog extends DialogFragment implements AppDetailsDialogContract.View {
@@ -66,8 +67,8 @@ public class AppDetailsDialog extends DialogFragment implements AppDetailsDialog
     }
 
     private void setUpTextViews(Package app) {
-        TextView appNameView = (TextView) mRootView.findViewById(R.id.app_name);
-        TextView packageNameView = (TextView) mRootView.findViewById(R.id.package_name);
+        TextView appNameView = mRootView.findViewById(R.id.app_name);
+        TextView packageNameView = mRootView.findViewById(R.id.package_name);
 
         appNameView.setText(app.getAppName());
         packageNameView.setText(app.getPackageName());
@@ -75,20 +76,19 @@ public class AppDetailsDialog extends DialogFragment implements AppDetailsDialog
 
     @Override
     public void onAppIconLoaded(Drawable appIcon) {
-        ImageView appIconView = (ImageView) mRootView.findViewById(R.id.app_icon);
+        ImageView appIconView = mRootView.findViewById(R.id.app_icon);
         appIconView.setImageDrawable(appIcon);
     }
 
     @Override
     public void updateLastInstrumentationTextView(String lastInstrumentedString) {
-        TextView lastInstrumentationView = (TextView) mRootView
-                .findViewById(R.id.last_instrumentation);
+        TextView lastInstrumentationView = mRootView.findViewById(R.id.last_instrumentation);
         lastInstrumentationView.setText(lastInstrumentedString);
     }
 
     @Override
     public void activateKeepInstrumentedViews(Package app) {
-        Switch keepInstrumentedSwitch = (Switch) mRootView
+        Switch keepInstrumentedSwitch = mRootView
                 .findViewById(R.id.keep_instrumented_switch);
         keepInstrumentedSwitch.setChecked(app.isKeepInstrumented());
         keepInstrumentedSwitch.setOnCheckedChangeListener((v, isChecked) -> {
@@ -98,16 +98,23 @@ public class AppDetailsDialog extends DialogFragment implements AppDetailsDialog
         });
         keepInstrumentedSwitch.setEnabled(true);
 
-        TextView summary = (TextView) mRootView
+        TextView summary = mRootView
                 .findViewById(R.id.keep_instrumented_switch_info_text);
         summary.setOnClickListener((l) -> keepInstrumentedSwitch.toggle());
     }
 
     @Override
     public void updateInstrumentationButton(boolean instrumented, String packageName) {
-        Button instrumentButton = (Button) mRootView.findViewById(R.id.instrument_button);
+        Button instrumentButton = mRootView.findViewById(R.id.instrument_button);
         instrumentButton.setText(instrumented ? getString(R.string.reinstrument_app) :
                 getString(R.string.instrument_app));
         instrumentButton.setOnClickListener(v -> mPresenter.instrumentApp(packageName));
+    }
+
+    @Override
+    public void showInstrumentationProgress() {
+        ProgressDialogFragment dialogFragment = new ProgressDialogFragment();
+        dialogFragment.setCancelable(false);
+        dialogFragment.show(getFragmentManager(), ProgressDialogFragment.TAG);
     }
 }

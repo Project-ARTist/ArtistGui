@@ -33,6 +33,8 @@ import android.view.ViewGroup;
 
 import saarland.cispa.artist.artistgui.Package;
 import saarland.cispa.artist.artistgui.R;
+import saarland.cispa.artist.artistgui.appdetails.AppDetailsDialog;
+import saarland.cispa.artist.artistgui.appdetails.AppDetailsDialogPresenter;
 import saarland.cispa.artist.artistgui.instrumentation.progress.ProgressPublisher;
 import saarland.cispa.artist.artistgui.packagelist.view.PackageListView;
 import saarland.cispa.artist.artistgui.progress.ProgressDialogFragment;
@@ -99,20 +101,18 @@ public class CompileFragment extends Fragment implements CompilationContract.Vie
 
     @Override
     public void onPackageSelected(Package selectedPackage) {
-        mPresenter.queueInstrumentation(selectedPackage.getPackageName());
+        Bundle bundle = new Bundle();
+        bundle.putParcelable(AppDetailsDialog.PACKAGE_KEY, selectedPackage);
+
+        AppDetailsDialog detailsDialog = new AppDetailsDialog();
+        detailsDialog.setArguments(bundle);
+        new AppDetailsDialogPresenter(detailsDialog, getActivity());
+        detailsDialog.show(getFragmentManager(), AppDetailsDialog.TAG);
     }
 
     @Override
     public void showNoCodeLibChosenMessage() {
         GuiUtils.displaySnackForever(mPackageListView, getString(R.string.no_codelib_chosen));
-    }
-
-    @Override
-    public void showInstrumentationProgress() {
-        ProgressDialogFragment dialogFragment = new ProgressDialogFragment();
-        new ProgressPresenter(getContext(), dialogFragment);
-        dialogFragment.setCancelable(false);
-        dialogFragment.show(getFragmentManager(), ProgressDialogFragment.TAG);
     }
 
     @Override

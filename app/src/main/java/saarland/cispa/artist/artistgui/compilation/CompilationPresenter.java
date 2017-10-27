@@ -24,7 +24,6 @@ import android.content.Context;
 import android.content.Intent;
 
 import saarland.cispa.artist.artistgui.MainActivity;
-import saarland.cispa.artist.artistgui.instrumentation.InstrumentationService;
 import saarland.cispa.artist.artistgui.settings.config.ArtistAppConfig;
 import saarland.cispa.artist.artistgui.settings.db.operations.AddInstrumentedPackageToDbAsyncTask;
 import saarland.cispa.artist.artistgui.settings.manager.SettingsManager;
@@ -57,7 +56,6 @@ public class CompilationPresenter implements CompilationContract.Presenter {
             final String packageName = intent.getStringExtra(MainActivity.EXTRA_PACKAGE);
             if (packageName != null) {
                 Log.d(TAG, "CompilationTask() Execute: " + packageName);
-                queueInstrumentation(packageName);
             }
         }
     }
@@ -104,13 +102,7 @@ public class CompilationPresenter implements CompilationContract.Presenter {
         }
     }
 
-    @Override
-    public void queueInstrumentation(String packageName) {
-        Intent intent = new Intent(mActivity, InstrumentationService.class);
-        intent.putExtra(InstrumentationService.INTENT_KEY_APP_NAME, packageName);
-        mActivity.startService(intent);
-        mView.showInstrumentationProgress();
-    }
+
 
     @Override
     public void handleInstrumentationResult(Context context, boolean isSuccess,

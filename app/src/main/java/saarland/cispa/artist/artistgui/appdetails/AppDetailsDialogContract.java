@@ -34,6 +34,9 @@ interface AppDetailsDialogContract {
         void activateKeepInstrumentedViews(Package app);
 
         void updateInstrumentationButton(boolean instrumented, String packageName);
+
+        void showInstrumentationProgress();
+
     }
 
     interface Presenter extends BasePresenter {

@@ -1,12 +1,13 @@
 package saarland.cispa.artist.artistgui.broadcastreceiver;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 
 import java.util.List;
 
 import saarland.cispa.artist.artistgui.Package;
-import saarland.cispa.artist.artistgui.compilation.CompilationService;
+import saarland.cispa.artist.artistgui.instrumentation.InstrumentationService;
 import saarland.cispa.artist.artistgui.settings.db.DatabaseManager;
 import saarland.cispa.artist.artistgui.settings.db.InstrumentedPackagesManager;
 
@@ -25,7 +26,9 @@ public class ReinstrumentAppAsyncTask extends AsyncTask<String, Void, Void> {
             List<Package> instrumentedPackages = manager.getAllInstrumentedApps();
             for (Package app : instrumentedPackages) {
                 if (app.getPackageName().equals(p) && app.isKeepInstrumented()) {
-                    CompilationService.startService(mContext, p);
+                    Intent intent = new Intent(mContext, InstrumentationService.class);
+                    intent.putExtra(InstrumentationService.INTENT_KEY_APP_NAME, p);
+                    mContext.startService(intent);
                 }
             }
         }

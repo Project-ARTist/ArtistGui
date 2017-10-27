@@ -30,8 +30,6 @@ public interface CompilationContract {
     interface View extends BaseView<Presenter> {
         void showNoCodeLibChosenMessage();
 
-        void showInstrumentationProgress();
-
         void showInstrumentationResult(boolean isSuccess, String packageName);
     }
 
@@ -41,8 +39,6 @@ public interface CompilationContract {
         void createArtistFolders();
 
         void maybeStartRecompiledApp(final String applicationName);
-
-        void queueInstrumentation(String packageName);
 
         void executeIntentTasks(Intent intent);
 

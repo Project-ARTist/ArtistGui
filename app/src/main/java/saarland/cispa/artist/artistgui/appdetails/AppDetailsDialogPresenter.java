@@ -2,6 +2,7 @@ package saarland.cispa.artist.artistgui.appdetails;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
@@ -12,7 +13,7 @@ import java.util.Date;
 
 import saarland.cispa.artist.artistgui.Package;
 import saarland.cispa.artist.artistgui.R;
-import saarland.cispa.artist.artistgui.compilation.CompileDialogActivity;
+import saarland.cispa.artist.artistgui.instrumentation.InstrumentationService;
 import trikita.log.Log;
 
 public class AppDetailsDialogPresenter implements AppDetailsDialogContract.Presenter {
@@ -71,6 +72,9 @@ public class AppDetailsDialogPresenter implements AppDetailsDialogContract.Prese
     @Override
     public void instrumentApp(String packageName) {
         Log.d(TAG, "compileInstalledApp(): " + packageName);
-        CompileDialogActivity.compile(mActivity, packageName);
+        Intent intent = new Intent(mActivity, InstrumentationService.class);
+        intent.putExtra(InstrumentationService.INTENT_KEY_APP_NAME, packageName);
+        mActivity.startService(intent);
+        mView.showInstrumentationProgress();
     }
 }
