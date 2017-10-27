@@ -19,10 +19,6 @@ android {
         targetSdkVersion 26
         versionCode 1
         versionName "1.0"
-
-        jackOptions {
-            enabled true
-        }
     }
     lintOptions {
         // set to true to turn off analysis progress reporting by lint
