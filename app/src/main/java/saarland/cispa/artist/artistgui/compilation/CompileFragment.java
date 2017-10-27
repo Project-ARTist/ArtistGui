@@ -106,7 +106,6 @@ public class CompileFragment extends Fragment implements CompilationContract.Vie
 
         AppDetailsDialog detailsDialog = new AppDetailsDialog();
         detailsDialog.setArguments(bundle);
-        new AppDetailsDialogPresenter(detailsDialog, getActivity());
         detailsDialog.show(getFragmentManager(), AppDetailsDialog.TAG);
     }
 

@@ -45,6 +45,19 @@ public class AppDetailsDialog extends DialogFragment implements AppDetailsDialog
     private AppDetailsDialogContract.Presenter mPresenter;
     private View mRootView;
 
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        new AppDetailsDialogPresenter(this, getActivity());
+
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            Package selectedPackage = bundle.getParcelable(PACKAGE_KEY);
+            mPresenter.loadAppIcon(selectedPackage);
+            mPresenter.determineInstrumentationStatusAndUpdateViews(selectedPackage);
+        }
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
@@ -55,8 +68,6 @@ public class AppDetailsDialog extends DialogFragment implements AppDetailsDialog
         if (bundle != null) {
             Package selectedPackage = bundle.getParcelable(PACKAGE_KEY);
             setUpTextViews(selectedPackage);
-            mPresenter.loadAppIcon(selectedPackage);
-            mPresenter.determineInstrumentationStatusAndUpdateViews(selectedPackage);
         }
         return mRootView;
     }
