@@ -11,8 +11,6 @@ build/
 debug/
 doc/log
 doc/tombstones
-gradle/
-gradlew*
 TaintingCompiler.iml
 app/src/main/obj
 app/src/main/assets/dex2oat
