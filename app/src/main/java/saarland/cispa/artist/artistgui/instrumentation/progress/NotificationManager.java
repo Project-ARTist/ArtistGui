@@ -63,7 +63,8 @@ public class NotificationManager implements ProgressListener {
     }
 
     @Override
-    public void reportProgressStage(@NonNull String packageName, int progress, @NonNull String stage) {
+    public void reportProgressStage(@NonNull String packageName, int progress,
+                                    @NonNull String stage) {
         mNotification.extras.putInt(EXTRA_PROGRESS, progress);
         mNotification.extras.putInt(EXTRA_PROGRESS_MAX, PROGRESS_MAX);
         mNotification.extras.putBoolean(EXTRA_PROGRESS_INDETERMINATE, true);

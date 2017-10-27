@@ -41,8 +41,6 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         MainActivityContract.View {
 
-    private static final String TAG = "MainActivity";
-
     public static final String EXTRA_PACKAGE = "INTENT_EXTRA_PACKAGE";
     public static final String SELECTED_FRAGMENT_STATE_KEY = "selected_fragment";
 

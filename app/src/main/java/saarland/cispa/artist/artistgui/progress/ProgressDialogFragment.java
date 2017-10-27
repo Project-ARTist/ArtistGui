@@ -39,31 +39,36 @@ public class ProgressDialogFragment extends DialogFragment implements ProgressCo
 
     public static final String TAG = "ProgressDialogFragment";
 
+    private static final String STATE_KEY_STAGE_TEXT = "stage_text";
+    private static final String STATE_KEY_DETAILS_TEXT = "details_text";
+
     private ProgressContract.Presenter mPresenter;
-    private boolean wasStopped;
     private TextView mStageTextView;
     private TextView mDetailsTextView;
 
     @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if (mPresenter == null) {
+            setPresenter(new ProgressPresenter(getContext(), this));
+        }
+    }
+
+    @Override
     public void setPresenter(ProgressContract.Presenter presenter) {
         mPresenter = presenter;
-        mPresenter.start();
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        if (wasStopped) {
-            mPresenter.start();
-            wasStopped = false;
-        }
+        mPresenter.start();
     }
 
     @Override
     public void onStop() {
         super.onStop();
         mPresenter.onStop();
-        wasStopped = true;
     }
 
     @Nullable
@@ -72,14 +77,33 @@ public class ProgressDialogFragment extends DialogFragment implements ProgressCo
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.dialog_progress, container, false);
 
-        mStageTextView = (TextView) rootView.findViewById(R.id.stage_status);
-        mDetailsTextView = (TextView) rootView.findViewById(R.id.status_extended);
+        mStageTextView = rootView.findViewById(R.id.stage_status);
+        mDetailsTextView = rootView.findViewById(R.id.status_extended);
         mDetailsTextView.setMovementMethod(new ScrollingMovementMethod());
 
-        Button cancel = (Button) rootView.findViewById(R.id.button_compile_cancel);
+        Button cancel = rootView.findViewById(R.id.button_compile_cancel);
         cancel.setOnClickListener(onClickListener -> mPresenter.cancelInstrumentation());
 
         return rootView;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(STATE_KEY_STAGE_TEXT, mStageTextView.getText().toString());
+        outState.putString(STATE_KEY_DETAILS_TEXT, mDetailsTextView.getText().toString());
+    }
+
+    @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+        if (savedInstanceState != null) {
+            String stage = savedInstanceState.getString(STATE_KEY_STAGE_TEXT);
+            mStageTextView.setText(stage);
+
+            String details = savedInstanceState.getString(STATE_KEY_DETAILS_TEXT);
+            mDetailsTextView.setText(details);
+        }
     }
 
     @Override

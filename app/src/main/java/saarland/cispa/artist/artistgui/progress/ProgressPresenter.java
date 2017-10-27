@@ -22,6 +22,7 @@ public class ProgressPresenter implements ProgressContract.Presenter {
 
     private Context mContext;
     private ProgressContract.View mView;
+    private boolean mIsBroadcastListenerActive;
 
     private final ServiceConnection mConnection = new ServiceConnection() {
         @Override
@@ -72,11 +73,16 @@ public class ProgressPresenter implements ProgressContract.Presenter {
 
     @Override
     public void start() {
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(ACTION_STAGE_UPDATE);
-        intentFilter.addAction(ACTION_DETAILED_UPDATE);
-        intentFilter.addAction(ACTION_INSTRUMENTATION_RESULT);
-        LocalBroadcastManager.getInstance(mContext).registerReceiver(mResultReceiver, intentFilter);
+        if (!mIsBroadcastListenerActive) {
+            IntentFilter intentFilter = new IntentFilter();
+            intentFilter.addAction(ACTION_STAGE_UPDATE);
+            intentFilter.addAction(ACTION_DETAILED_UPDATE);
+            intentFilter.addAction(ACTION_INSTRUMENTATION_RESULT);
+            LocalBroadcastManager.getInstance(mContext)
+                    .registerReceiver(mResultReceiver, intentFilter);
+
+            mIsBroadcastListenerActive = true;
+        }
     }
 
     @Override
@@ -87,6 +93,8 @@ public class ProgressPresenter implements ProgressContract.Presenter {
 
     @Override
     public void onStop() {
-        LocalBroadcastManager.getInstance(mContext).unregisterReceiver(mResultReceiver);
+        if (mIsBroadcastListenerActive) {
+            LocalBroadcastManager.getInstance(mContext).unregisterReceiver(mResultReceiver);
+        }
     }
 }
