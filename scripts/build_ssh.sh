@@ -89,6 +89,10 @@ if [ $? -eq 0 ]; then
 
     echo "Creating folders if necessary: ./assets/artist/${api_level_string}/lib/"
     mkdir -p ./assets/artist/${api_level_string}/lib/
+    echo ""
+    echo "Debug binaries will get copied to ${working_dir}/debug/android-${api_level}/${lib}"
+    mkdir -p ${working_dir}/debug/android-${api_level}/${lib}
+    echo ""
 
     echo "Copying new binaries and shared objects"
     echo ""
@@ -112,14 +116,13 @@ if [ $? -eq 0 ]; then
             echo "Copy ${lib} (32bit) -> './assets/artist/${api_level_string}/lib/'"
             cp ${mounted_aosp}/out/target/product/generic/symbols/system/lib/${lib} ./assets/artist/${api_level_string}/lib/
         fi
+        cp ./assets/artist/${api_level_string}/lib/${lib} ${working_dir}/debug/android-${api_level}/${lib}
         if [ "${debug_binaries}" = true ]; then
             echo " > ${lib}: Keeping debug symbols"
         else
             echo " > ${lib}: Stripping debug symbols"
             ${ndk_binary_strip} ./assets/artist/${api_level_string}/lib/${lib}
         fi
-        cp ./assets/artist/${api_level_string}/lib/${lib} ${working_dir}/debug/android-${api_level}/${lib}
-        # /home/weisgerber/mount/colossus04/weisgerber/aosp/aosp_8.0.0_r9_arm-eng/out/target/product/generic_arm64/obj/lib/
     done
     echo ""
     echo "Copying files DONE"
