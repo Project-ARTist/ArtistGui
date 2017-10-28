@@ -76,24 +76,6 @@ public class MainActivityPresenterTest {
     }
 
     @Test
-    public void startActivityWithoutIntent() throws Exception {
-        when(mIntent.hasExtra(MainActivity.EXTRA_PACKAGE)).thenReturn(false);
-        mPresenter.processIntent(mIntent);
-
-        verify(mView).onFragmentSelected(mArgumentCaptor.capture());
-        assertTrue(mArgumentCaptor.getValue() instanceof InfoFragment);
-    }
-
-    @Test
-    public void startActivityWithIntent() throws Exception {
-        when(mIntent.hasExtra(MainActivity.EXTRA_PACKAGE)).thenReturn(true);
-        mPresenter.processIntent(mIntent);
-
-        verify(mView).onFragmentSelected(mArgumentCaptor.capture());
-        assertTrue(mArgumentCaptor.getValue() instanceof AppListFragment);
-    }
-
-    @Test
     public void selectInfoFragment() throws Exception {
         mPresenter.selectFragment(MainActivityPresenter.INFO_FRAGMENT);
         verify(mView).onFragmentSelected(mArgumentCaptor.capture());

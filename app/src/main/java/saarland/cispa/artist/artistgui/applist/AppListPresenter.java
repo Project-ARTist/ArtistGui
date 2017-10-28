@@ -23,7 +23,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 
-import saarland.cispa.artist.artistgui.MainActivity;
 import saarland.cispa.artist.artistgui.settings.config.ArtistAppConfig;
 import saarland.cispa.artist.artistgui.settings.db.operations.AddInstrumentedPackageToDbAsyncTask;
 import saarland.cispa.artist.artistgui.settings.manager.SettingsManager;
@@ -48,16 +47,6 @@ public class AppListPresenter implements AppListContract.Presenter {
         mSettingsManager = settingsManager;
 
         mView.setPresenter(this);
-    }
-
-    @Override
-    public void executeIntentTasks(Intent intent) {
-        if (intent != null && intent.hasExtra(MainActivity.EXTRA_PACKAGE)) {
-            final String packageName = intent.getStringExtra(MainActivity.EXTRA_PACKAGE);
-            if (packageName != null) {
-                Log.d(TAG, "CompilationTask() Execute: " + packageName);
-            }
-        }
     }
 
     @Override
@@ -101,7 +90,6 @@ public class AppListPresenter implements AppListContract.Presenter {
             mActivity.startActivity(launchIntent);
         }
     }
-
 
 
     @Override

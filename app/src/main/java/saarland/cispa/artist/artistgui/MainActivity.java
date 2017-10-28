@@ -41,7 +41,6 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         MainActivityContract.View {
 
-    public static final String EXTRA_PACKAGE = "INTENT_EXTRA_PACKAGE";
     public static final String SELECTED_FRAGMENT_STATE_KEY = "selected_fragment";
 
     private MainActivityContract.Presenter mPresenter;
@@ -71,12 +70,6 @@ public class MainActivity extends AppCompatActivity
 
         if (savedInstanceState == null) {
             mPresenter.checkCompatibility();
-
-            final Intent intent = getIntent();
-            if (intent != null) {
-                mPresenter.processIntent(intent);
-            }
-
         } else {
             int selectedFragmentId = savedInstanceState.getInt(SELECTED_FRAGMENT_STATE_KEY);
             Fragment lastSelectedFragment = mFragmentManager.findFragmentById(R.id.content_frame);

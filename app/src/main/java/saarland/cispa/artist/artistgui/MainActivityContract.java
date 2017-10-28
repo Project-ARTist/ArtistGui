@@ -19,7 +19,6 @@
 
 package saarland.cispa.artist.artistgui;
 
-import android.content.Intent;
 import android.support.v4.app.Fragment;
 
 import saarland.cispa.artist.artistgui.base.BasePresenter;
@@ -34,8 +33,6 @@ interface MainActivityContract {
 
     interface Presenter extends BasePresenter {
         void checkCompatibility();
-
-        void processIntent(Intent intent);
 
         void selectFragment(@MainActivityPresenter.selectableFragment int id);
 

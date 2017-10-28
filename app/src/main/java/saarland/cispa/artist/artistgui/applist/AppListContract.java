@@ -20,7 +20,6 @@
 package saarland.cispa.artist.artistgui.applist;
 
 import android.content.Context;
-import android.content.Intent;
 
 import saarland.cispa.artist.artistgui.base.BasePresenter;
 import saarland.cispa.artist.artistgui.base.BaseView;
@@ -39,8 +38,6 @@ public interface AppListContract {
         void createArtistFolders();
 
         void maybeStartRecompiledApp(final String applicationName);
-
-        void executeIntentTasks(Intent intent);
 
         void handleInstrumentationResult(Context context, boolean isSuccess, String packageName);
     }

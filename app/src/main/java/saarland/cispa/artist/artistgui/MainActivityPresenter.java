@@ -21,7 +21,6 @@ package saarland.cispa.artist.artistgui;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Build;
 import android.support.annotation.IntDef;
 import android.support.v4.app.Fragment;
@@ -30,8 +29,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 import saarland.cispa.artist.artistgui.applist.AppListContract;
-import saarland.cispa.artist.artistgui.applist.AppListPresenter;
 import saarland.cispa.artist.artistgui.applist.AppListFragment;
+import saarland.cispa.artist.artistgui.applist.AppListPresenter;
 import saarland.cispa.artist.artistgui.settings.manager.SettingsManager;
 import saarland.cispa.artist.artistgui.utils.LogA;
 
@@ -80,16 +79,6 @@ class MainActivityPresenter implements MainActivityContract.Presenter {
     public void checkCompatibility() {
         if (!supportedByArtist()) {
             mView.onIncompatibleAndroidVersion();
-        }
-    }
-
-    @Override
-    public void processIntent(Intent intent) {
-        if (intent.hasExtra(MainActivity.EXTRA_PACKAGE)) {
-            selectFragment(COMPILATION_FRAGMENT);
-            mCompilationPresenter.executeIntentTasks(intent);
-        } else {
-            selectFragment(INFO_FRAGMENT);
         }
     }
 
