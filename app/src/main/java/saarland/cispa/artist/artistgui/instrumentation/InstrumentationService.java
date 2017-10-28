@@ -48,7 +48,7 @@ public class InstrumentationService extends Service {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent != null &&
-                    intent.getAction().equals(ProgressPublisher.ACTION_INSTRUMENTATION_RESULT)) {
+                    ProgressPublisher.ACTION_INSTRUMENTATION_RESULT.equals(intent.getAction())) {
                 String packageName = intent.getStringExtra(ProgressPublisher.EXTRA_PACKAGE_NAME);
                 mServiceController.processResult(packageName);
                 stopIfNothingToDo();
