@@ -73,9 +73,9 @@ class AppListAdapter extends RecyclerView.Adapter<AppListAdapter.ViewHolder>
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.app_list_entry,
                 parent, false);
 
-        ImageView appIcon = (ImageView) view.findViewById(R.id.app_icon);
-        TextView appName = (TextView) view.findViewById(R.id.app_name);
-        TextView packageName = (TextView) view.findViewById(R.id.package_name);
+        ImageView appIcon = view.findViewById(R.id.app_icon);
+        TextView appName = view.findViewById(R.id.app_name);
+        TextView packageName = view.findViewById(R.id.package_name);
 
         return new ViewHolder(view, appIcon, appName, packageName);
     }
