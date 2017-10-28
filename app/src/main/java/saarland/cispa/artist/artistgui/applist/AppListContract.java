@@ -17,7 +17,7 @@
  *
  */
 
-package saarland.cispa.artist.artistgui.compilation;
+package saarland.cispa.artist.artistgui.applist;
 
 import android.content.Context;
 import android.content.Intent;
@@ -25,7 +25,7 @@ import android.content.Intent;
 import saarland.cispa.artist.artistgui.base.BasePresenter;
 import saarland.cispa.artist.artistgui.base.BaseView;
 
-public interface CompilationContract {
+public interface AppListContract {
 
     interface View extends BaseView<Presenter> {
         void showNoCodeLibChosenMessage();

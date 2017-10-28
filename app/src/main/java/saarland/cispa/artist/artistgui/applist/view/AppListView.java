@@ -17,7 +17,7 @@
  *
  */
 
-package saarland.cispa.artist.artistgui.packagelist.view;
+package saarland.cispa.artist.artistgui.applist.view;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -35,10 +35,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import saarland.cispa.artist.artistgui.Package;
-import saarland.cispa.artist.artistgui.broadcastreceiver.PackageModifiedReceiver;
 
-public class PackageListView extends RecyclerView
-        implements ReadInstalledPackagesAsyncTask.OnReadInstalledPackages {
+public class AppListView extends RecyclerView
+        implements ReadInstalledAppsAsyncTask.OnReadInstalledPackages {
 
     public interface OnPackageSelectedListener {
         void onPackageSelected(Package selectedPackage);
@@ -50,15 +49,15 @@ public class PackageListView extends RecyclerView
 
     private BroadcastReceiver mPackageInstalledOrRemoved;
 
-    public PackageListView(Context context) {
+    public AppListView(Context context) {
         this(context, null);
     }
 
-    public PackageListView(Context context, @Nullable AttributeSet attrs) {
+    public AppListView(Context context, @Nullable AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public PackageListView(Context context, @Nullable AttributeSet attrs, int defStyle) {
+    public AppListView(Context context, @Nullable AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         mListeners = new ArrayList<>();
         mContext = context;
@@ -68,7 +67,7 @@ public class PackageListView extends RecyclerView
         setLayoutManager(mLayoutManager);
 
         PackageManager packageManager = context.getPackageManager();
-        new ReadInstalledPackagesAsyncTask(context, this).execute(packageManager);
+        new ReadInstalledAppsAsyncTask(context, this).execute(packageManager);
     }
 
     private boolean shouldFilterApps(final Context context) {
@@ -80,7 +79,7 @@ public class PackageListView extends RecyclerView
     public void setAdapter(Adapter adapter) {
         super.setAdapter(adapter);
         if (mPackageInstalledOrRemoved == null) {
-            mPackageInstalledOrRemoved = new PackageModifiedReceiver((PackageListAdapter) adapter);
+            mPackageInstalledOrRemoved = new PackageModifiedReceiver((AppListAdapter) adapter);
         }
         registerPackageModifiedBroadcastReceiver();
     }
@@ -113,7 +112,7 @@ public class PackageListView extends RecyclerView
 
     @Override
     public void onReadInstalledPackages(List<Package> packages) {
-        PackageListAdapter adapter = new PackageListAdapter(mContext, packages, mListeners);
+        AppListAdapter adapter = new AppListAdapter(mContext, packages, mListeners);
         setAdapter(adapter);
     }
 

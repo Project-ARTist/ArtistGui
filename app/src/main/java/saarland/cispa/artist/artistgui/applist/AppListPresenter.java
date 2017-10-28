@@ -17,7 +17,7 @@
  *
  */
 
-package saarland.cispa.artist.artistgui.compilation;
+package saarland.cispa.artist.artistgui.applist;
 
 import android.app.Activity;
 import android.content.Context;
@@ -30,18 +30,18 @@ import saarland.cispa.artist.artistgui.settings.manager.SettingsManager;
 import saarland.cispa.artist.artistgui.utils.AndroidUtils;
 import trikita.log.Log;
 
-public class CompilationPresenter implements CompilationContract.Presenter {
+public class AppListPresenter implements AppListContract.Presenter {
 
     public static final String TAG = "CompileActivity";
 
-    private final CompilationContract.View mView;
+    private final AppListContract.View mView;
     private final Activity mActivity;
     private final SettingsManager mSettingsManager;
 
     private ArtistAppConfig mConfig = null;
 
-    public CompilationPresenter(Activity activity, CompilationContract.View view,
-                                SettingsManager settingsManager) {
+    public AppListPresenter(Activity activity, AppListContract.View view,
+                            SettingsManager settingsManager) {
         mConfig = new ArtistAppConfig();
         mActivity = activity;
         mView = view;

@@ -33,7 +33,7 @@ import org.mockito.MockitoAnnotations;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 
-import saarland.cispa.artist.artistgui.compilation.CompileFragment;
+import saarland.cispa.artist.artistgui.applist.AppListFragment;
 import saarland.cispa.artist.artistgui.settings.manager.SettingsManager;
 
 import static junit.framework.Assert.assertTrue;
@@ -90,7 +90,7 @@ public class MainActivityPresenterTest {
         mPresenter.processIntent(mIntent);
 
         verify(mView).onFragmentSelected(mArgumentCaptor.capture());
-        assertTrue(mArgumentCaptor.getValue() instanceof CompileFragment);
+        assertTrue(mArgumentCaptor.getValue() instanceof AppListFragment);
     }
 
     @Test
@@ -104,7 +104,7 @@ public class MainActivityPresenterTest {
     public void selectCompileFragment() throws Exception {
         mPresenter.selectFragment(MainActivityPresenter.COMPILATION_FRAGMENT);
         verify(mView).onFragmentSelected(mArgumentCaptor.capture());
-        assertTrue(mArgumentCaptor.getValue() instanceof CompileFragment);
+        assertTrue(mArgumentCaptor.getValue() instanceof AppListFragment);
     }
 
     private static void setFinalStatic(Field field, Object newValue) throws Exception {

@@ -29,9 +29,9 @@ import android.support.v4.app.Fragment;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-import saarland.cispa.artist.artistgui.compilation.CompilationContract;
-import saarland.cispa.artist.artistgui.compilation.CompilationPresenter;
-import saarland.cispa.artist.artistgui.compilation.CompileFragment;
+import saarland.cispa.artist.artistgui.applist.AppListContract;
+import saarland.cispa.artist.artistgui.applist.AppListPresenter;
+import saarland.cispa.artist.artistgui.applist.AppListFragment;
 import saarland.cispa.artist.artistgui.settings.manager.SettingsManager;
 import saarland.cispa.artist.artistgui.utils.LogA;
 
@@ -60,8 +60,8 @@ class MainActivityPresenter implements MainActivityContract.Presenter {
     private int mSelectedFragmentId;
     private InfoFragment mInfoFragment;
 
-    private CompileFragment mCompileFragment;
-    private CompilationContract.Presenter mCompilationPresenter;
+    private AppListFragment mAppListFragment;
+    private AppListContract.Presenter mCompilationPresenter;
 
     MainActivityPresenter(Context context, Activity activity, MainActivityContract.View view,
                           SettingsManager settingsManager) {
@@ -104,12 +104,12 @@ class MainActivityPresenter implements MainActivityContract.Presenter {
                 selectedFragment = mInfoFragment;
                 break;
             case COMPILATION_FRAGMENT:
-                if (mCompileFragment == null) {
-                    mCompileFragment = new CompileFragment();
-                    mCompilationPresenter = new CompilationPresenter(mActivity,
-                            mCompileFragment, mSettingsManager);
+                if (mAppListFragment == null) {
+                    mAppListFragment = new AppListFragment();
+                    mCompilationPresenter = new AppListPresenter(mActivity,
+                            mAppListFragment, mSettingsManager);
                 }
-                selectedFragment = mCompileFragment;
+                selectedFragment = mAppListFragment;
                 break;
         }
         mSelectedFragmentId = id;
@@ -123,10 +123,10 @@ class MainActivityPresenter implements MainActivityContract.Presenter {
                 mInfoFragment = (InfoFragment) selectedFragment;
                 break;
             case COMPILATION_FRAGMENT:
-                mCompileFragment = (CompileFragment) selectedFragment;
-                mCompilationPresenter = new CompilationPresenter(mActivity,
-                        mCompileFragment, mSettingsManager);
-                mCompileFragment.setPresenter(mCompilationPresenter);
+                mAppListFragment = (AppListFragment) selectedFragment;
+                mCompilationPresenter = new AppListPresenter(mActivity,
+                        mAppListFragment, mSettingsManager);
+                mAppListFragment.setPresenter(mCompilationPresenter);
                 break;
         }
         mSelectedFragmentId = selectedFragmentId;

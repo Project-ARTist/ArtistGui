@@ -24,6 +24,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 
+import saarland.cispa.artist.artistgui.broadcastreceiver.ReinstrumentAppAsyncTask;
+
 public class PackageUpdatedReceiver extends BroadcastReceiver {
 
     private static final String PACKAGE_NAME_PREFIX = "package:";

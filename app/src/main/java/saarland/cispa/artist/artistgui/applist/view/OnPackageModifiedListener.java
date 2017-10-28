@@ -17,7 +17,7 @@
  *
  */
 
-package saarland.cispa.artist.artistgui.broadcastreceiver;
+package saarland.cispa.artist.artistgui.applist.view;
 
 public interface OnPackageModifiedListener {
     void onPackageInstalled(String packageName);

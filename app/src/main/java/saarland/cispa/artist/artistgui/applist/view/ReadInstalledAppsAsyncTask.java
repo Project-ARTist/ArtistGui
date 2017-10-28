@@ -17,7 +17,7 @@
  *
  */
 
-package saarland.cispa.artist.artistgui.packagelist.view;
+package saarland.cispa.artist.artistgui.applist.view;
 
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
@@ -32,7 +32,7 @@ import java.util.List;
 import saarland.cispa.artist.artistgui.Package;
 import saarland.cispa.artist.artistgui.settings.db.DatabaseManager;
 
-class ReadInstalledPackagesAsyncTask extends
+class ReadInstalledAppsAsyncTask extends
         AsyncTask<PackageManager, Void, List<Package>> {
 
     interface OnReadInstalledPackages {
@@ -44,7 +44,7 @@ class ReadInstalledPackagesAsyncTask extends
 
     private List<Package> mInstrumentedApps;
 
-    ReadInstalledPackagesAsyncTask(Context context, OnReadInstalledPackages callback) {
+    ReadInstalledAppsAsyncTask(Context context, OnReadInstalledPackages callback) {
         super();
         mContext = context;
         mResultCallback = callback;

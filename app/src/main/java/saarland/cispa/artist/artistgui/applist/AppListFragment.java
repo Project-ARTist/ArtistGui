@@ -17,7 +17,7 @@
  *
  */
 
-package saarland.cispa.artist.artistgui.compilation;
+package saarland.cispa.artist.artistgui.applist;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -34,18 +34,15 @@ import android.view.ViewGroup;
 import saarland.cispa.artist.artistgui.Package;
 import saarland.cispa.artist.artistgui.R;
 import saarland.cispa.artist.artistgui.appdetails.AppDetailsDialog;
-import saarland.cispa.artist.artistgui.appdetails.AppDetailsDialogPresenter;
 import saarland.cispa.artist.artistgui.instrumentation.progress.ProgressPublisher;
-import saarland.cispa.artist.artistgui.packagelist.view.PackageListView;
-import saarland.cispa.artist.artistgui.progress.ProgressDialogFragment;
-import saarland.cispa.artist.artistgui.progress.ProgressPresenter;
+import saarland.cispa.artist.artistgui.applist.view.AppListView;
 import saarland.cispa.artist.artistgui.utils.GuiUtils;
 
-public class CompileFragment extends Fragment implements CompilationContract.View,
-        PackageListView.OnPackageSelectedListener {
+public class AppListFragment extends Fragment implements AppListContract.View,
+        AppListView.OnPackageSelectedListener {
 
-    private CompilationContract.Presenter mPresenter;
-    private PackageListView mPackageListView;
+    private AppListContract.Presenter mPresenter;
+    private AppListView mAppListView;
 
     private BroadcastReceiver mResultReceiver = new BroadcastReceiver() {
         @Override
@@ -78,7 +75,7 @@ public class CompileFragment extends Fragment implements CompilationContract.Vie
     }
 
     @Override
-    public void setPresenter(CompilationContract.Presenter presenter) {
+    public void setPresenter(AppListContract.Presenter presenter) {
         mPresenter = presenter;
     }
 
@@ -86,10 +83,10 @@ public class CompileFragment extends Fragment implements CompilationContract.Vie
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        mPackageListView = (PackageListView) inflater
+        mAppListView = (AppListView) inflater
                 .inflate(R.layout.fragment_package_list, container, false);
-        mPackageListView.addOnPackageSelectedListener(this);
-        return mPackageListView;
+        mAppListView.addOnPackageSelectedListener(this);
+        return mAppListView;
     }
 
     @Override
@@ -111,7 +108,7 @@ public class CompileFragment extends Fragment implements CompilationContract.Vie
 
     @Override
     public void showNoCodeLibChosenMessage() {
-        GuiUtils.displaySnackForever(mPackageListView, getString(R.string.no_codelib_chosen));
+        GuiUtils.displaySnackForever(mAppListView, getString(R.string.no_codelib_chosen));
     }
 
     @Override
@@ -119,6 +116,6 @@ public class CompileFragment extends Fragment implements CompilationContract.Vie
         int stringResourceId = isSuccess ? R.string.snack_compilation_success :
                 R.string.snack_compilation_failed;
         String userMessage = getResources().getString(stringResourceId) + packageName;
-        GuiUtils.displaySnackLong(mPackageListView, userMessage);
+        GuiUtils.displaySnackLong(mAppListView, userMessage);
     }
 }
