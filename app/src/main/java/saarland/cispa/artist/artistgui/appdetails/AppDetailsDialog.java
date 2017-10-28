@@ -53,8 +53,9 @@ public class AppDetailsDialog extends DialogFragment implements AppDetailsDialog
         Bundle bundle = getArguments();
         if (bundle != null) {
             Package selectedPackage = bundle.getParcelable(PACKAGE_KEY);
-            mPresenter.loadAppIcon(selectedPackage);
-            mPresenter.determineInstrumentationStatusAndUpdateViews(selectedPackage);
+            mPresenter.setSelectedPackage(selectedPackage);
+            mPresenter.loadAppIcon();
+            mPresenter.determineInstrumentationStatusAndUpdateViews();
         }
     }
 
@@ -119,7 +120,7 @@ public class AppDetailsDialog extends DialogFragment implements AppDetailsDialog
         Button instrumentButton = mRootView.findViewById(R.id.instrument_button);
         instrumentButton.setText(instrumented ? getString(R.string.reinstrument_app) :
                 getString(R.string.instrument_app));
-        instrumentButton.setOnClickListener(v -> mPresenter.instrumentApp(packageName));
+        instrumentButton.setOnClickListener(v -> mPresenter.instrumentApp());
     }
 
     @Override

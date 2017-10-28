@@ -40,10 +40,12 @@ interface AppDetailsDialogContract {
     }
 
     interface Presenter extends BasePresenter {
-        void loadAppIcon(Package app);
+        void loadAppIcon();
 
-        void determineInstrumentationStatusAndUpdateViews(Package app);
+        void determineInstrumentationStatusAndUpdateViews();
 
-        void instrumentApp(String packageName);
+        void instrumentApp();
+
+        void setSelectedPackage(Package selectedPackage);
     }
 }
