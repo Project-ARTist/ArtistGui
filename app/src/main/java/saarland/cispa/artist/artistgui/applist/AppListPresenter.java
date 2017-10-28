@@ -20,14 +20,9 @@
 package saarland.cispa.artist.artistgui.applist;
 
 import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
 
 import saarland.cispa.artist.artistgui.settings.config.ArtistAppConfig;
-import saarland.cispa.artist.artistgui.settings.db.operations.AddInstrumentedPackageToDbAsyncTask;
 import saarland.cispa.artist.artistgui.settings.manager.SettingsManager;
-import saarland.cispa.artist.artistgui.utils.AndroidUtils;
-import trikita.log.Log;
 
 public class AppListPresenter implements AppListContract.Presenter {
 
@@ -51,7 +46,6 @@ public class AppListPresenter implements AppListContract.Presenter {
 
     @Override
     public void start() {
-        createArtistFolders();
     }
 
     @Override
@@ -63,19 +57,6 @@ public class AppListPresenter implements AppListContract.Presenter {
         // warn the user IF no code lib is chosen AND code lib should be merged
         if (!codeLibChosen && shouldMerge) {
             mView.showNoCodeLibChosenMessage();
-        }
-    }
-
-    @Override
-    public void createArtistFolders() {
-        if (mConfig.apkBackupFolderLocation.isEmpty()) {
-            mConfig.apkBackupFolderLocation =
-                    AndroidUtils.createFoldersInFilesDir(mActivity.getApplicationContext(),
-                            ArtistAppConfig.APP_FOLDER_APK_BACKUP);
-        }
-        if (mConfig.codeLibFolder.isEmpty()) {
-            mConfig.codeLibFolder = AndroidUtils.createFoldersInFilesDir(mActivity
-                    .getApplicationContext(), ArtistAppConfig.APP_FOLDER_CODELIBS);
         }
     }
 }

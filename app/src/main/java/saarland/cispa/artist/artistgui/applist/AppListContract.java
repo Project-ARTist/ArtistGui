@@ -30,7 +30,5 @@ public interface AppListContract {
 
     interface Presenter extends BasePresenter {
         void checkIfCodeLibIsChosen();
-
-        void createArtistFolders();
     }
 }

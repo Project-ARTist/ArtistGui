@@ -39,8 +39,4 @@ public class ArtistAppConfig {
     public static final String PREF_KEY_CODELIB_IMPORT = "pref_key_codelib_import";
 
     public static final String KEY_PREF_GENERAL_LOGLEVEL = "pref_general_log_level";
-
-
-    public String apkBackupFolderLocation = "";
-    public String codeLibFolder = "";
 }
