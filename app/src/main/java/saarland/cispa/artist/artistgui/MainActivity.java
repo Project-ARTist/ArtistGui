@@ -67,6 +67,7 @@ public class MainActivity extends AppCompatActivity
 
         if (savedInstanceState == null) {
             mPresenter.checkCompatibility();
+            mPresenter.selectFragment(MainActivityPresenter.INFO_FRAGMENT);
         } else {
             mPresenter.restoreSavedInstanceState(savedInstanceState, mFragmentManager);
         }

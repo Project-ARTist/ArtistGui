@@ -18,6 +18,6 @@ interface ProgressContract {
     interface Presenter extends BasePresenter {
         void cancelInstrumentation();
 
-        void onStop();
+        void destroy();
     }
 }

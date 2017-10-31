@@ -12,7 +12,6 @@ import java.text.DateFormat;
 import java.util.Date;
 
 import saarland.cispa.artist.artistgui.Package;
-import saarland.cispa.artist.artistgui.R;
 import saarland.cispa.artist.artistgui.instrumentation.InstrumentationService;
 import saarland.cispa.artist.artistgui.settings.db.operations.AddInstrumentedPackageToDbAsyncTask;
 import saarland.cispa.artist.artistgui.settings.manager.SettingsManager;
@@ -49,7 +48,7 @@ public class AppDetailsDialogPresenter implements AppDetailsDialogContract.Prese
             Drawable appIcon = mdpiContext.getResources()
                     .getDrawableForDensity(mSelectedPackage.getAppIconId(),
                             DisplayMetrics.DENSITY_XHIGH, null);
-            mView.onAppIconLoaded(appIcon);
+            mView.setAppIcon(appIcon);
         } catch (PackageManager.NameNotFoundException | Resources.NotFoundException e) {
             e.printStackTrace();
         }
@@ -60,47 +59,43 @@ public class AppDetailsDialogPresenter implements AppDetailsDialogContract.Prese
         long timestamp = mSelectedPackage.getLastInstrumentationTimestamp();
         boolean isInstrumented = timestamp != 0;
 
-        String lastInstrumentationText;
+        String dateAndTime = null;
         if (isInstrumented) {
-            Date date = new Date(timestamp);
-            String formattedData = DateFormat
-                    .getDateTimeInstance(DateFormat.FULL, DateFormat.SHORT).format(date);
-
-            String prefix = mActivity.getString(R.string.last_instrumentation);
-            lastInstrumentationText = String.format(prefix, formattedData);
-
+            dateAndTime = convertTimestampToDateAndTime(timestamp);
             mView.activateKeepInstrumentedViews(mSelectedPackage);
-        } else {
-            lastInstrumentationText = mActivity.getString(R.string.never_instrumented);
         }
 
-        mView.updateLastInstrumentationTextView(lastInstrumentationText);
+        mView.setLastInstrumentationText(dateAndTime);
         mView.updateInstrumentationButton(isInstrumented, mSelectedPackage.getPackageName());
     }
 
-    @Override
-    public void instrumentApp() {
-        String packageName = mSelectedPackage.getPackageName();
-        Log.d(TAG, "compileInstalledApp(): " + packageName);
-        Intent intent = new Intent(mActivity, InstrumentationService.class);
-        intent.putExtra(InstrumentationService.INTENT_KEY_APP_NAME, packageName);
-        mActivity.startService(intent);
-        mView.showInstrumentationProgress();
+    private String convertTimestampToDateAndTime(long timestamp) {
+        Date date = new Date(timestamp);
+        return DateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.SHORT).format(date);
     }
 
     @Override
     public void handleInstrumentationResult(boolean isSuccess) {
-        mView.showInstrumentationResult(isSuccess, mSelectedPackage.getPackageName());
-
         if (isSuccess) {
             mSelectedPackage.updateLastInstrumentationTimestamp();
-            mView.updateLastInstrumentationTextView(String.valueOf(mSelectedPackage
-                    .getLastInstrumentationTimestamp()));
+
+            long timestamp = mSelectedPackage.getLastInstrumentationTimestamp();
+            String dateAndTime = convertTimestampToDateAndTime(timestamp);
+            mView.setLastInstrumentationText(dateAndTime);
+
             mView.activateKeepInstrumentedViews(mSelectedPackage);
 
             new AddInstrumentedPackageToDbAsyncTask(mActivity).execute(mSelectedPackage);
             startInstrumentedAppIfWished();
         }
+    }
+
+    @Override
+    public void startInstrumentation() {
+        Intent intent = new Intent(mActivity, InstrumentationService.class);
+        intent.putExtra(InstrumentationService.INTENT_KEY_APP_NAME,
+                mSelectedPackage.getPackageName());
+        mActivity.startService(intent);
     }
 
     private void startInstrumentedAppIfWished() {

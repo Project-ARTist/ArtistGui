@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
 
@@ -22,7 +23,6 @@ public class ProgressPresenter implements ProgressContract.Presenter {
 
     private Context mContext;
     private ProgressContract.View mView;
-    private boolean mIsBroadcastListenerActive;
 
     private final ServiceConnection mConnection = new ServiceConnection() {
         @Override
@@ -65,7 +65,7 @@ public class ProgressPresenter implements ProgressContract.Presenter {
         }
     };
 
-    public ProgressPresenter(Context context, ProgressContract.View view) {
+    ProgressPresenter(Context context, ProgressContract.View view) {
         mContext = context;
         mView = view;
         view.setPresenter(this);
@@ -73,16 +73,12 @@ public class ProgressPresenter implements ProgressContract.Presenter {
 
     @Override
     public void start() {
-        if (!mIsBroadcastListenerActive) {
-            IntentFilter intentFilter = new IntentFilter();
-            intentFilter.addAction(ACTION_STAGE_UPDATE);
-            intentFilter.addAction(ACTION_DETAILED_UPDATE);
-            intentFilter.addAction(ACTION_INSTRUMENTATION_RESULT);
-            LocalBroadcastManager.getInstance(mContext)
-                    .registerReceiver(mResultReceiver, intentFilter);
-
-            mIsBroadcastListenerActive = true;
-        }
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(ACTION_STAGE_UPDATE);
+        intentFilter.addAction(ACTION_DETAILED_UPDATE);
+        intentFilter.addAction(ACTION_INSTRUMENTATION_RESULT);
+        LocalBroadcastManager.getInstance(mContext)
+                .registerReceiver(mResultReceiver, intentFilter);
     }
 
     @Override
@@ -92,9 +88,7 @@ public class ProgressPresenter implements ProgressContract.Presenter {
     }
 
     @Override
-    public void onStop() {
-        if (mIsBroadcastListenerActive) {
-            LocalBroadcastManager.getInstance(mContext).unregisterReceiver(mResultReceiver);
-        }
+    public void destroy() {
+        LocalBroadcastManager.getInstance(mContext).unregisterReceiver(mResultReceiver);
     }
 }

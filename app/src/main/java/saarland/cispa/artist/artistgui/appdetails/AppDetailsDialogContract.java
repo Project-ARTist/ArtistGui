@@ -27,17 +27,15 @@ import saarland.cispa.artist.artistgui.base.BaseView;
 
 interface AppDetailsDialogContract {
     interface View extends BaseView<AppDetailsDialogContract.Presenter> {
-        void onAppIconLoaded(Drawable appIcon);
+        void setAppIcon(Drawable appIcon);
 
-        void updateLastInstrumentationTextView(String lastInstrumented);
+        void setLastInstrumentationText(String lastInstrumented);
 
         void activateKeepInstrumentedViews(Package app);
 
         void updateInstrumentationButton(boolean instrumented, String packageName);
 
         void showInstrumentationProgress();
-
-        void showInstrumentationResult(boolean isSuccess, String packageName);
     }
 
     interface Presenter extends BasePresenter {
@@ -45,7 +43,7 @@ interface AppDetailsDialogContract {
 
         void determineInstrumentationStatusAndUpdateViews();
 
-        void instrumentApp();
+        void startInstrumentation();
 
         void handleInstrumentationResult(boolean isSuccess);
 

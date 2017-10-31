@@ -39,12 +39,6 @@ public class AppListFragment extends Fragment implements AppListContract.View,
     private AppListView mAppListView;
 
     @Override
-    public void onStart() {
-        super.onStart();
-        mPresenter.start();
-    }
-
-    @Override
     public void setPresenter(AppListContract.Presenter presenter) {
         mPresenter = presenter;
     }
