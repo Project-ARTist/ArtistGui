@@ -19,9 +19,6 @@
 
 package saarland.cispa.artist.artistgui;
 
-
-import android.content.Intent;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -42,12 +39,6 @@ public class AppListPresenterTest {
     private static final String INVALID_CODE_LIB = "-1";
     private static final String VALID_CODE_LIB = "Test CodeLib";
 
-    @Captor
-    private ArgumentCaptor<Boolean> mBoolArgCaptor;
-
-    @Captor
-    private ArgumentCaptor<String> mStringArgCaptor;
-
     private AppListPresenter mPresenter;
 
     @Mock
@@ -56,15 +47,12 @@ public class AppListPresenterTest {
     @Mock
     private SettingsManager mSettingsManager;
 
-    @Mock
-    private Intent mIntent;
-
     @Before
     public void setup() {
         // Mockito has a very convenient way to inject mocks by using the @Mock annotation. To
         // inject the mocks in the test the initMocks method needs to be called.
         MockitoAnnotations.initMocks(this);
-        mPresenter = new AppListPresenter(null, mView, mSettingsManager);
+        mPresenter = new AppListPresenter(mView, mSettingsManager);
     }
 
     @Test
