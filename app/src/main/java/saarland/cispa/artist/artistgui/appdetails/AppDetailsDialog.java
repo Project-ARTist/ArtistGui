@@ -19,11 +19,16 @@
 
 package saarland.cispa.artist.artistgui.appdetails;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,8 +39,11 @@ import android.widget.TextView;
 
 import saarland.cispa.artist.artistgui.Package;
 import saarland.cispa.artist.artistgui.R;
+import saarland.cispa.artist.artistgui.instrumentation.progress.ProgressPublisher;
 import saarland.cispa.artist.artistgui.progress.ProgressDialogFragment;
 import saarland.cispa.artist.artistgui.settings.db.operations.PersistPackageToDbAsyncTask;
+import saarland.cispa.artist.artistgui.settings.manager.SettingsManagerImpl;
+import saarland.cispa.artist.artistgui.utils.GuiUtils;
 
 public class AppDetailsDialog extends DialogFragment implements AppDetailsDialogContract.View {
 
@@ -45,10 +53,39 @@ public class AppDetailsDialog extends DialogFragment implements AppDetailsDialog
     private AppDetailsDialogContract.Presenter mPresenter;
     private View mRootView;
 
+    private BroadcastReceiver mResultReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent != null &&
+                    ProgressPublisher.ACTION_INSTRUMENTATION_RESULT.equals(intent.getAction())) {
+                // TODO package name check
+                boolean isSuccess = intent
+                        .getBooleanExtra(ProgressPublisher.EXTRA_INSTRUMENTATION_RESULT, false);
+                mPresenter.handleInstrumentationResult(isSuccess);
+            }
+        }
+    };
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        IntentFilter intentFilter = new IntentFilter(ProgressPublisher
+                .ACTION_INSTRUMENTATION_RESULT);
+        LocalBroadcastManager.getInstance(getContext())
+                .registerReceiver(mResultReceiver, intentFilter);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mResultReceiver);
+    }
+
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        new AppDetailsDialogPresenter(this, getActivity());
+        new AppDetailsDialogPresenter(this, getActivity(),
+                new SettingsManagerImpl(getContext()));
 
         Bundle bundle = getArguments();
         if (bundle != null) {
@@ -128,5 +165,13 @@ public class AppDetailsDialog extends DialogFragment implements AppDetailsDialog
         ProgressDialogFragment dialogFragment = new ProgressDialogFragment();
         dialogFragment.setCancelable(false);
         dialogFragment.show(getFragmentManager(), ProgressDialogFragment.TAG);
+    }
+
+    @Override
+    public void showInstrumentationResult(boolean isSuccess, String packageName) {
+        int stringResourceId = isSuccess ? R.string.snack_compilation_success :
+                R.string.snack_compilation_failed;
+        String userMessage = getResources().getString(stringResourceId) + packageName;
+        GuiUtils.displaySnackLong(mRootView, userMessage);
     }
 }

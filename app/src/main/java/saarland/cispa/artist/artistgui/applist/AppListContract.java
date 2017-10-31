@@ -19,8 +19,6 @@
 
 package saarland.cispa.artist.artistgui.applist;
 
-import android.content.Context;
-
 import saarland.cispa.artist.artistgui.base.BasePresenter;
 import saarland.cispa.artist.artistgui.base.BaseView;
 
@@ -28,17 +26,11 @@ public interface AppListContract {
 
     interface View extends BaseView<Presenter> {
         void showNoCodeLibChosenMessage();
-
-        void showInstrumentationResult(boolean isSuccess, String packageName);
     }
 
     interface Presenter extends BasePresenter {
         void checkIfCodeLibIsChosen();
 
         void createArtistFolders();
-
-        void maybeStartRecompiledApp(final String applicationName);
-
-        void handleInstrumentationResult(Context context, boolean isSuccess, String packageName);
     }
 }

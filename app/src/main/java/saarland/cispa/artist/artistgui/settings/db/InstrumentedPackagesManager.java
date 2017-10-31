@@ -24,8 +24,6 @@ import java.util.List;
 import saarland.cispa.artist.artistgui.Package;
 
 public interface InstrumentedPackagesManager {
-    void addInstrumentedPackage(String packageName);
-
     void persistPackage(Package app);
 
     void removeUninstrumentedPackage(String packageName);

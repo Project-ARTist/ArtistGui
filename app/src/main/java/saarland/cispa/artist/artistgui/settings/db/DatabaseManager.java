@@ -53,29 +53,6 @@ public class DatabaseManager implements InstrumentedPackagesManager {
     }
 
     @Override
-    public void addInstrumentedPackage(String packageName) {
-        getWritableDatabase();
-
-        ContentValues values = new ContentValues();
-        values.put(PackageEntry.COLUMN_NAME_PACKAGE_NAME, packageName);
-        values.put(PackageEntry.COLUMN_NAME_TIMESTAMP, System.currentTimeMillis());
-        values.put(PackageEntry.COLUMN_NAME_KEEP_INSTRUMENTED, 0);
-
-        if (!isEntryInPresent(packageName)) {
-            mDatabase.insert(PackageEntry.TABLE_NAME, null, values);
-        } else {
-            String selection = PackageEntry.COLUMN_NAME_PACKAGE_NAME + " LIKE ?";
-            String[] selectionArgs = {packageName};
-
-            mDatabase.update(
-                    PackageEntry.TABLE_NAME,
-                    values,
-                    selection,
-                    selectionArgs);
-        }
-    }
-
-    @Override
     public void persistPackage(Package app) {
         getWritableDatabase();
 

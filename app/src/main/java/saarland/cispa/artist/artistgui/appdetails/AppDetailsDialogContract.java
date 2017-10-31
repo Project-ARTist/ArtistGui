@@ -37,6 +37,7 @@ interface AppDetailsDialogContract {
 
         void showInstrumentationProgress();
 
+        void showInstrumentationResult(boolean isSuccess, String packageName);
     }
 
     interface Presenter extends BasePresenter {
@@ -45,6 +46,8 @@ interface AppDetailsDialogContract {
         void determineInstrumentationStatusAndUpdateViews();
 
         void instrumentApp();
+
+        void handleInstrumentationResult(boolean isSuccess);
 
         void setSelectedPackage(Package selectedPackage);
     }

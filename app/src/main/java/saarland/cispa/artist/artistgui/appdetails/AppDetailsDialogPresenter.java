@@ -1,7 +1,6 @@
 package saarland.cispa.artist.artistgui.appdetails;
 
 import android.app.Activity;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -15,33 +14,26 @@ import java.util.Date;
 import saarland.cispa.artist.artistgui.Package;
 import saarland.cispa.artist.artistgui.R;
 import saarland.cispa.artist.artistgui.instrumentation.InstrumentationService;
-import saarland.cispa.artist.artistgui.instrumentation.progress.ProgressPublisher;
+import saarland.cispa.artist.artistgui.settings.db.operations.AddInstrumentedPackageToDbAsyncTask;
+import saarland.cispa.artist.artistgui.settings.manager.SettingsManager;
 import trikita.log.Log;
 
 public class AppDetailsDialogPresenter implements AppDetailsDialogContract.Presenter {
 
     public static final String TAG = "AppDetailsDialogPresenter";
 
-    private AppDetailsDialogContract.View mView;
-    private Activity mActivity;
+
+    private final AppDetailsDialogContract.View mView;
+    private final Activity mActivity;
+    private final SettingsManager mSettingsManager;
+
     private Package mSelectedPackage;
 
-    private BroadcastReceiver mResultReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            if (ProgressPublisher.ACTION_INSTRUMENTATION_RESULT.equals(action)) {
-                String packageName = intent.getStringExtra(ProgressPublisher.EXTRA_PACKAGE_NAME);
-                if (packageName.equals(mSelectedPackage.getPackageName())) {
-
-                }
-            }
-        }
-    };
-
-    AppDetailsDialogPresenter(AppDetailsDialogContract.View view, Activity activity) {
-        this.mView = view;
-        this.mActivity = activity;
+    AppDetailsDialogPresenter(AppDetailsDialogContract.View view, Activity activity,
+                              SettingsManager settingsManager) {
+        mView = view;
+        mActivity = activity;
+        mSettingsManager = settingsManager;
         view.setPresenter(this);
     }
 
@@ -56,7 +48,7 @@ public class AppDetailsDialogPresenter implements AppDetailsDialogContract.Prese
                     Context.CONTEXT_IGNORE_SECURITY);
             Drawable appIcon = mdpiContext.getResources()
                     .getDrawableForDensity(mSelectedPackage.getAppIconId(),
-                    DisplayMetrics.DENSITY_XHIGH, null);
+                            DisplayMetrics.DENSITY_XHIGH, null);
             mView.onAppIconLoaded(appIcon);
         } catch (PackageManager.NameNotFoundException | Resources.NotFoundException e) {
             e.printStackTrace();
@@ -94,6 +86,32 @@ public class AppDetailsDialogPresenter implements AppDetailsDialogContract.Prese
         intent.putExtra(InstrumentationService.INTENT_KEY_APP_NAME, packageName);
         mActivity.startService(intent);
         mView.showInstrumentationProgress();
+    }
+
+    @Override
+    public void handleInstrumentationResult(boolean isSuccess) {
+        mView.showInstrumentationResult(isSuccess, mSelectedPackage.getPackageName());
+
+        if (isSuccess) {
+            mSelectedPackage.updateLastInstrumentationTimestamp();
+            mView.updateLastInstrumentationTextView(String.valueOf(mSelectedPackage
+                    .getLastInstrumentationTimestamp()));
+            mView.activateKeepInstrumentedViews(mSelectedPackage);
+
+            new AddInstrumentedPackageToDbAsyncTask(mActivity).execute(mSelectedPackage);
+            startInstrumentedAppIfWished();
+        }
+    }
+
+    private void startInstrumentedAppIfWished() {
+        final boolean launchActivity = mSettingsManager.shouldLaunchActivityAfterCompilation();
+        if (launchActivity) {
+            String packageName = mSelectedPackage.getPackageName();
+            Log.d(TAG, "Starting compiled app: " + packageName);
+            final Intent launchIntent = mActivity.getPackageManager()
+                    .getLaunchIntentForPackage(packageName);
+            mActivity.startActivity(launchIntent);
+        }
     }
 
     @Override

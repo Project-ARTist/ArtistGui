@@ -78,28 +78,4 @@ public class AppListPresenter implements AppListContract.Presenter {
                     .getApplicationContext(), ArtistAppConfig.APP_FOLDER_CODELIBS);
         }
     }
-
-    @Override
-    public void maybeStartRecompiledApp(String applicationName) {
-        Log.d(TAG, "maybeStartRecompiledApp() ? " + applicationName);
-        final boolean launchActivity = mSettingsManager.shouldLaunchActivityAfterCompilation();
-        if (launchActivity) {
-            Log.d(TAG, "Starting compiled app: " + applicationName);
-            final Intent launchIntent = mActivity.getPackageManager()
-                    .getLaunchIntentForPackage(applicationName);
-            mActivity.startActivity(launchIntent);
-        }
-    }
-
-
-    @Override
-    public void handleInstrumentationResult(Context context, boolean isSuccess,
-                                            String packageName) {
-        mView.showInstrumentationResult(isSuccess, packageName);
-
-        if (isSuccess) {
-            new AddInstrumentedPackageToDbAsyncTask(context).execute(packageName);
-            maybeStartRecompiledApp(packageName);
-        }
-    }
 }

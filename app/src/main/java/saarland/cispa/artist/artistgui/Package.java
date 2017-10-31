@@ -85,6 +85,10 @@ public class Package implements Parcelable {
         this.keepInstrumented = keepInstrumented;
     }
 
+    public void updateLastInstrumentationTimestamp() {
+        this.lastInstrumentationTimestamp = System.currentTimeMillis();
+    }
+
     @Override
     public int describeContents() {
         return 0;

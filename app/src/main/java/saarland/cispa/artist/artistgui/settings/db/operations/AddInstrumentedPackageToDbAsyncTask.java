@@ -23,10 +23,11 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 
+import saarland.cispa.artist.artistgui.Package;
 import saarland.cispa.artist.artistgui.settings.db.DatabaseManager;
 import saarland.cispa.artist.artistgui.settings.db.InstrumentedPackagesManager;
 
-public class AddInstrumentedPackageToDbAsyncTask extends AsyncTask<String, Void, Void> {
+public class AddInstrumentedPackageToDbAsyncTask extends AsyncTask<Package, Void, Void> {
 
     private Context mContext;
 
@@ -35,10 +36,10 @@ public class AddInstrumentedPackageToDbAsyncTask extends AsyncTask<String, Void,
     }
 
     @Override
-    protected Void doInBackground(@NonNull String... params) {
+    protected Void doInBackground(@NonNull Package... params) {
         InstrumentedPackagesManager manager = new DatabaseManager(mContext);
-        for (String p : params) {
-            manager.addInstrumentedPackage(p);
+        for (Package p : params) {
+            manager.persistPackage(p);
         }
         manager.onDestroy();
         return null;

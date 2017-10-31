@@ -19,14 +19,9 @@
 
 package saarland.cispa.artist.artistgui.applist;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.LocalBroadcastManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,7 +29,6 @@ import android.view.ViewGroup;
 import saarland.cispa.artist.artistgui.Package;
 import saarland.cispa.artist.artistgui.R;
 import saarland.cispa.artist.artistgui.appdetails.AppDetailsDialog;
-import saarland.cispa.artist.artistgui.instrumentation.progress.ProgressPublisher;
 import saarland.cispa.artist.artistgui.applist.view.AppListView;
 import saarland.cispa.artist.artistgui.utils.GuiUtils;
 
@@ -44,34 +38,10 @@ public class AppListFragment extends Fragment implements AppListContract.View,
     private AppListContract.Presenter mPresenter;
     private AppListView mAppListView;
 
-    private BroadcastReceiver mResultReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (intent != null &&
-                    ProgressPublisher.ACTION_INSTRUMENTATION_RESULT.equals(intent.getAction())) {
-                String packageName = intent.getStringExtra(ProgressPublisher.EXTRA_PACKAGE_NAME);
-                boolean isSuccess = intent
-                        .getBooleanExtra(ProgressPublisher.EXTRA_INSTRUMENTATION_RESULT, false);
-                mPresenter.handleInstrumentationResult(context, isSuccess, packageName);
-            }
-        }
-    };
-
     @Override
     public void onStart() {
         super.onStart();
         mPresenter.start();
-
-        IntentFilter intentFilter = new IntentFilter(ProgressPublisher.ACTION_INSTRUMENTATION_RESULT);
-        LocalBroadcastManager.getInstance(getContext())
-                .registerReceiver(mResultReceiver, intentFilter);
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        LocalBroadcastManager.getInstance(getContext())
-                .unregisterReceiver(mResultReceiver);
     }
 
     @Override
@@ -109,13 +79,5 @@ public class AppListFragment extends Fragment implements AppListContract.View,
     @Override
     public void showNoCodeLibChosenMessage() {
         GuiUtils.displaySnackForever(mAppListView, getString(R.string.no_codelib_chosen));
-    }
-
-    @Override
-    public void showInstrumentationResult(boolean isSuccess, String packageName) {
-        int stringResourceId = isSuccess ? R.string.snack_compilation_success :
-                R.string.snack_compilation_failed;
-        String userMessage = getResources().getString(stringResourceId) + packageName;
-        GuiUtils.displaySnackLong(mAppListView, userMessage);
     }
 }
