@@ -17,7 +17,7 @@
  *
  */
 
-package saarland.cispa.artist.artistgui.packagelist.view;
+package saarland.cispa.artist.artistgui.applist.view;
 
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
@@ -34,9 +34,8 @@ import java.util.List;
 
 import saarland.cispa.artist.artistgui.Package;
 import saarland.cispa.artist.artistgui.R;
-import saarland.cispa.artist.artistgui.packagelist.view.broadcastreceiver.OnPackageModifiedListener;
 
-class PackageListAdapter extends RecyclerView.Adapter<PackageListAdapter.ViewHolder>
+class AppListAdapter extends RecyclerView.Adapter<AppListAdapter.ViewHolder>
         implements OnPackageModifiedListener {
 
     private static final int PACKAGE_MANAGER_EMPTY_FLAG = 0;
@@ -45,7 +44,7 @@ class PackageListAdapter extends RecyclerView.Adapter<PackageListAdapter.ViewHol
     private AppIconCache mAppIconCache;
 
     private List<Package> mPackageList;
-    private List<PackageListView.OnPackageSelectedListener> mListeners;
+    private List<AppListView.OnPackageSelectedListener> mListeners;
 
     // Reference for performance instead of slow findByView lookup
     static class ViewHolder extends RecyclerView.ViewHolder {
@@ -61,8 +60,8 @@ class PackageListAdapter extends RecyclerView.Adapter<PackageListAdapter.ViewHol
         }
     }
 
-    PackageListAdapter(Context context, List<Package> packageList,
-                       List<PackageListView.OnPackageSelectedListener> listeners) {
+    AppListAdapter(Context context, List<Package> packageList,
+                   List<AppListView.OnPackageSelectedListener> listeners) {
         mAppIconCache = new AppIconCache(context);
         mPackageList = packageList;
         mListeners = listeners;
@@ -70,13 +69,13 @@ class PackageListAdapter extends RecyclerView.Adapter<PackageListAdapter.ViewHol
     }
 
     @Override
-    public PackageListAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public AppListAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.app_list_entry,
                 parent, false);
 
-        ImageView appIcon = (ImageView) view.findViewById(R.id.app_icon);
-        TextView appName = (TextView) view.findViewById(R.id.app_name);
-        TextView packageName = (TextView) view.findViewById(R.id.package_name);
+        ImageView appIcon = view.findViewById(R.id.app_icon);
+        TextView appName = view.findViewById(R.id.app_name);
+        TextView packageName = view.findViewById(R.id.package_name);
 
         return new ViewHolder(view, appIcon, appName, packageName);
     }
@@ -91,11 +90,8 @@ class PackageListAdapter extends RecyclerView.Adapter<PackageListAdapter.ViewHol
         holder.mAppIcon.setImageDrawable(appIcon);
         holder.mAppName.setText(packageEntry.getAppName());
         holder.mPackageName.setText(packageName);
-        holder.itemView.setOnClickListener((view) -> {
-            for (PackageListView.OnPackageSelectedListener l : mListeners) {
-                l.onPackageSelected(packageName);
-            }
-        });
+        holder.itemView.setOnClickListener((view) -> mListeners
+                .forEach(l -> l.onPackageSelected(packageEntry)));
     }
 
     @Override

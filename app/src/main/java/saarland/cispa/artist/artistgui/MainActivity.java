@@ -41,9 +41,6 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         MainActivityContract.View {
 
-    public static final String EXTRA_PACKAGE = "INTENT_EXTRA_PACKAGE";
-    public static final String SELECTED_FRAGMENT_STATE_KEY = "selected_fragment";
-
     private MainActivityContract.Presenter mPresenter;
     private FragmentManager mFragmentManager;
     private DrawerLayout mDrawerLayout;
@@ -53,47 +50,33 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mDrawerLayout = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, mDrawerLayout, toolbar,
                 R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         mDrawerLayout.addDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
         mFragmentManager = getSupportFragmentManager();
-        mPresenter = new MainActivityPresenter(getApplicationContext(), this, this,
-                new SettingsManagerImpl(this));
+        mPresenter = new MainActivityPresenter(this, new SettingsManagerImpl(this));
 
         if (savedInstanceState == null) {
             mPresenter.checkCompatibility();
-
-            final Intent intent = getIntent();
-            if (intent != null) {
-                mPresenter.processIntent(intent);
-            }
-
+            mPresenter.selectFragment(MainActivityPresenter.INFO_FRAGMENT);
         } else {
-            int selectedFragmentId = savedInstanceState.getInt(SELECTED_FRAGMENT_STATE_KEY);
-            Fragment lastSelectedFragment = mFragmentManager.findFragmentById(R.id.content_frame);
-            mPresenter.onRestoreSavedInstance(selectedFragmentId, lastSelectedFragment);
+            mPresenter.restoreSavedInstanceState(savedInstanceState, mFragmentManager);
         }
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        mPresenter.start();
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putInt(SELECTED_FRAGMENT_STATE_KEY, mPresenter.getSelectedFragmentId());
+        mPresenter.saveInstanceState(outState);
     }
 
     @Override
@@ -102,7 +85,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onIncompatibleAndroidVersion() {
+    public void showIncompatibleVersionDialog() {
         new AlertDialog.Builder(this).setTitle(R.string.incompatible_android_version)
                 .setMessage(R.string.unsupported_android_version_info)
                 .setPositiveButton("Close", (dialog, which) -> {
@@ -118,7 +101,7 @@ public class MainActivity extends AppCompatActivity
                 mPresenter.selectFragment(MainActivityPresenter.INFO_FRAGMENT);
                 break;
             case R.id.nav_compiler:
-                mPresenter.selectFragment(MainActivityPresenter.COMPILATION_FRAGMENT);
+                mPresenter.selectFragment(MainActivityPresenter.INSTRUMENTATION_FRAGMENT);
                 break;
             case R.id.nav_settings:
                 final Intent generalSettings = new Intent(this, SettingsActivity.class);
@@ -126,13 +109,13 @@ public class MainActivity extends AppCompatActivity
                 return true;
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
 
     @Override
-    public void onFragmentSelected(Fragment fragment) {
+    public void showSelectedFragment(Fragment fragment) {
         mFragmentManager.beginTransaction()
                 .replace(R.id.content_frame, fragment)
                 .commit();

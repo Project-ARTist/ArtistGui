@@ -17,18 +17,18 @@
  *
  */
 
-package saarland.cispa.artist.artistgui.settings.db;
+package saarland.cispa.artist.artistgui.applist;
 
-import java.util.List;
+import saarland.cispa.artist.artistgui.base.BasePresenter;
+import saarland.cispa.artist.artistgui.base.BaseView;
 
-import saarland.cispa.artist.artistgui.Package;
+public interface AppListContract {
 
-public interface InstrumentedPackagesManager {
-    void persistPackage(Package app);
+    interface View extends BaseView<Presenter> {
+        void showNoCodeLibChosenMessage();
+    }
 
-    void removeUninstrumentedPackage(String packageName);
-
-    List<Package> getAllInstrumentedApps();
-
-    void onDestroy();
+    interface Presenter extends BasePresenter {
+        void checkIfCodeLibIsChosen();
+    }
 }

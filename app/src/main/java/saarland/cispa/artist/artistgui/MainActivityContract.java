@@ -19,28 +19,27 @@
 
 package saarland.cispa.artist.artistgui;
 
-import android.content.Intent;
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 
 import saarland.cispa.artist.artistgui.base.BasePresenter;
 import saarland.cispa.artist.artistgui.base.BaseView;
 
 interface MainActivityContract {
     interface View extends BaseView<MainActivityContract.Presenter> {
-        void onIncompatibleAndroidVersion();
+        void showIncompatibleVersionDialog();
 
-        void onFragmentSelected(Fragment fragment);
+        void showSelectedFragment(Fragment fragment);
     }
 
     interface Presenter extends BasePresenter {
         void checkCompatibility();
 
-        void processIntent(Intent intent);
-
         void selectFragment(@MainActivityPresenter.selectableFragment int id);
 
-        void onRestoreSavedInstance(int selectedFragmentId, Fragment selectedFragment);
+        void saveInstanceState(Bundle outState);
 
-        int getSelectedFragmentId();
+        void restoreSavedInstanceState(Bundle savedInstanceState, FragmentManager fragmentManager);
     }
 }

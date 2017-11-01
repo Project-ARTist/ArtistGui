@@ -31,9 +31,10 @@ import java.util.Locale;
 
 import saarland.cispa.apksigner.ApkSigner;
 import saarland.cispa.apksigner.ApkZipSir;
-import saarland.cispa.artist.artistgui.instrumentation.exceptions.InstrumentationException;
 import saarland.cispa.artist.artistgui.instrumentation.config.ArtistRunConfig;
+import saarland.cispa.artist.artistgui.instrumentation.exceptions.InstrumentationException;
 import saarland.cispa.artist.artistgui.instrumentation.progress.ProgressListener;
+import saarland.cispa.artist.artistgui.settings.config.ArtistAppConfig;
 import saarland.cispa.artist.artistgui.utils.AndroidUtils;
 import saarland.cispa.artist.artistgui.utils.ArtistUtils;
 import saarland.cispa.artist.artistgui.utils.ProcessExecutor;
@@ -60,9 +61,7 @@ public class InstrumentationStagesImpl implements InstrumentationStages {
 
     @Override
     public String prepareEnvironment() throws InstrumentationException {
-        AndroidUtils.createFoldersInFilesDir(mContext, mRunConfig.artist_exec_path);
-        AndroidUtils.createFoldersInFilesDir(mContext, mRunConfig.artist_exec_path_libs_dir);
-
+        createArtistFolders();
         cleanOldBuildFiles();
         setupKeystore();
 
@@ -70,6 +69,13 @@ public class InstrumentationStagesImpl implements InstrumentationStages {
         setupArtistLibraries();
 
         return pathDex2oat;
+    }
+
+    private void createArtistFolders() {
+        AndroidUtils.createFoldersInFilesDir(mContext, ArtistAppConfig.APP_FOLDER_APK_BACKUP);
+        AndroidUtils.createFoldersInFilesDir(mContext, ArtistAppConfig.APP_FOLDER_CODELIBS);
+        AndroidUtils.createFoldersInFilesDir(mContext, mRunConfig.artist_exec_path);
+        AndroidUtils.createFoldersInFilesDir(mContext, mRunConfig.artist_exec_path_libs_dir);
     }
 
     private void cleanOldBuildFiles() {

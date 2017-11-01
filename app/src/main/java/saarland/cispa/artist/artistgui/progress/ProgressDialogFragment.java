@@ -51,6 +51,7 @@ public class ProgressDialogFragment extends DialogFragment implements ProgressCo
         super.onActivityCreated(savedInstanceState);
         if (mPresenter == null) {
             setPresenter(new ProgressPresenter(getContext(), this));
+            mPresenter.start();
         }
     }
 
@@ -60,15 +61,9 @@ public class ProgressDialogFragment extends DialogFragment implements ProgressCo
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-        mPresenter.start();
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        mPresenter.onStop();
+    public void onDestroyView() {
+        super.onDestroyView();
+        mPresenter.destroy();
     }
 
     @Nullable
@@ -83,7 +78,6 @@ public class ProgressDialogFragment extends DialogFragment implements ProgressCo
 
         Button cancel = rootView.findViewById(R.id.button_compile_cancel);
         cancel.setOnClickListener(onClickListener -> mPresenter.cancelInstrumentation());
-
         return rootView;
     }
 

@@ -17,27 +17,14 @@
  *
  */
 
-package saarland.cispa.artist.artistgui.settings.db;
+package saarland.cispa.artist.artistgui;
 
-import android.content.Context;
-import android.os.AsyncTask;
-import android.support.annotation.NonNull;
+import saarland.cispa.artist.artistgui.utils.LogA;
 
-public class AddInstrumentedPackageToDbAsyncTask extends AsyncTask<String, Void, Void> {
-
-    private Context mContext;
-
-    public AddInstrumentedPackageToDbAsyncTask(Context context) {
-        this.mContext = context;
-    }
-
+public class Application extends android.app.Application {
     @Override
-    protected Void doInBackground(@NonNull String... params) {
-        InstrumentedPackagesManager manager = new DatabaseManager(mContext);
-        for (String p : params) {
-            manager.addInstrumentedPackage(p);
-        }
-        manager.onDestroy();
-        return null;
+    public void onCreate() {
+        super.onCreate();
+        LogA.setUserLogLevel(this);
     }
 }

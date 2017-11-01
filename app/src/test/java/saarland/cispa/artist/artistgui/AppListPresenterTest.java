@@ -19,9 +19,6 @@
 
 package saarland.cispa.artist.artistgui;
 
-
-import android.content.Intent;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -29,42 +26,33 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import saarland.cispa.artist.artistgui.compilation.CompilationContract;
-import saarland.cispa.artist.artistgui.compilation.CompilationPresenter;
+import saarland.cispa.artist.artistgui.applist.AppListContract;
+import saarland.cispa.artist.artistgui.applist.AppListPresenter;
 import saarland.cispa.artist.artistgui.settings.manager.SettingsManager;
 
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class CompilationPresenterTest {
+public class AppListPresenterTest {
 
     private static final String INVALID_CODE_LIB = "-1";
     private static final String VALID_CODE_LIB = "Test CodeLib";
 
-    @Captor
-    private ArgumentCaptor<Boolean> mBoolArgCaptor;
-
-    @Captor
-    private ArgumentCaptor<String> mStringArgCaptor;
-
-    private CompilationPresenter mPresenter;
+    private AppListPresenter mPresenter;
 
     @Mock
-    private CompilationContract.View mView;
+    private AppListContract.View mView;
 
     @Mock
     private SettingsManager mSettingsManager;
-
-    @Mock
-    private Intent mIntent;
 
     @Before
     public void setup() {
         // Mockito has a very convenient way to inject mocks by using the @Mock annotation. To
         // inject the mocks in the test the initMocks method needs to be called.
         MockitoAnnotations.initMocks(this);
-        mPresenter = new CompilationPresenter(null, mView, mSettingsManager);
+        mPresenter = new AppListPresenter(mView, mSettingsManager);
     }
 
     @Test

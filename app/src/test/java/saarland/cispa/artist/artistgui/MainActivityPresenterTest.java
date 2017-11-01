@@ -19,9 +19,9 @@
 
 package saarland.cispa.artist.artistgui;
 
-import android.content.Intent;
 import android.os.Build;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -33,12 +33,12 @@ import org.mockito.MockitoAnnotations;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 
-import saarland.cispa.artist.artistgui.compilation.CompileFragment;
+import saarland.cispa.artist.artistgui.applist.AppListFragment;
 import saarland.cispa.artist.artistgui.settings.manager.SettingsManager;
 
 import static junit.framework.Assert.assertTrue;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 public class MainActivityPresenterTest {
 
@@ -57,54 +57,40 @@ public class MainActivityPresenterTest {
     @Mock
     private SettingsManager mSettingsManager;
 
-    @Mock
-    private Intent mIntent;
-
     @Before
     public void setup() {
         // Mockito has a very convenient way to inject mocks by using the @Mock annotation. To
         // inject the mocks in the test the initMocks method needs to be called.
         MockitoAnnotations.initMocks(this);
-        mPresenter = new MainActivityPresenter(null, null, mView, mSettingsManager);
+        mPresenter = new MainActivityPresenter(mView, mSettingsManager);
     }
 
     @Test
     public void incompatibilityTest() throws Exception {
         setFinalStatic(Build.VERSION.class.getField("SDK_INT"), Build.VERSION_CODES.LOLLIPOP);
         mPresenter.checkCompatibility();
-        verify(mView).onIncompatibleAndroidVersion();
+        verify(mView).showIncompatibleVersionDialog();
     }
 
     @Test
-    public void startActivityWithoutIntent() throws Exception {
-        when(mIntent.hasExtra(MainActivity.EXTRA_PACKAGE)).thenReturn(false);
-        mPresenter.processIntent(mIntent);
-
-        verify(mView).onFragmentSelected(mArgumentCaptor.capture());
-        assertTrue(mArgumentCaptor.getValue() instanceof InfoFragment);
-    }
-
-    @Test
-    public void startActivityWithIntent() throws Exception {
-        when(mIntent.hasExtra(MainActivity.EXTRA_PACKAGE)).thenReturn(true);
-        mPresenter.processIntent(mIntent);
-
-        verify(mView).onFragmentSelected(mArgumentCaptor.capture());
-        assertTrue(mArgumentCaptor.getValue() instanceof CompileFragment);
+    public void compatibilityTest() throws Exception {
+        setFinalStatic(Build.VERSION.class.getField("SDK_INT"), Build.VERSION_CODES.N);
+        mPresenter.checkCompatibility();
+        verify(mView, never()).showIncompatibleVersionDialog();
     }
 
     @Test
     public void selectInfoFragment() throws Exception {
         mPresenter.selectFragment(MainActivityPresenter.INFO_FRAGMENT);
-        verify(mView).onFragmentSelected(mArgumentCaptor.capture());
+        verify(mView).showSelectedFragment(mArgumentCaptor.capture());
         assertTrue(mArgumentCaptor.getValue() instanceof InfoFragment);
     }
 
     @Test
-    public void selectCompileFragment() throws Exception {
-        mPresenter.selectFragment(MainActivityPresenter.COMPILATION_FRAGMENT);
-        verify(mView).onFragmentSelected(mArgumentCaptor.capture());
-        assertTrue(mArgumentCaptor.getValue() instanceof CompileFragment);
+    public void selectAppListFragment() throws Exception {
+        mPresenter.selectFragment(MainActivityPresenter.INSTRUMENTATION_FRAGMENT);
+        verify(mView).showSelectedFragment(mArgumentCaptor.capture());
+        assertTrue(mArgumentCaptor.getValue() instanceof AppListFragment);
     }
 
     private static void setFinalStatic(Field field, Object newValue) throws Exception {

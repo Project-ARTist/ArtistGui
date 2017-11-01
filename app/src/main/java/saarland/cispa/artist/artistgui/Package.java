@@ -19,11 +19,13 @@
 
 package saarland.cispa.artist.artistgui;
 
-import android.support.annotation.DrawableRes;
+import android.os.Parcel;
+import android.os.Parcelable;
+import android.support.annotation.NonNull;
 
 import java.util.Comparator;
 
-public class Package {
+public class Package implements Parcelable {
 
     public static final Comparator<Package> sComparator =
             (p1, p2) -> p1.getAppName().compareTo(p2.getAppName());
@@ -32,13 +34,20 @@ public class Package {
     private String packageName;
     private int appIconId;
     private long lastInstrumentationTimestamp;
+    private boolean keepInstrumented;
 
-    public Package(String packageName, long lastInstrumentationTimestamp) {
+    public Package(@NonNull String packageName) {
         this.packageName = packageName;
-        this.lastInstrumentationTimestamp = lastInstrumentationTimestamp;
     }
 
-    public Package(String appName, String packageName, @DrawableRes int appIconId) {
+    public Package(@NonNull String packageName, long lastInstrumentationTimestamp,
+                   boolean keepInstrumented) {
+        this.packageName = packageName;
+        this.lastInstrumentationTimestamp = lastInstrumentationTimestamp;
+        this.keepInstrumented = keepInstrumented;
+    }
+
+    public Package(@NonNull String appName, @NonNull String packageName, int appIconId) {
         this.appName = appName;
         this.packageName = packageName;
         this.appIconId = appIconId;
@@ -58,6 +67,56 @@ public class Package {
 
     public long getLastInstrumentationTimestamp() {
         return lastInstrumentationTimestamp;
+    }
+
+    public boolean isKeepInstrumented() {
+        return keepInstrumented;
+    }
+
+    public void setAppName(String appName) {
+        this.appName = appName;
+    }
+
+    public void setAppIconId(int appIconId) {
+        this.appIconId = appIconId;
+    }
+
+    public void setKeepInstrumented(boolean keepInstrumented) {
+        this.keepInstrumented = keepInstrumented;
+    }
+
+    public void updateLastInstrumentationTimestamp() {
+        this.lastInstrumentationTimestamp = System.currentTimeMillis();
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(appName);
+        dest.writeString(packageName);
+        dest.writeInt(appIconId);
+        dest.writeLong(lastInstrumentationTimestamp);
+    }
+
+    public static final Parcelable.Creator<Package> CREATOR = new Parcelable.Creator<Package>() {
+        public Package createFromParcel(Parcel in) {
+            return new Package(in);
+        }
+
+        public Package[] newArray(int size) {
+            return new Package[size];
+        }
+    };
+
+    private Package(Parcel in) {
+        appName = in.readString();
+        packageName = in.readString();
+        appIconId = in.readInt();
+        lastInstrumentationTimestamp = in.readLong();
     }
 
     @Override

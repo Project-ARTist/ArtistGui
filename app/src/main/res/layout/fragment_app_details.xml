@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/app_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/dialog_content_area_padding"
+        android:layout_marginTop="@dimen/dialog_content_area_padding"
+        android:fontFamily="sans-serif-medium"
+        android:paddingEnd="@dimen/dialog_content_area_padding"
+        android:paddingStart="0dp"
+        android:textColor="@android:color/black"
+        android:textSize="@dimen/dialog_title_text_size"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Example App" />
+
+    <ImageView
+        android:id="@+id/app_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dialog_title_body_padding"
+        android:adjustViewBounds="true"
+        android:contentDescription="@string/app_icon"
+        android:maxHeight="@dimen/app_icon_metrics"
+        android:maxWidth="@dimen/app_icon_metrics"
+        android:scaleType="centerInside"
+        app:layout_constraintStart_toStartOf="@id/app_name"
+        app:layout_constraintTop_toBottomOf="@id/app_name"
+        tools:src="@mipmap/ic_launcher" />
+
+    <TextView
+        android:id="@+id/package_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="80dp"
+        android:paddingEnd="@dimen/dialog_content_area_padding"
+        android:paddingStart="0dp"
+        android:textSize="@dimen/subheading_text_size"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/app_icon"
+        tools:text="com.example.app" />
+
+    <TextView
+        android:id="@+id/last_instrumentation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingEnd="@dimen/dialog_content_area_padding"
+        android:paddingStart="0dp"
+        android:textSize="@dimen/body_text_size"
+        app:layout_constraintStart_toStartOf="@id/package_name"
+        app:layout_constraintTop_toBottomOf="@id/package_name"
+        tools:text="Last instrumentation: Fri 8 Sep, 13:06" />
+
+    <Switch
+        android:id="@+id/keep_instrumented_switch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:enabled="false"
+        app:layout_constraintStart_toStartOf="@id/app_name"
+        app:layout_constraintTop_toBottomOf="@id/app_icon" />
+
+    <TextView
+        android:id="@+id/keep_instrumented_switch_info_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="0dp"
+        android:paddingEnd="@dimen/dialog_content_area_padding"
+        android:paddingStart="80dp"
+        android:text="@string/keep_instrumented_switch_info"
+        app:layout_constraintBaseline_toBaselineOf="@id/keep_instrumented_switch"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/instrument_button"
+        style="?android:attr/borderlessButtonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginTop="24dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/keep_instrumented_switch_info_text"
+        tools:text="Recompile" />
+
+</android.support.constraint.ConstraintLayout>

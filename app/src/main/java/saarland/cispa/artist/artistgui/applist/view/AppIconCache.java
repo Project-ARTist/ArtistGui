@@ -17,7 +17,7 @@
  *
  */
 
-package saarland.cispa.artist.artistgui.packagelist.view;
+package saarland.cispa.artist.artistgui.applist.view;
 
 import android.content.Context;
 import android.content.pm.PackageManager;
