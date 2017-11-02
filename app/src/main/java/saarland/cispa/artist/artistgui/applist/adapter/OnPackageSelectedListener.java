@@ -17,10 +17,10 @@
  *
  */
 
-package saarland.cispa.artist.artistgui.applist.view;
+package saarland.cispa.artist.artistgui.applist.adapter;
 
-public interface OnPackageModifiedListener {
-    void onPackageInstalled(String packageName);
+import saarland.cispa.artist.artistgui.Package;
 
-    void onPackageRemoved(String packageName);
+public interface OnPackageSelectedListener {
+    void onPackageSelected(Package selectedPackage);
 }

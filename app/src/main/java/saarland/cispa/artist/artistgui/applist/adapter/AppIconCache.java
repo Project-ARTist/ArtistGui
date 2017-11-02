@@ -17,7 +17,7 @@
  *
  */
 
-package saarland.cispa.artist.artistgui.applist.view;
+package saarland.cispa.artist.artistgui.applist.adapter;
 
 import android.content.Context;
 import android.content.pm.PackageManager;
@@ -27,7 +27,7 @@ import android.util.LruCache;
 
 import saarland.cispa.artist.artistgui.Package;
 
-class AppIconCache extends LruCache<Package, Drawable> {
+public class AppIconCache extends LruCache<Package, Drawable> {
 
     private static final int MAX_SIZE = 15;
     private static final Package sDefaultIconPackage =
@@ -35,7 +35,7 @@ class AppIconCache extends LruCache<Package, Drawable> {
 
     private Context mContext;
 
-    AppIconCache(Context context) {
+    public AppIconCache(Context context) {
         super(MAX_SIZE);
         mContext = context;
     }

@@ -19,38 +19,72 @@
 
 package saarland.cispa.artist.artistgui.applist;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
+
+import java.util.List;
 
 import saarland.cispa.artist.artistgui.Package;
 import saarland.cispa.artist.artistgui.R;
 import saarland.cispa.artist.artistgui.appdetails.AppDetailsDialog;
-import saarland.cispa.artist.artistgui.applist.view.AppListView;
+import saarland.cispa.artist.artistgui.applist.adapter.AppIconCache;
+import saarland.cispa.artist.artistgui.applist.adapter.AppListAdapter;
+import saarland.cispa.artist.artistgui.applist.adapter.OnPackageSelectedListener;
+import saarland.cispa.artist.artistgui.applist.loader.AppListLoader;
 import saarland.cispa.artist.artistgui.utils.GuiUtils;
 
 public class AppListFragment extends Fragment implements AppListContract.View,
-        AppListView.OnPackageSelectedListener {
+        LoaderManager.LoaderCallbacks<List<Package>>, OnPackageSelectedListener {
+
+    private static final int LOADER_ID = 9574583;
 
     private AppListContract.Presenter mPresenter;
-    private AppListView mAppListView;
+    private ProgressBar mProgressBar;
+    private RecyclerView mAppListView;
+    private AppListAdapter mAdapter;
 
     @Override
     public void setPresenter(AppListContract.Presenter presenter) {
         mPresenter = presenter;
     }
 
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        // Prepare the loader.  Either re-connect with an existing one,
+        // or start a new one.
+        getLoaderManager().initLoader(LOADER_ID, null, this);
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        mAppListView = (AppListView) inflater
-                .inflate(R.layout.fragment_package_list, container, false);
-        mAppListView.addOnPackageSelectedListener(this);
-        return mAppListView;
+        View rootView = inflater.inflate(R.layout.fragment_app_list, container, false);
+        mProgressBar = rootView.findViewById(R.id.progress_bar);
+        mAppListView = rootView.findViewById(R.id.recycler_view);
+
+        mAppListView.setHasFixedSize(true);
+
+        final Context context = getContext();
+        LinearLayoutManager mLayoutManager = new LinearLayoutManager(context);
+        mAppListView.setLayoutManager(mLayoutManager);
+
+        mAdapter = new AppListAdapter(new AppIconCache(context));
+        mAdapter.registerPackageSelectedListener(this);
+
+        mAppListView.setAdapter(mAdapter);
+        return rootView;
     }
 
     @Override
@@ -68,6 +102,28 @@ public class AppListFragment extends Fragment implements AppListContract.View,
         AppDetailsDialog detailsDialog = new AppDetailsDialog();
         detailsDialog.setArguments(bundle);
         detailsDialog.show(getFragmentManager(), AppDetailsDialog.TAG);
+    }
+
+    @Override
+    public Loader<List<Package>> onCreateLoader(int id, Bundle args) {
+        return new AppListLoader(getActivity());
+    }
+
+    @Override
+    public void onLoadFinished(Loader<List<Package>> loader, List<Package> data) {
+        // Set the new data in the adapter.
+        mAdapter.setData(data);
+
+        if (mProgressBar.getVisibility() == View.VISIBLE) {
+            mProgressBar.setVisibility(View.GONE);
+            mAppListView.setVisibility(View.VISIBLE);
+        }
+    }
+
+    @Override
+    public void onLoaderReset(Loader<List<Package>> loader) {
+        // Clear the data in the adapter.
+        mAdapter.setData(null);
     }
 
     @Override
