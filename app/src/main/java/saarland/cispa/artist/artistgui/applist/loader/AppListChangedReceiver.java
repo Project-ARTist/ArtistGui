@@ -17,36 +17,32 @@
  *
  */
 
-package saarland.cispa.artist.artistgui.applist.view;
+package saarland.cispa.artist.artistgui.applist.loader;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.support.annotation.NonNull;
+import android.content.IntentFilter;
 
-import saarland.cispa.artist.artistgui.applist.view.OnPackageModifiedListener;
+public class AppListChangedReceiver extends BroadcastReceiver {
 
-public class PackageModifiedReceiver extends BroadcastReceiver {
+    private final AppListLoader mLoader;
 
-    public static final String PACKAGE_NAME_PREFIX = "package:";
+    public AppListChangedReceiver(AppListLoader appListLoader) {
+        this.mLoader = appListLoader;
+        registerToBroadcasts(appListLoader.getContext());
+    }
 
-    private OnPackageModifiedListener mListener;
-
-    public PackageModifiedReceiver(@NonNull OnPackageModifiedListener listener) {
-        this.mListener = listener;
+    private void registerToBroadcasts(Context context) {
+        final IntentFilter filter = new IntentFilter(Intent.ACTION_PACKAGE_ADDED);
+        filter.addAction(Intent.ACTION_PACKAGE_REMOVED);
+        filter.addDataScheme("package");
+        context.registerReceiver(this, filter);
     }
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        String packageName = intent.getDataString().replace(PACKAGE_NAME_PREFIX, "");
-        switch (intent.getAction()) {
-            case Intent.ACTION_PACKAGE_ADDED:
-                mListener.onPackageInstalled(packageName);
-                break;
-            case Intent.ACTION_PACKAGE_REMOVED:
-                mListener.onPackageRemoved(packageName);
-                break;
-        }
+        // Tell the loader about the change.
+        mLoader.onContentChanged();
     }
-
 }

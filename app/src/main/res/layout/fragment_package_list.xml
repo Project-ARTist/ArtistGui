@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<saarland.cispa.artist.artistgui.applist.view.AppListView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/recycler_view"
-    android:paddingTop="@dimen/vertical_content_margin"
-    android:paddingBottom="@dimen/vertical_content_margin"
-    android:scrollbars="vertical"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent" />
