@@ -126,7 +126,6 @@ class MainActivityPresenter implements MainActivityContract.Presenter {
             case INSTRUMENTATION_FRAGMENT:
                 mAppListFragment = (AppListFragment) selectedFragment;
                 mAppListPresenter = new AppListPresenter(mAppListFragment, mSettingsManager);
-                mAppListFragment.setPresenter(mAppListPresenter);
                 break;
         }
         mSelectedFragmentId = selectedFragmentId;
