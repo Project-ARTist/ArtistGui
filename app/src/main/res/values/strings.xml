@@ -39,6 +39,7 @@
     <string name="keep_instrumented_switch_info">Reinstrument after updates</string>
     <string name="instrument_app">Instrument</string>
     <string name="reinstrument_app">Reinstrument</string>
+    <string name="remove_instrumentation">Remove Instrumentation</string>
     <string name="never_instrumented">Never instrumented</string>
     <string name="last_instrumentation">Last instrumentation: %s</string>
 

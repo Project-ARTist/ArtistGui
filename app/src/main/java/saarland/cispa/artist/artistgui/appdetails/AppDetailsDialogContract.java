@@ -20,6 +20,7 @@
 package saarland.cispa.artist.artistgui.appdetails;
 
 import android.graphics.drawable.Drawable;
+import android.os.Bundle;
 
 import saarland.cispa.artist.artistgui.Package;
 import saarland.cispa.artist.artistgui.base.BasePresenter;
@@ -31,9 +32,11 @@ interface AppDetailsDialogContract {
 
         void setLastInstrumentationText(String lastInstrumented);
 
-        void activateKeepInstrumentedViews(Package app);
+        void updateKeepInstrumentedViews(boolean enable, Package app);
 
-        void updateInstrumentationButton(boolean instrumented, String packageName);
+        void updateInstrumentationButton(boolean instrumented);
+
+        void updateRemoveInstrumentationButton(boolean isInstrumented);
 
         void showInstrumentationProgress();
     }
@@ -45,7 +48,11 @@ interface AppDetailsDialogContract {
 
         void startInstrumentation();
 
+        void removeInstrumentation();
+
         void handleInstrumentationResult(boolean isSuccess);
+
+        void saveInstanceState(Bundle outState);
 
         void setSelectedPackage(Package selectedPackage);
     }

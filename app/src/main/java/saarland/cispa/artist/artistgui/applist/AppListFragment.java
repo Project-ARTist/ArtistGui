@@ -37,10 +37,12 @@ import java.util.List;
 import saarland.cispa.artist.artistgui.Package;
 import saarland.cispa.artist.artistgui.R;
 import saarland.cispa.artist.artistgui.appdetails.AppDetailsDialog;
+import saarland.cispa.artist.artistgui.appdetails.AppDetailsDialogPresenter;
 import saarland.cispa.artist.artistgui.applist.adapter.AppIconCache;
 import saarland.cispa.artist.artistgui.applist.adapter.AppListAdapter;
 import saarland.cispa.artist.artistgui.applist.adapter.OnPackageSelectedListener;
 import saarland.cispa.artist.artistgui.applist.loader.AppListLoader;
+import saarland.cispa.artist.artistgui.settings.manager.SettingsManagerImpl;
 import saarland.cispa.artist.artistgui.utils.GuiUtils;
 
 public class AppListFragment extends Fragment implements AppListContract.View,
@@ -49,6 +51,7 @@ public class AppListFragment extends Fragment implements AppListContract.View,
     private static final int LOADER_ID = 9574583;
 
     private AppListContract.Presenter mPresenter;
+
     private ProgressBar mProgressBar;
     private RecyclerView mAppListView;
     private AppListAdapter mAdapter;
@@ -56,14 +59,6 @@ public class AppListFragment extends Fragment implements AppListContract.View,
     @Override
     public void setPresenter(AppListContract.Presenter presenter) {
         mPresenter = presenter;
-    }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        // Prepare the loader.  Either re-connect with an existing one,
-        // or start a new one.
-        getLoaderManager().initLoader(LOADER_ID, null, this);
     }
 
     @Nullable
@@ -82,9 +77,25 @@ public class AppListFragment extends Fragment implements AppListContract.View,
 
         mAdapter = new AppListAdapter(new AppIconCache(context));
         mAdapter.registerPackageSelectedListener(this);
-
         mAppListView.setAdapter(mAdapter);
+
+        if (savedInstanceState != null) {
+            Fragment dialog = getFragmentManager().findFragmentByTag(AppDetailsDialog.TAG);
+            if (dialog != null) {
+                // connect presenter to old fragment
+                new AppDetailsDialogPresenter((AppDetailsDialog) dialog, context,
+                        new SettingsManagerImpl(context));
+            }
+        }
         return rootView;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        // Prepare the loader.  Either re-connect with an existing one,
+        // or start a new one.
+        getLoaderManager().initLoader(LOADER_ID, null, this);
     }
 
     @Override
@@ -96,11 +107,15 @@ public class AppListFragment extends Fragment implements AppListContract.View,
 
     @Override
     public void onPackageSelected(Package selectedPackage) {
+        AppDetailsDialog detailsDialog = new AppDetailsDialog();
+        // constructor connects presenter to view
+        final Context context = getContext();
+        new AppDetailsDialogPresenter(detailsDialog, context, new SettingsManagerImpl(context));
+
         Bundle bundle = new Bundle();
         bundle.putParcelable(AppDetailsDialog.PACKAGE_KEY, selectedPackage);
-
-        AppDetailsDialog detailsDialog = new AppDetailsDialog();
         detailsDialog.setArguments(bundle);
+
         detailsDialog.show(getFragmentManager(), AppDetailsDialog.TAG);
     }
 

@@ -42,7 +42,6 @@ import saarland.cispa.artist.artistgui.R;
 import saarland.cispa.artist.artistgui.instrumentation.progress.ProgressPublisher;
 import saarland.cispa.artist.artistgui.progress.ProgressDialogFragment;
 import saarland.cispa.artist.artistgui.settings.db.operations.PersistPackageToDbAsyncTask;
-import saarland.cispa.artist.artistgui.settings.manager.SettingsManagerImpl;
 
 public class AppDetailsDialog extends DialogFragment implements AppDetailsDialogContract.View {
 
@@ -51,7 +50,11 @@ public class AppDetailsDialog extends DialogFragment implements AppDetailsDialog
 
     private AppDetailsDialogContract.Presenter mPresenter;
     private View mRootView;
-    private TextView lastInstrumentationView;
+
+    private TextView mLastInstrumentationView;
+    private Switch mKeepInstrumentedSwitch;
+    private Button mInstrumentationButton;
+    private Button mRemoveInstrumentationButton;
 
     private BroadcastReceiver mResultReceiver = new BroadcastReceiver() {
         @Override
@@ -64,7 +67,50 @@ public class AppDetailsDialog extends DialogFragment implements AppDetailsDialog
             }
         }
     };
-    private Package mSelectedPackage;
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
+                             Bundle savedInstanceState) {
+        mRootView = inflater.inflate(R.layout.fragment_app_details, container, false);
+        mLastInstrumentationView = mRootView.findViewById(R.id.last_instrumentation);
+        mKeepInstrumentedSwitch = mRootView.findViewById(R.id.keep_instrumented_switch);
+
+        mInstrumentationButton = mRootView.findViewById(R.id.instrument_button);
+        mInstrumentationButton.setOnClickListener(v -> mPresenter.startInstrumentation());
+
+        mRemoveInstrumentationButton = mRootView.findViewById(R.id.remove_instrumentation_button);
+        mRemoveInstrumentationButton.setOnClickListener(v -> mPresenter.removeInstrumentation());
+
+        // restore after configuration change
+        Package selectedPackage = null;
+        if (savedInstanceState != null) {
+            selectedPackage = savedInstanceState.getParcelable(PACKAGE_KEY);
+        } else {
+            // new instance
+            Bundle bundle = getArguments();
+            if (bundle != null) {
+                selectedPackage = bundle.getParcelable(PACKAGE_KEY);
+            }
+        }
+
+        if (selectedPackage != null) {
+            mPresenter.setSelectedPackage(selectedPackage);
+            initializeAppAndPackageName(selectedPackage);
+            mPresenter.loadAppIcon();
+            mPresenter.determineInstrumentationStatusAndUpdateViews();
+        }
+
+        return mRootView;
+    }
+
+    private void initializeAppAndPackageName(Package selectedPackage) {
+        TextView appNameView = mRootView.findViewById(R.id.app_name);
+        TextView packageNameView = mRootView.findViewById(R.id.package_name);
+
+        appNameView.setText(selectedPackage.getAppName());
+        packageNameView.setText(selectedPackage.getPackageName());
+    }
 
     @Override
     public void onStart() {
@@ -82,41 +128,9 @@ public class AppDetailsDialog extends DialogFragment implements AppDetailsDialog
     }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        new AppDetailsDialogPresenter(this, getActivity(),
-                new SettingsManagerImpl(getContext()));
-
-        Bundle bundle = getArguments();
-        if (bundle != null) {
-            Package selectedPackage = bundle.getParcelable(PACKAGE_KEY);
-            mPresenter.setSelectedPackage(selectedPackage);
-            mPresenter.loadAppIcon();
-            mPresenter.determineInstrumentationStatusAndUpdateViews();
-        }
-    }
-
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
-                             Bundle savedInstanceState) {
-        mRootView = inflater.inflate(R.layout.fragment_app_details, container, false);
-        lastInstrumentationView = mRootView.findViewById(R.id.last_instrumentation);
-
-        Bundle bundle = getArguments();
-        if (bundle != null) {
-            mSelectedPackage = bundle.getParcelable(PACKAGE_KEY);
-            setUpTextViews();
-        }
-        return mRootView;
-    }
-
-    private void setUpTextViews() {
-        TextView appNameView = mRootView.findViewById(R.id.app_name);
-        TextView packageNameView = mRootView.findViewById(R.id.package_name);
-
-        appNameView.setText(mSelectedPackage.getAppName());
-        packageNameView.setText(mSelectedPackage.getPackageName());
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        mPresenter.saveInstanceState(outState);
     }
 
     @Override
@@ -138,32 +152,33 @@ public class AppDetailsDialog extends DialogFragment implements AppDetailsDialog
         } else {
             textToShow = getString(R.string.never_instrumented);
         }
-        lastInstrumentationView.setText(textToShow);
+        mLastInstrumentationView.setText(textToShow);
     }
 
     @Override
-    public void activateKeepInstrumentedViews(Package app) {
-        Switch keepInstrumentedSwitch = mRootView
-                .findViewById(R.id.keep_instrumented_switch);
-        keepInstrumentedSwitch.setChecked(app.isKeepInstrumented());
-        keepInstrumentedSwitch.setOnCheckedChangeListener((v, isChecked) -> {
+    public void updateKeepInstrumentedViews(boolean enable, Package app) {
+        mKeepInstrumentedSwitch.setChecked(app.isKeepInstrumented());
+        mKeepInstrumentedSwitch.setOnCheckedChangeListener((v, isChecked) -> {
             app.setKeepInstrumented(isChecked);
             new PersistPackageToDbAsyncTask(getContext())
                     .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, app);
         });
-        keepInstrumentedSwitch.setEnabled(true);
+        mKeepInstrumentedSwitch.setEnabled(enable);
 
         TextView summary = mRootView
                 .findViewById(R.id.keep_instrumented_switch_info_text);
-        summary.setOnClickListener((l) -> keepInstrumentedSwitch.toggle());
+        summary.setOnClickListener((l) -> mKeepInstrumentedSwitch.toggle());
     }
 
     @Override
-    public void updateInstrumentationButton(boolean instrumented, String packageName) {
-        Button instrumentButton = mRootView.findViewById(R.id.instrument_button);
-        instrumentButton.setText(instrumented ? getString(R.string.reinstrument_app) :
+    public void updateInstrumentationButton(boolean isInstrumented) {
+        mInstrumentationButton.setText(isInstrumented ? getString(R.string.reinstrument_app) :
                 getString(R.string.instrument_app));
-        instrumentButton.setOnClickListener(v -> showInstrumentationProgress());
+    }
+
+    @Override
+    public void updateRemoveInstrumentationButton(boolean isInstrumented) {
+        mRemoveInstrumentationButton.setVisibility(isInstrumented ? View.VISIBLE : View.GONE);
     }
 
     @Override
@@ -171,6 +186,5 @@ public class AppDetailsDialog extends DialogFragment implements AppDetailsDialog
         ProgressDialogFragment dialogFragment = new ProgressDialogFragment();
         dialogFragment.setCancelable(false);
         dialogFragment.show(getFragmentManager(), ProgressDialogFragment.TAG);
-        mPresenter.startInstrumentation();
     }
 }

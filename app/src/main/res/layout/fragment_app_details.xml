@@ -79,6 +79,23 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
+        android:id="@+id/remove_instrumentation_button"
+        style="?android:attr/borderlessButtonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginTop="24dp"
+        android:text="@string/remove_instrumentation"
+        android:textColor="@android:color/holo_red_light"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/instrument_button"
+        app:layout_constraintTop_toBottomOf="@id/keep_instrumented_switch_info_text"
+        tools:text="Remove instrumentation"
+        tools:visibility="visible" />
+
+    <Button
         android:id="@+id/instrument_button"
         style="?android:attr/borderlessButtonStyle"
         android:layout_width="wrap_content"
@@ -89,6 +106,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/keep_instrumented_switch_info_text"
-        tools:text="Recompile" />
+        tools:text="Reinstrument" />
 
 </android.support.constraint.ConstraintLayout>

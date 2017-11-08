@@ -48,6 +48,12 @@ public class ProgressPublisher implements ProgressListener {
     public static final String EXTRA_INSTRUMENTATION_RESULT =
             "saarland.cispa.artist.artistgui.extra.INSTRUMENTATION_RESULT";
 
+    /**
+     * Instrumentation removed action
+     */
+    public static final String ACTION_INSTRUMENTATION_REMOVED =
+            "saarland.cispa.artist.artistgui.action.INSTRUMENTATION_REMOVED";
+
     private LocalBroadcastManager mBroadcastManager;
 
     public ProgressPublisher(LocalBroadcastManager broadcastManager) {
