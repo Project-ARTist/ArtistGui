@@ -1,11 +1,32 @@
+/*
+ * The ARTist Project (https://artist.cispa.saarland)
+ *
+ * Copyright (C) 2017 CISPA (https://cispa.saarland), Saarland University
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+
 package saarland.cispa.artist.artistgui.appdetails;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.DisplayMetrics;
 
 import java.text.DateFormat;
@@ -13,7 +34,12 @@ import java.util.Date;
 
 import saarland.cispa.artist.artistgui.Package;
 import saarland.cispa.artist.artistgui.instrumentation.InstrumentationService;
+import saarland.cispa.artist.artistgui.instrumentation.RemoveInstrumentationAsyncTask;
+import saarland.cispa.artist.artistgui.instrumentation.config.ArtistRunConfig;
+import saarland.cispa.artist.artistgui.instrumentation.progress.ProgressPublisher;
+import saarland.cispa.artist.artistgui.settings.config.ArtistConfigFactory;
 import saarland.cispa.artist.artistgui.settings.db.operations.AddInstrumentedPackageToDbAsyncTask;
+import saarland.cispa.artist.artistgui.settings.db.operations.RemovePackagesFromDbAyncTask;
 import saarland.cispa.artist.artistgui.settings.manager.SettingsManager;
 import trikita.log.Log;
 
@@ -21,17 +47,16 @@ public class AppDetailsDialogPresenter implements AppDetailsDialogContract.Prese
 
     public static final String TAG = "AppDetailsDialogPresenter";
 
-
     private final AppDetailsDialogContract.View mView;
-    private final Activity mActivity;
+    private final Context mContext;
     private final SettingsManager mSettingsManager;
 
     private Package mSelectedPackage;
 
-    AppDetailsDialogPresenter(AppDetailsDialogContract.View view, Activity activity,
-                              SettingsManager settingsManager) {
+    public AppDetailsDialogPresenter(AppDetailsDialogContract.View view, Context context,
+                                     SettingsManager settingsManager) {
         mView = view;
-        mActivity = activity;
+        mContext = context;
         mSettingsManager = settingsManager;
         view.setPresenter(this);
     }
@@ -43,7 +68,7 @@ public class AppDetailsDialogPresenter implements AppDetailsDialogContract.Prese
     @Override
     public void loadAppIcon() {
         try {
-            Context mdpiContext = mActivity.createPackageContext(mSelectedPackage.getPackageName(),
+            Context mdpiContext = mContext.createPackageContext(mSelectedPackage.getPackageName(),
                     Context.CONTEXT_IGNORE_SECURITY);
             Drawable appIcon = mdpiContext.getResources()
                     .getDrawableForDensity(mSelectedPackage.getAppIconId(),
@@ -62,16 +87,52 @@ public class AppDetailsDialogPresenter implements AppDetailsDialogContract.Prese
         String dateAndTime = null;
         if (isInstrumented) {
             dateAndTime = convertTimestampToDateAndTime(timestamp);
-            mView.activateKeepInstrumentedViews(mSelectedPackage);
+            mView.updateKeepInstrumentedViews(true, mSelectedPackage);
         }
 
         mView.setLastInstrumentationText(dateAndTime);
-        mView.updateInstrumentationButton(isInstrumented, mSelectedPackage.getPackageName());
+        mView.updateInstrumentationButton(isInstrumented);
+        mView.updateRemoveInstrumentationButton(isInstrumented);
     }
 
     private String convertTimestampToDateAndTime(long timestamp) {
         Date date = new Date(timestamp);
         return DateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.SHORT).format(date);
+    }
+
+    @Override
+    public void startInstrumentation() {
+        mView.showInstrumentationProgress();
+
+        Intent intent = new Intent(mContext, InstrumentationService.class);
+        intent.putExtra(InstrumentationService.INTENT_KEY_APP_NAME,
+                mSelectedPackage.getPackageName());
+        mContext.startService(intent);
+    }
+
+    @Override
+    public void removeInstrumentation() {
+        startRemovalTasks();
+        mSelectedPackage.reset();
+
+        mView.updateKeepInstrumentedViews(false, mSelectedPackage);
+        mView.setLastInstrumentationText(null);
+        mView.updateRemoveInstrumentationButton(false);
+        mView.updateInstrumentationButton(false);
+
+        Intent intent = new Intent(ProgressPublisher.ACTION_INSTRUMENTATION_REMOVED);
+        intent.putExtra(ProgressPublisher.EXTRA_PACKAGE_NAME, mSelectedPackage.getPackageName());
+        LocalBroadcastManager.getInstance(mContext).sendBroadcast(intent);
+    }
+
+    private void startRemovalTasks() {
+        String packageName = mSelectedPackage.getPackageName();
+        ArtistRunConfig runConfig = ArtistConfigFactory
+                .buildArtistRunConfig(mContext, packageName);
+        new RemoveInstrumentationAsyncTask()
+                .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, runConfig.app_oat_file_path);
+        new RemovePackagesFromDbAyncTask(mContext)
+                .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, packageName);
     }
 
     @Override
@@ -83,19 +144,12 @@ public class AppDetailsDialogPresenter implements AppDetailsDialogContract.Prese
             String dateAndTime = convertTimestampToDateAndTime(timestamp);
             mView.setLastInstrumentationText(dateAndTime);
 
-            mView.activateKeepInstrumentedViews(mSelectedPackage);
+            mView.updateKeepInstrumentedViews(true, mSelectedPackage);
+            mView.updateRemoveInstrumentationButton(true);
 
-            new AddInstrumentedPackageToDbAsyncTask(mActivity).execute(mSelectedPackage);
+            new AddInstrumentedPackageToDbAsyncTask(mContext).execute(mSelectedPackage);
             startInstrumentedAppIfWished();
         }
-    }
-
-    @Override
-    public void startInstrumentation() {
-        Intent intent = new Intent(mActivity, InstrumentationService.class);
-        intent.putExtra(InstrumentationService.INTENT_KEY_APP_NAME,
-                mSelectedPackage.getPackageName());
-        mActivity.startService(intent);
     }
 
     private void startInstrumentedAppIfWished() {
@@ -103,10 +157,15 @@ public class AppDetailsDialogPresenter implements AppDetailsDialogContract.Prese
         if (launchActivity) {
             String packageName = mSelectedPackage.getPackageName();
             Log.d(TAG, "Starting compiled app: " + packageName);
-            final Intent launchIntent = mActivity.getPackageManager()
+            final Intent launchIntent = mContext.getPackageManager()
                     .getLaunchIntentForPackage(packageName);
-            mActivity.startActivity(launchIntent);
+            mContext.startActivity(launchIntent);
         }
+    }
+
+    @Override
+    public void saveInstanceState(Bundle outState) {
+        outState.putParcelable(AppDetailsDialog.PACKAGE_KEY, mSelectedPackage);
     }
 
     @Override

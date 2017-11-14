@@ -53,6 +53,14 @@ public class Package implements Parcelable {
         this.appIconId = appIconId;
     }
 
+    /**
+     * Can be called after a instrumentation removal to reset the package state.
+     */
+    public void reset() {
+        lastInstrumentationTimestamp = 0;
+        keepInstrumented = false;
+    }
+
     public String getAppName() {
         return appName;
     }

@@ -23,6 +23,9 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.support.v4.content.LocalBroadcastManager;
+
+import saarland.cispa.artist.artistgui.instrumentation.progress.ProgressPublisher;
 
 public class AppListChangedReceiver extends BroadcastReceiver {
 
@@ -38,6 +41,11 @@ public class AppListChangedReceiver extends BroadcastReceiver {
         filter.addAction(Intent.ACTION_PACKAGE_REMOVED);
         filter.addDataScheme("package");
         context.registerReceiver(this, filter);
+
+        final IntentFilter localFilter = new IntentFilter(ProgressPublisher
+                .ACTION_INSTRUMENTATION_REMOVED);
+        LocalBroadcastManager broadcastManager = LocalBroadcastManager.getInstance(context);
+        broadcastManager.registerReceiver(this, localFilter);
     }
 
     @Override
