@@ -1,4 +1,4 @@
-/**
+/*
  * The ARTist Project (https://artist.cispa.saarland)
  * <p>
  * Copyright (C) 2017 CISPA (https://cispa.saarland), Saarland University
@@ -18,6 +18,7 @@
  * @author "Oliver Schranz <oliver.schranz@cispa.saarland>"
  * @author "Sebastian Weisgerber <weisgerber@cispa.saarland>"
  */
+
 package saarland.cispa.artist.artistgui.instrumentation.config;
 
 import java.io.File;
@@ -58,8 +59,6 @@ public class ArtistRunConfig {
     public String api_level = "";
 
     public int COMPILER_THREADS = -1;
-
-    public boolean BACKUP_APK_MERGED = false;
 
     public String asset_path_artist_root = "";
     public String asset_path_dex2oat = "";
@@ -103,7 +102,6 @@ public class ArtistRunConfig {
                 ", app_package_name=                 '" + app_package_name + '\'' + "\n" +
                 ", app_oat_architecture=             '" + app_oat_architecture + '\'' + "\n" +
                 ", COMPILER_THREADS=                 '" + COMPILER_THREADS + "'\n" +
-                ", BACKUP_APK_MERGED=                '" + BACKUP_APK_MERGED + "'\n" +
                 ", asset_path_artist_root=           '" + asset_path_artist_root + '\'' + "\n" +
                 ", asset_path_dex2oat=               '" + asset_path_dex2oat + '\'' + "\n" +
                 ", asset_path_dex2oat_libs=          '" + asset_path_dex2oat_libs + '\'' + "\n" +
@@ -128,10 +126,6 @@ public class ArtistRunConfig {
     }
 
     public boolean isAssetCodeLib() {
-        if (codeLibName != null) {
-            return codeLibName.startsWith(ArtistUtils.CODELIB_ASSET);
-        } else {
-            return false;
-        }
+        return codeLibName != null && codeLibName.startsWith(ArtistUtils.CODELIB_ASSET);
     }
 }
