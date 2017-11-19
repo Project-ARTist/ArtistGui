@@ -21,7 +21,6 @@ package saarland.cispa.artist.artistgui;
 
 import android.os.Build;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -62,21 +61,21 @@ public class MainActivityPresenterTest {
         // Mockito has a very convenient way to inject mocks by using the @Mock annotation. To
         // inject the mocks in the test the initMocks method needs to be called.
         MockitoAnnotations.initMocks(this);
-        mPresenter = new MainActivityPresenter(mView, mSettingsManager);
+        mPresenter = new MainActivityPresenter(mView, mSettingsManager, null);
     }
 
     @Test
     public void incompatibilityTest() throws Exception {
         setFinalStatic(Build.VERSION.class.getField("SDK_INT"), Build.VERSION_CODES.LOLLIPOP);
-        mPresenter.checkCompatibility();
-        verify(mView).showIncompatibleVersionDialog();
+        mPresenter.checkAndroidVersionCompatibility();
+        verify(mView).showIncompatibleAndroidVersionDialog();
     }
 
     @Test
     public void compatibilityTest() throws Exception {
         setFinalStatic(Build.VERSION.class.getField("SDK_INT"), Build.VERSION_CODES.N);
-        mPresenter.checkCompatibility();
-        verify(mView, never()).showIncompatibleVersionDialog();
+        mPresenter.checkAndroidVersionCompatibility();
+        verify(mView, never()).showIncompatibleAndroidVersionDialog();
     }
 
     @Test

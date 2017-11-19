@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         mFragmentManager = getSupportFragmentManager();
-        mPresenter = new MainActivityPresenter(this, new SettingsManagerImpl(this));
+        mPresenter = new MainActivityPresenter(this, new SettingsManagerImpl(this), this);
 
         if (savedInstanceState == null) {
             mPresenter.checkCompatibility();
@@ -85,11 +85,19 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void showIncompatibleVersionDialog() {
+    public void showIncompatibleAndroidVersionDialog() {
         new AlertDialog.Builder(this).setTitle(R.string.incompatible_android_version)
                 .setMessage(R.string.unsupported_android_version_info)
                 .setPositiveButton("Close", (dialog, which) -> {
                 }).show();
+    }
+
+    @Override
+    public void showMissingDex2OatFilesDialog() {
+        new AlertDialog.Builder(this).setTitle(R.string.missing_dex2oat_files)
+                .setMessage(R.string.missing_dex2oat_files_description)
+                .setPositiveButton("Learn more", (dialog, which) ->
+                        mPresenter.openDex2OatHelpPage()).show();
     }
 
     @Override
