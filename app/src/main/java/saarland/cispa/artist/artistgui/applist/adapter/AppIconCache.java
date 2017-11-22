@@ -25,7 +25,7 @@ import android.graphics.drawable.Drawable;
 import android.util.DisplayMetrics;
 import android.util.LruCache;
 
-import saarland.cispa.artist.artistgui.Package;
+import saarland.cispa.artist.artistgui.database.Package;
 
 public class AppIconCache extends LruCache<Package, Drawable> {
 
@@ -44,15 +44,15 @@ public class AppIconCache extends LruCache<Package, Drawable> {
     protected Drawable create(Package packageEntry) {
         if (packageEntry.equals(sDefaultIconPackage)) {
             return mContext.getDrawable(android.R.mipmap.sym_def_app_icon);
-        } else if (packageEntry.getAppIconId() == android.R.mipmap.sym_def_app_icon) {
+        } else if (packageEntry.appIconId == android.R.mipmap.sym_def_app_icon) {
             return get(sDefaultIconPackage);
         }
 
         Drawable appIcon = null;
         try {
-            Context mdpiContext = mContext.createPackageContext(packageEntry.getPackageName(),
+            Context mdpiContext = mContext.createPackageContext(packageEntry.packageName,
                     Context.CONTEXT_IGNORE_SECURITY);
-            appIcon = mdpiContext.getResources().getDrawableForDensity(packageEntry.getAppIconId(),
+            appIcon = mdpiContext.getResources().getDrawableForDensity(packageEntry.appIconId,
                     DisplayMetrics.DENSITY_XHIGH, null);
             put(packageEntry, appIcon);
 

@@ -19,7 +19,7 @@
 
 package saarland.cispa.artist.artistgui.applist.adapter;
 
-import saarland.cispa.artist.artistgui.Package;
+import saarland.cispa.artist.artistgui.database.Package;
 
 public interface OnPackageSelectedListener {
     void onPackageSelected(Package selectedPackage);

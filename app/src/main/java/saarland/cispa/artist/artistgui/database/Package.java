@@ -17,29 +17,63 @@
  *
  */
 
-package saarland.cispa.artist.artistgui;
+package saarland.cispa.artist.artistgui.database;
 
+import android.arch.persistence.room.ColumnInfo;
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
+import android.arch.persistence.room.PrimaryKey;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 
 import java.util.Comparator;
 
+@Entity(tableName = "instrumented_packages")
 public class Package implements Parcelable {
 
+    @PrimaryKey
+    @ColumnInfo(name = "package_name")
+    @NonNull
+    public String packageName;
+
+    @ColumnInfo(name = "last_instrumentation_timestamp")
+    public long lastInstrumentationTimestamp;
+
+    @ColumnInfo(name = "keep_instrumented")
+    public boolean keepInstrumented;
+
+    // Non db fields
     public static final Comparator<Package> sComparator =
-            (p1, p2) -> p1.getAppName().compareTo(p2.getAppName());
+            (p1, p2) -> p1.appName.compareTo(p2.appName);
 
-    private String appName;
-    private String packageName;
-    private int appIconId;
-    private long lastInstrumentationTimestamp;
-    private boolean keepInstrumented;
+    @Ignore
+    public String appName;
 
+    @Ignore
+    public int appIconId;
+
+    // Parcelable creator
+    public static final Parcelable.Creator<Package> CREATOR =
+            new Parcelable.Creator<Package>() {
+                public Package createFromParcel(Parcel in) {
+                    return new Package(in);
+                }
+
+                public Package[] newArray(int size) {
+                    return new Package[size];
+                }
+            };
+
+    public Package() {
+    }
+
+    @Ignore
     public Package(@NonNull String packageName) {
         this.packageName = packageName;
     }
 
+    @Ignore
     public Package(@NonNull String packageName, long lastInstrumentationTimestamp,
                    boolean keepInstrumented) {
         this.packageName = packageName;
@@ -47,54 +81,19 @@ public class Package implements Parcelable {
         this.keepInstrumented = keepInstrumented;
     }
 
+    @Ignore
     public Package(@NonNull String appName, @NonNull String packageName, int appIconId) {
         this.appName = appName;
         this.packageName = packageName;
         this.appIconId = appIconId;
     }
 
-    /**
-     * Can be called after a instrumentation removal to reset the package state.
-     */
-    public void reset() {
-        lastInstrumentationTimestamp = 0;
-        keepInstrumented = false;
-    }
-
-    public String getAppName() {
-        return appName;
-    }
-
-    public String getPackageName() {
-        return packageName;
-    }
-
-    public int getAppIconId() {
-        return appIconId;
-    }
-
-    public long getLastInstrumentationTimestamp() {
-        return lastInstrumentationTimestamp;
-    }
-
-    public boolean isKeepInstrumented() {
-        return keepInstrumented;
-    }
-
-    public void setAppName(String appName) {
-        this.appName = appName;
-    }
-
-    public void setAppIconId(int appIconId) {
-        this.appIconId = appIconId;
-    }
-
-    public void setKeepInstrumented(boolean keepInstrumented) {
-        this.keepInstrumented = keepInstrumented;
-    }
-
-    public void updateLastInstrumentationTimestamp() {
-        this.lastInstrumentationTimestamp = System.currentTimeMillis();
+    @Ignore
+    private Package(Parcel in) {
+        appName = in.readString();
+        packageName = in.readString();
+        appIconId = in.readInt();
+        lastInstrumentationTimestamp = in.readLong();
     }
 
     @Override
@@ -102,29 +101,13 @@ public class Package implements Parcelable {
         return 0;
     }
 
+
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(appName);
         dest.writeString(packageName);
         dest.writeInt(appIconId);
         dest.writeLong(lastInstrumentationTimestamp);
-    }
-
-    public static final Parcelable.Creator<Package> CREATOR = new Parcelable.Creator<Package>() {
-        public Package createFromParcel(Parcel in) {
-            return new Package(in);
-        }
-
-        public Package[] newArray(int size) {
-            return new Package[size];
-        }
-    };
-
-    private Package(Parcel in) {
-        appName = in.readString();
-        packageName = in.readString();
-        appIconId = in.readInt();
-        lastInstrumentationTimestamp = in.readLong();
     }
 
     @Override
@@ -145,5 +128,13 @@ public class Package implements Parcelable {
         result = 31 * result + packageName.hashCode();
         result = 31 * result + appIconId;
         return result;
+    }
+
+    /**
+     * Can be called after a instrumentation removal to reset the package state.
+     */
+    public void reset() {
+        lastInstrumentationTimestamp = 0;
+        keepInstrumented = false;
     }
 }

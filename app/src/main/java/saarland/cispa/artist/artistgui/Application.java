@@ -19,12 +19,27 @@
 
 package saarland.cispa.artist.artistgui;
 
+import android.arch.persistence.room.Room;
+
+import saarland.cispa.artist.artistgui.database.AppDatabase;
 import saarland.cispa.artist.artistgui.utils.LogA;
 
 public class Application extends android.app.Application {
+
+    public static final String DATABASE_NAME = "app-database";
+    private AppDatabase mDatabase;
+
     @Override
     public void onCreate() {
         super.onCreate();
         LogA.setUserLogLevel(this);
+    }
+
+    public AppDatabase getDatabase() {
+        if (mDatabase == null) {
+            mDatabase = Room.databaseBuilder(getApplicationContext(),
+                    AppDatabase.class, DATABASE_NAME).build();
+        }
+        return mDatabase;
     }
 }
