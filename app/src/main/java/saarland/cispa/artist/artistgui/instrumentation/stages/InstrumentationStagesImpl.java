@@ -229,31 +229,25 @@ public class InstrumentationStagesImpl implements InstrumentationStages {
 
     @Override
     public void backupMergedApk() {
-        if (!mRunConfig.BACKUP_APK_MERGED) {
-            Log.v(TAG, "Skip: backupMergedApk()");
-            return;
-        }
         Log.v(TAG, "backupMergedApk()");
+        final File externalStorage = mContext.getExternalFilesDir(null);
+        if (externalStorage != null) {
+            final String mergedApkBackupPath = externalStorage.getAbsolutePath() + File.separator
+                    + "last_merged_signed_instrumented_app.apk";
 
-        final File sdcard = Environment.getExternalStorageDirectory();
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss", Locale.getDefault());
-        Date date = new Date();
+            reportProgressDetails("Backing up Merged APK: " + mergedApkBackupPath);
 
-        final String mergedApkBackupPath = sdcard.getAbsolutePath() + File.separator
-                + mRunConfig.app_package_name + "_merged_signed_" + dateFormat.format(date) + ".apk";
+            final String cmd_backup_merged_apk = "cp " + mRunConfig.app_apk_merged_signed_file_path +
+                    " " + mergedApkBackupPath;
 
-        reportProgressDetails("Backing up Merged APK: " + mergedApkBackupPath);
+            boolean success = ProcessExecutor.execute(cmd_backup_merged_apk, true,
+                    ProcessExecutor.processName(mRunConfig.app_package_name, "cp_backup_merged"));
 
-        final String cmd_backup_merged_apk = "cp " + mRunConfig.app_apk_merged_signed_file_path +
-                " " + mergedApkBackupPath;
-
-        boolean success = ProcessExecutor.execute(cmd_backup_merged_apk, true,
-                ProcessExecutor.processName(mRunConfig.app_package_name, "cp_backup_merged"));
-
-        if (success) {
-            Log.d(TAG, "backupMergedApk() Success: " + mergedApkBackupPath);
-        } else {
-            Log.e(TAG, "backupMergedApk() Failed:  " + mergedApkBackupPath);
+            if (success) {
+                Log.d(TAG, "backupMergedApk() Success: " + mergedApkBackupPath);
+            } else {
+                Log.e(TAG, "backupMergedApk() Failed:  " + mergedApkBackupPath);
+            }
         }
     }
 

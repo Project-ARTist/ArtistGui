@@ -1,4 +1,4 @@
-/**
+/*
  * The ARTist Project (https://artist.cispa.saarland)
  * <p>
  * Copyright (C) 2017 CISPA (https://cispa.saarland), Saarland University
@@ -47,8 +47,8 @@ public class ArtistConfigFactory {
     private static final String TAG = "ArtistConfigFactory";
     private static final String CODE_LIB_ASSET = "assetcodelib.apk";
 
-    public final static String PATH_ASSET_ARTIST_ROOT = "artist";
-    public final static String PATH_ASSET_ARTIST_BIN_PREFIX = PATH_ASSET_ARTIST_ROOT + File.separator + "android-";
+    private final static String PATH_ASSET_ARTIST_ROOT = "artist";
+    private final static String PATH_ASSET_ARTIST_BIN_PREFIX = PATH_ASSET_ARTIST_ROOT + File.separator + "android-";
 
     public static ArtistRunConfig buildArtistRunConfig(final Context context, final String appPackageName) {
         ArtistRunConfig artistConfig = new ArtistRunConfig();
@@ -70,7 +70,6 @@ public class ArtistConfigFactory {
 
         final String compiler_threads = sharedPref.getString(ArtistAppConfig.KEY_PREF_COMPILER_THREADS, "-1");
         artistConfig.COMPILER_THREADS = Integer.parseInt(compiler_threads);
-        artistConfig.BACKUP_APK_MERGED = sharedPref.getBoolean(ArtistAppConfig.KEY_PREF_BACKUP_APK_MERGED, false);
 
         final PackageInfo packageInfo = getPackageInfo(context, appPackageName);
 
@@ -126,7 +125,6 @@ public class ArtistConfigFactory {
                 String codeLibName = userCodeLib.replaceFirst(ArtistUtils.CODELIB_IMPORTED, "");
                 codeLibPath = AndroidUtils.getFilesDirLocation(context, ArtistAppConfig.APP_FOLDER_CODELIBS + File.separator + codeLibName);
             } else if (userCodeLib.startsWith(ArtistUtils.CODELIB_ASSET)) {
-                String codeLibName = userCodeLib.replaceFirst(ArtistUtils.CODELIB_ASSET, "");
                 codeLibPath = AndroidUtils.getFilesDirLocation(context, CODE_LIB_ASSET);
             }
 
