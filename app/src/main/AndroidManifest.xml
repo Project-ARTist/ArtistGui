@@ -27,7 +27,7 @@
             android:launchMode="singleInstance"
             android:parentActivityName=".MainActivity" />
 
-        <receiver android:name=".broadcastreceiver.PackageUpdatedReceiver">
+        <receiver android:name=".PackageUpdatedReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.PACKAGE_REPLACED" />
                 <data android:scheme="package" />

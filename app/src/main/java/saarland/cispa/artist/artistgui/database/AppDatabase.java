@@ -17,17 +17,12 @@
  *
  */
 
-package saarland.cispa.artist.artistgui.settings.db;
+package saarland.cispa.artist.artistgui.database;
 
-public final class DbContract {
-    private DbContract() {
-    }
+import android.arch.persistence.room.Database;
+import android.arch.persistence.room.RoomDatabase;
 
-    /* Inner class that defines the table contents */
-    static class PackageEntry {
-        static final String TABLE_NAME = "instrumented_apps";
-        static final String COLUMN_NAME_PACKAGE_NAME = "package_name";
-        static final String COLUMN_NAME_TIMESTAMP = "last_instrumented_timestamp";
-        static final String COLUMN_NAME_KEEP_INSTRUMENTED = "keep_instrumented";
-    }
+@Database(entities = {Package.class}, version = 1)
+public abstract class AppDatabase extends RoomDatabase {
+    public abstract PackageDao packageDao();
 }

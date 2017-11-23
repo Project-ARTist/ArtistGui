@@ -22,7 +22,7 @@ package saarland.cispa.artist.artistgui.appdetails;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
-import saarland.cispa.artist.artistgui.Package;
+import saarland.cispa.artist.artistgui.database.Package;
 import saarland.cispa.artist.artistgui.base.BasePresenter;
 import saarland.cispa.artist.artistgui.base.BaseView;
 

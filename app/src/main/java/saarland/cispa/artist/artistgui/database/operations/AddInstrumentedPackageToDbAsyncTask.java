@@ -17,29 +17,22 @@
  *
  */
 
-package saarland.cispa.artist.artistgui.settings.db.operations;
+package saarland.cispa.artist.artistgui.database.operations;
 
-import android.content.Context;
-import android.os.AsyncTask;
+import android.support.annotation.NonNull;
 
-import saarland.cispa.artist.artistgui.settings.db.DatabaseManager;
-import saarland.cispa.artist.artistgui.settings.db.InstrumentedPackagesManager;
+import saarland.cispa.artist.artistgui.database.AppDatabase;
+import saarland.cispa.artist.artistgui.database.Package;
 
-public class RemovePackagesFromDbAyncTask extends AsyncTask<String, Void, Void> {
+public class AddInstrumentedPackageToDbAsyncTask extends BaseDbAsyncTask<Package> {
 
-    private Context mContext;
-
-    public RemovePackagesFromDbAyncTask(Context context) {
-        this.mContext = context;
+    public AddInstrumentedPackageToDbAsyncTask(AppDatabase database) {
+        super(database);
     }
 
     @Override
-    protected Void doInBackground(String... params) {
-        InstrumentedPackagesManager manager = new DatabaseManager(mContext);
-        for (String packageName : params) {
-            manager.removeUninstrumentedPackage(packageName);
-        }
-        manager.onDestroy();
+    protected Void doInBackground(@NonNull Package... params) {
+        mDatabase.packageDao().insertAll(params);
         return null;
     }
 }

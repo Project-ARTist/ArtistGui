@@ -32,14 +32,16 @@ import android.util.DisplayMetrics;
 import java.text.DateFormat;
 import java.util.Date;
 
-import saarland.cispa.artist.artistgui.Package;
+import saarland.cispa.artist.artistgui.Application;
+import saarland.cispa.artist.artistgui.database.AppDatabase;
+import saarland.cispa.artist.artistgui.database.Package;
+import saarland.cispa.artist.artistgui.database.operations.AddInstrumentedPackageToDbAsyncTask;
+import saarland.cispa.artist.artistgui.database.operations.RemovePackagesFromDbAsyncTask;
 import saarland.cispa.artist.artistgui.instrumentation.InstrumentationService;
 import saarland.cispa.artist.artistgui.instrumentation.RemoveInstrumentationAsyncTask;
 import saarland.cispa.artist.artistgui.instrumentation.config.ArtistRunConfig;
 import saarland.cispa.artist.artistgui.instrumentation.progress.ProgressPublisher;
 import saarland.cispa.artist.artistgui.settings.config.ArtistConfigFactory;
-import saarland.cispa.artist.artistgui.settings.db.operations.AddInstrumentedPackageToDbAsyncTask;
-import saarland.cispa.artist.artistgui.settings.db.operations.RemovePackagesFromDbAyncTask;
 import saarland.cispa.artist.artistgui.settings.manager.SettingsManager;
 import trikita.log.Log;
 
@@ -50,6 +52,7 @@ public class AppDetailsDialogPresenter implements AppDetailsDialogContract.Prese
     private final AppDetailsDialogContract.View mView;
     private final Context mContext;
     private final SettingsManager mSettingsManager;
+    private final AppDatabase mDatabase;
 
     private Package mSelectedPackage;
 
@@ -58,6 +61,7 @@ public class AppDetailsDialogPresenter implements AppDetailsDialogContract.Prese
         mView = view;
         mContext = context;
         mSettingsManager = settingsManager;
+        mDatabase = ((Application) context.getApplicationContext()).getDatabase();
         view.setPresenter(this);
     }
 
@@ -68,10 +72,10 @@ public class AppDetailsDialogPresenter implements AppDetailsDialogContract.Prese
     @Override
     public void loadAppIcon() {
         try {
-            Context mdpiContext = mContext.createPackageContext(mSelectedPackage.getPackageName(),
+            Context mdpiContext = mContext.createPackageContext(mSelectedPackage.packageName,
                     Context.CONTEXT_IGNORE_SECURITY);
             Drawable appIcon = mdpiContext.getResources()
-                    .getDrawableForDensity(mSelectedPackage.getAppIconId(),
+                    .getDrawableForDensity(mSelectedPackage.appIconId,
                             DisplayMetrics.DENSITY_XHIGH, null);
             mView.setAppIcon(appIcon);
         } catch (PackageManager.NameNotFoundException | Resources.NotFoundException e) {
@@ -81,7 +85,7 @@ public class AppDetailsDialogPresenter implements AppDetailsDialogContract.Prese
 
     @Override
     public void determineInstrumentationStatusAndUpdateViews() {
-        long timestamp = mSelectedPackage.getLastInstrumentationTimestamp();
+        long timestamp = mSelectedPackage.lastInstrumentationTimestamp;
         boolean isInstrumented = timestamp != 0;
 
         String dateAndTime = null;
@@ -106,7 +110,7 @@ public class AppDetailsDialogPresenter implements AppDetailsDialogContract.Prese
 
         Intent intent = new Intent(mContext, InstrumentationService.class);
         intent.putExtra(InstrumentationService.INTENT_KEY_APP_NAME,
-                mSelectedPackage.getPackageName());
+                mSelectedPackage.packageName);
         mContext.startService(intent);
     }
 
@@ -121,33 +125,32 @@ public class AppDetailsDialogPresenter implements AppDetailsDialogContract.Prese
         mView.updateInstrumentationButton(false);
 
         Intent intent = new Intent(ProgressPublisher.ACTION_INSTRUMENTATION_REMOVED);
-        intent.putExtra(ProgressPublisher.EXTRA_PACKAGE_NAME, mSelectedPackage.getPackageName());
+        intent.putExtra(ProgressPublisher.EXTRA_PACKAGE_NAME, mSelectedPackage.packageName);
         LocalBroadcastManager.getInstance(mContext).sendBroadcast(intent);
     }
 
     private void startRemovalTasks() {
-        String packageName = mSelectedPackage.getPackageName();
+        String packageName = mSelectedPackage.packageName;
         ArtistRunConfig runConfig = ArtistConfigFactory
                 .buildArtistRunConfig(mContext, packageName);
         new RemoveInstrumentationAsyncTask()
                 .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, runConfig.app_oat_file_path);
-        new RemovePackagesFromDbAyncTask(mContext)
+        new RemovePackagesFromDbAsyncTask(mDatabase)
                 .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, packageName);
     }
 
     @Override
     public void handleInstrumentationResult(boolean isSuccess) {
         if (isSuccess) {
-            mSelectedPackage.updateLastInstrumentationTimestamp();
-
-            long timestamp = mSelectedPackage.getLastInstrumentationTimestamp();
-            String dateAndTime = convertTimestampToDateAndTime(timestamp);
+            mSelectedPackage.lastInstrumentationTimestamp = System.currentTimeMillis();
+            String dateAndTime = convertTimestampToDateAndTime(mSelectedPackage
+                    .lastInstrumentationTimestamp);
             mView.setLastInstrumentationText(dateAndTime);
 
             mView.updateKeepInstrumentedViews(true, mSelectedPackage);
             mView.updateRemoveInstrumentationButton(true);
 
-            new AddInstrumentedPackageToDbAsyncTask(mContext).execute(mSelectedPackage);
+            new AddInstrumentedPackageToDbAsyncTask(mDatabase).execute(mSelectedPackage);
             startInstrumentedAppIfWished();
         }
     }
@@ -155,7 +158,7 @@ public class AppDetailsDialogPresenter implements AppDetailsDialogContract.Prese
     private void startInstrumentedAppIfWished() {
         final boolean launchActivity = mSettingsManager.shouldLaunchActivityAfterCompilation();
         if (launchActivity) {
-            String packageName = mSelectedPackage.getPackageName();
+            String packageName = mSelectedPackage.packageName;
             Log.d(TAG, "Starting compiled app: " + packageName);
             final Intent launchIntent = mContext.getPackageManager()
                     .getLaunchIntentForPackage(packageName);
