@@ -37,11 +37,12 @@ import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
 
-import saarland.cispa.artist.artistgui.Package;
+import saarland.cispa.artist.artistgui.Application;
 import saarland.cispa.artist.artistgui.R;
+import saarland.cispa.artist.artistgui.database.Package;
+import saarland.cispa.artist.artistgui.database.operations.PersistPackageToDbAsyncTask;
 import saarland.cispa.artist.artistgui.instrumentation.progress.ProgressPublisher;
 import saarland.cispa.artist.artistgui.progress.ProgressDialogFragment;
-import saarland.cispa.artist.artistgui.settings.db.operations.PersistPackageToDbAsyncTask;
 
 public class AppDetailsDialog extends DialogFragment implements AppDetailsDialogContract.View {
 
@@ -108,8 +109,8 @@ public class AppDetailsDialog extends DialogFragment implements AppDetailsDialog
         TextView appNameView = mRootView.findViewById(R.id.app_name);
         TextView packageNameView = mRootView.findViewById(R.id.package_name);
 
-        appNameView.setText(selectedPackage.getAppName());
-        packageNameView.setText(selectedPackage.getPackageName());
+        appNameView.setText(selectedPackage.appName);
+        packageNameView.setText(selectedPackage.packageName);
     }
 
     @Override
@@ -157,10 +158,11 @@ public class AppDetailsDialog extends DialogFragment implements AppDetailsDialog
 
     @Override
     public void updateKeepInstrumentedViews(boolean enable, Package app) {
-        mKeepInstrumentedSwitch.setChecked(app.isKeepInstrumented());
+        mKeepInstrumentedSwitch.setChecked(app.keepInstrumented);
+        Application appContext = (Application) getContext().getApplicationContext();
         mKeepInstrumentedSwitch.setOnCheckedChangeListener((v, isChecked) -> {
-            app.setKeepInstrumented(isChecked);
-            new PersistPackageToDbAsyncTask(getContext())
+            app.keepInstrumented = isChecked;
+            new PersistPackageToDbAsyncTask(appContext.getDatabase())
                     .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, app);
         });
         mKeepInstrumentedSwitch.setEnabled(enable);

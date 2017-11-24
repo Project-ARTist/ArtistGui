@@ -30,8 +30,8 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
-import saarland.cispa.artist.artistgui.Package;
 import saarland.cispa.artist.artistgui.R;
+import saarland.cispa.artist.artistgui.database.Package;
 
 public class AppListAdapter extends RecyclerView.Adapter<AppListAdapter.ViewHolder> {
 
@@ -76,11 +76,11 @@ public class AppListAdapter extends RecyclerView.Adapter<AppListAdapter.ViewHold
     public void onBindViewHolder(ViewHolder holder, int position) {
         Package packageEntry = mPackageList.get(position);
 
-        String packageName = packageEntry.getPackageName();
+        String packageName = packageEntry.packageName;
         Drawable appIcon = mAppIconCache.get(packageEntry);
 
         holder.mAppIcon.setImageDrawable(appIcon);
-        holder.mAppName.setText(packageEntry.getAppName());
+        holder.mAppName.setText(packageEntry.appName);
         holder.mPackageName.setText(packageName);
         holder.itemView.setOnClickListener((view) -> {
             for (OnPackageSelectedListener l : mListeners) {
@@ -99,10 +99,6 @@ public class AppListAdapter extends RecyclerView.Adapter<AppListAdapter.ViewHold
 
     public void registerPackageSelectedListener(OnPackageSelectedListener listener) {
         mListeners.add(listener);
-    }
-
-    public void unregisterPackageSelectedListener(OnPackageSelectedListener listener) {
-        mListeners.remove(listener);
     }
 
     @Override

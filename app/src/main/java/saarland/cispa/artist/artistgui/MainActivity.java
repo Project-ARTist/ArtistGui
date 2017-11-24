@@ -108,7 +108,7 @@ public class MainActivity extends AppCompatActivity
             case R.id.nav_home:
                 mPresenter.selectFragment(MainActivityPresenter.INFO_FRAGMENT);
                 break;
-            case R.id.nav_compiler:
+            case R.id.nav_app_list:
                 mPresenter.selectFragment(MainActivityPresenter.INSTRUMENTATION_FRAGMENT);
                 break;
             case R.id.nav_settings:

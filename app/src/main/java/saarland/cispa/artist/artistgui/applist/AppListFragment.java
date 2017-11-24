@@ -34,7 +34,7 @@ import android.widget.ProgressBar;
 
 import java.util.List;
 
-import saarland.cispa.artist.artistgui.Package;
+import saarland.cispa.artist.artistgui.database.Package;
 import saarland.cispa.artist.artistgui.R;
 import saarland.cispa.artist.artistgui.appdetails.AppDetailsDialog;
 import saarland.cispa.artist.artistgui.appdetails.AppDetailsDialogPresenter;

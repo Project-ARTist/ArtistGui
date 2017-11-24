@@ -17,18 +17,21 @@
  *
  */
 
-package saarland.cispa.artist.artistgui.settings.db;
+package saarland.cispa.artist.artistgui.database.operations;
 
-import java.util.List;
+import saarland.cispa.artist.artistgui.database.AppDatabase;
 
-import saarland.cispa.artist.artistgui.Package;
+public class RemovePackagesFromDbAsyncTask extends BaseDbAsyncTask<String> {
 
-public interface InstrumentedPackagesManager {
-    void persistPackage(Package app);
+    public RemovePackagesFromDbAsyncTask(AppDatabase database) {
+        super(database);
+    }
 
-    void removeUninstrumentedPackage(String packageName);
-
-    List<Package> getAllInstrumentedApps();
-
-    void onDestroy();
+    @Override
+    protected Void doInBackground(String... params) {
+        for (String packageName : params) {
+            mDatabase.packageDao().delete(packageName);
+        }
+        return null;
+    }
 }

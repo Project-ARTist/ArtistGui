@@ -29,13 +29,15 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import saarland.cispa.artist.artistgui.Package;
-import saarland.cispa.artist.artistgui.settings.db.DatabaseManager;
+import saarland.cispa.artist.artistgui.Application;
+import saarland.cispa.artist.artistgui.database.Package;
+import saarland.cispa.artist.artistgui.database.PackageDao;
 
 public class AppListLoader extends AsyncTaskLoader<List<Package>> {
 
     private static final int PACKAGE_MANAGER_NO_FILTER_FLAGS = 0;
 
+    private final PackageDao mInstrumentedPackagesDb;
     private final PackageManager mPackageManager;
     private AppListChangedReceiver mPackageObserver;
 
@@ -44,8 +46,10 @@ public class AppListLoader extends AsyncTaskLoader<List<Package>> {
 
     public AppListLoader(Context context) {
         super(context);
-        // getContext() gets the application context
-        mPackageManager = getContext().getPackageManager();
+        Application appContext = (Application) getContext();
+        mInstrumentedPackagesDb = appContext.getDatabase().packageDao();
+        mPackageManager = appContext.getPackageManager();
+
     }
 
     @Override
@@ -120,8 +124,8 @@ public class AppListLoader extends AsyncTaskLoader<List<Package>> {
 
             // Set collected metadata
             mPackage = getPackage(packageInfo.packageName);
-            mPackage.setAppName(appName);
-            mPackage.setAppIconId(appIconId);
+            mPackage.appName = appName;
+            mPackage.appIconId = appIconId;
 
             packageList.add(mPackage);
         }
@@ -135,18 +139,7 @@ public class AppListLoader extends AsyncTaskLoader<List<Package>> {
      * @return package
      */
     private Package getPackage(String packageName) {
-        if (mDbAppList == null) {
-            DatabaseManager databaseManager = new DatabaseManager(getContext());
-            mDbAppList = databaseManager.getAllInstrumentedApps();
-        }
-
-        for (Package p : mDbAppList) {
-            if (p.getPackageName().equals(packageName)) {
-                return p;
-            }
-        }
-
-        // If not in db return package without additional data
-        return new Package(packageName);
+        Package entry = mInstrumentedPackagesDb.get(packageName);
+        return entry != null ? entry : new Package(packageName);
     }
 }
