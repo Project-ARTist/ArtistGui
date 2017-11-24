@@ -40,7 +40,7 @@ import saarland.cispa.artist.artistgui.R;
 import saarland.cispa.artist.artistgui.settings.config.ArtistAppConfig;
 import saarland.cispa.artist.artistgui.utils.AndroidUtils;
 import saarland.cispa.artist.artistgui.utils.ArtistUtils;
-import saarland.cispa.artist.artistgui.utils.LogA;
+import saarland.cispa.utils.LogA;
 import saarland.cispa.artist.artistgui.utils.UriUtils;
 import trikita.log.Log;
 

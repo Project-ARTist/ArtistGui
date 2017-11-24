@@ -22,7 +22,7 @@ package saarland.cispa.artist.artistgui;
 import android.arch.persistence.room.Room;
 
 import saarland.cispa.artist.artistgui.database.AppDatabase;
-import saarland.cispa.artist.artistgui.utils.LogA;
+import saarland.cispa.utils.LogA;
 
 public class Application extends android.app.Application {
 
