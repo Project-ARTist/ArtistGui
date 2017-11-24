@@ -38,6 +38,8 @@ interface AppDetailsDialogContract {
 
         void updateRemoveInstrumentationButton(boolean isInstrumented);
 
+        void onDeviceNotCompatible();
+
         void showInstrumentationProgress();
     }
 

@@ -32,12 +32,20 @@
         For more information, please visit https://artist.cispa.saarland
         You can still navigate the application. However, the core functionality, e.g., recompiling applications, will most probably not work.</string>
 
+    <string name="missing_dex2oat_files">Missing files</string>
+    <string name="missing_dex2oat_files_description">ArtistGui needs the dex2oat compiler and its
+        libraries in order to instrument apps. We couldn\'t find the files.\n\n
+        For more information, please read the \"Building ArtistGui\" section at \n
+        https://artist.cispa.saarland/build-setup/</string>
+    <string name="no_browser_installed">Couldn\'t open homepage because no web browser isn\'t installed.</string>
+
     <!-- Compiler Fragment -->
     <string name="no_codelib_chosen">WARNING: No codelib chosen yet. Compilation might crash.</string>
 
     <!-- App details dialog -->
     <string name="keep_instrumented_switch_info">Reinstrument after updates</string>
     <string name="instrument_app">Instrument</string>
+    <string name="instrumentation_not_possible">Instrumentation not possible</string>
     <string name="reinstrument_app">Reinstrument</string>
     <string name="remove_instrumentation">Remove Instrumentation</string>
     <string name="never_instrumented">Never instrumented</string>

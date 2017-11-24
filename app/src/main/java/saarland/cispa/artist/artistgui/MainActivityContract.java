@@ -28,13 +28,17 @@ import saarland.cispa.artist.artistgui.base.BaseView;
 
 interface MainActivityContract {
     interface View extends BaseView<MainActivityContract.Presenter> {
-        void showIncompatibleVersionDialog();
+        void showIncompatibleAndroidVersionDialog();
+
+        void showMissingDex2OatFilesDialog();
 
         void showSelectedFragment(Fragment fragment);
     }
 
     interface Presenter extends BasePresenter {
         void checkCompatibility();
+
+        void openDex2OatHelpPage();
 
         void selectFragment(@MainActivityPresenter.selectableFragment int id);
 

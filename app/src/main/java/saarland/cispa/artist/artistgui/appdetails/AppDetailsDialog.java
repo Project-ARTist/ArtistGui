@@ -184,6 +184,12 @@ public class AppDetailsDialog extends DialogFragment implements AppDetailsDialog
     }
 
     @Override
+    public void onDeviceNotCompatible() {
+        mInstrumentationButton.setEnabled(false);
+        mInstrumentationButton.setText(getString(R.string.instrumentation_not_possible));
+    }
+
+    @Override
     public void showInstrumentationProgress() {
         ProgressDialogFragment dialogFragment = new ProgressDialogFragment();
         dialogFragment.setCancelable(false);
