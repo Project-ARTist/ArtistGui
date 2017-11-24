@@ -94,6 +94,7 @@ public class Package implements Parcelable {
         packageName = in.readString();
         appIconId = in.readInt();
         lastInstrumentationTimestamp = in.readLong();
+        keepInstrumented = in.readByte() == 1;
     }
 
     @Override
@@ -108,6 +109,7 @@ public class Package implements Parcelable {
         dest.writeString(packageName);
         dest.writeInt(appIconId);
         dest.writeLong(lastInstrumentationTimestamp);
+        dest.writeByte((byte) (keepInstrumented ? 1 : 0));
     }
 
     @Override
