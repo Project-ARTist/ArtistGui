@@ -39,8 +39,9 @@
         https://artist.cispa.saarland/build-setup/</string>
     <string name="no_browser_installed">Couldn\'t open homepage because no web browser isn\'t installed.</string>
 
-    <!-- Compiler Fragment -->
+    <!-- App list Fragment -->
     <string name="no_codelib_chosen">WARNING: No codelib chosen yet. Compilation might crash.</string>
+    <string name="search_hint">Search for a specific app</string>
 
     <!-- App details dialog -->
     <string name="keep_instrumented_switch_info">Reinstrument after updates</string>

@@ -20,6 +20,7 @@
 package saarland.cispa.artist.artistgui.applist.adapter;
 
 import android.graphics.drawable.Drawable;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -37,7 +38,8 @@ public class AppListAdapter extends RecyclerView.Adapter<AppListAdapter.ViewHold
 
     private AppIconCache mAppIconCache;
 
-    private List<Package> mPackageList;
+    private List<Package> mPackagesList;
+    private List<Package> mDisplayingList;
     private List<OnPackageSelectedListener> mListeners;
 
     // Reference for performance instead of slow findByView lookup
@@ -56,7 +58,7 @@ public class AppListAdapter extends RecyclerView.Adapter<AppListAdapter.ViewHold
 
     public AppListAdapter(AppIconCache iconCache) {
         mAppIconCache = iconCache;
-        mPackageList = new ArrayList<>();
+        mDisplayingList = new ArrayList<>();
         mListeners = new ArrayList<>();
     }
 
@@ -74,7 +76,7 @@ public class AppListAdapter extends RecyclerView.Adapter<AppListAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        Package packageEntry = mPackageList.get(position);
+        Package packageEntry = mDisplayingList.get(position);
 
         String packageName = packageEntry.packageName;
         Drawable appIcon = mAppIconCache.get(packageEntry);
@@ -89,12 +91,29 @@ public class AppListAdapter extends RecyclerView.Adapter<AppListAdapter.ViewHold
         });
     }
 
-    public void setData(List<Package> packages) {
-        mPackageList.clear();
+    public void setPackagesList(List<Package> packages) {
+        mPackagesList = new ArrayList<>();
         if (packages != null) {
-            mPackageList.addAll(packages);
+            mPackagesList.addAll(packages);
+            mDisplayingList = mPackagesList;
             notifyDataSetChanged();
         }
+    }
+
+    public void handleSearchRequest(@NonNull String searchText) {
+        List<Package> resultingList = new ArrayList<>();
+        for (Package p : mPackagesList) {
+            if (p.packageName.contains(searchText) || p.appName.contains(searchText)) {
+                resultingList.add(p);
+            }
+        }
+        mDisplayingList = resultingList;
+        notifyDataSetChanged();
+    }
+
+    public void cancelSearchRequest() {
+        mDisplayingList = mPackagesList;
+        notifyDataSetChanged();
     }
 
     public void registerPackageSelectedListener(OnPackageSelectedListener listener) {
@@ -103,6 +122,6 @@ public class AppListAdapter extends RecyclerView.Adapter<AppListAdapter.ViewHold
 
     @Override
     public int getItemCount() {
-        return mPackageList.size();
+        return mDisplayingList.size();
     }
 }
