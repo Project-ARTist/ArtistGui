@@ -36,6 +36,7 @@ import saarland.cispa.artist.artistgui.Application;
 import saarland.cispa.artist.artistgui.database.AppDatabase;
 import saarland.cispa.artist.artistgui.database.Package;
 import saarland.cispa.artist.artistgui.database.operations.AddInstrumentedPackageToDbAsyncTask;
+import saarland.cispa.artist.artistgui.database.operations.PersistPackageToDbAsyncTask;
 import saarland.cispa.artist.artistgui.database.operations.RemovePackagesFromDbAsyncTask;
 import saarland.cispa.artist.artistgui.instrumentation.InstrumentationService;
 import saarland.cispa.artist.artistgui.instrumentation.RemoveInstrumentationAsyncTask;
@@ -142,6 +143,8 @@ public class AppDetailsDialogPresenter implements AppDetailsDialogContract.Prese
     @Override
     public void handleInstrumentationResult(boolean isSuccess) {
         if (isSuccess) {
+            boolean wasInstrumented = mSelectedPackage.lastInstrumentationTimestamp != 0;
+
             mSelectedPackage.lastInstrumentationTimestamp = System.currentTimeMillis();
             String dateAndTime = convertTimestampToDateAndTime(mSelectedPackage
                     .lastInstrumentationTimestamp);
@@ -150,7 +153,11 @@ public class AppDetailsDialogPresenter implements AppDetailsDialogContract.Prese
             mView.updateKeepInstrumentedViews(true, mSelectedPackage);
             mView.updateRemoveInstrumentationButton(true);
 
-            new AddInstrumentedPackageToDbAsyncTask(mDatabase).execute(mSelectedPackage);
+            if (wasInstrumented) {
+                new AddInstrumentedPackageToDbAsyncTask(mDatabase).execute(mSelectedPackage);
+            } else {
+                new PersistPackageToDbAsyncTask(mDatabase).execute(mSelectedPackage);
+            }
             startInstrumentedAppIfWished();
         }
     }
