@@ -30,7 +30,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 
 import saarland.cispa.artist.artistgui.instrumentation.progress.ProgressPublisher;
-import saarland.cispa.artist.artistgui.utils.LogA;
+import saarland.cispa.utils.LogA;
 import trikita.log.Log;
 
 public class InstrumentationService extends Service {
