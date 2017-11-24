@@ -32,6 +32,7 @@ import android.util.DisplayMetrics;
 import java.text.DateFormat;
 import java.util.Date;
 
+import saarland.cispa.artist.artistgui.MainActivityPresenter;
 import saarland.cispa.artist.artistgui.Package;
 import saarland.cispa.artist.artistgui.instrumentation.InstrumentationService;
 import saarland.cispa.artist.artistgui.instrumentation.RemoveInstrumentationAsyncTask;
@@ -81,18 +82,25 @@ public class AppDetailsDialogPresenter implements AppDetailsDialogContract.Prese
 
     @Override
     public void determineInstrumentationStatusAndUpdateViews() {
-        long timestamp = mSelectedPackage.getLastInstrumentationTimestamp();
-        boolean isInstrumented = timestamp != 0;
-
         String dateAndTime = null;
-        if (isInstrumented) {
-            dateAndTime = convertTimestampToDateAndTime(timestamp);
-            mView.updateKeepInstrumentedViews(true, mSelectedPackage);
+
+        boolean isDex2OatPresent = MainActivityPresenter.isDeviceCompatible(mContext);
+        if (!isDex2OatPresent) {
+            mView.onDeviceNotCompatible();
+        } else {
+            long timestamp = mSelectedPackage.getLastInstrumentationTimestamp();
+            boolean isInstrumented = timestamp != 0;
+
+            if (isInstrumented) {
+                dateAndTime = convertTimestampToDateAndTime(timestamp);
+                mView.updateKeepInstrumentedViews(true, mSelectedPackage);
+            }
+
+            mView.updateInstrumentationButton(isInstrumented);
+            mView.updateRemoveInstrumentationButton(isInstrumented);
         }
 
         mView.setLastInstrumentationText(dateAndTime);
-        mView.updateInstrumentationButton(isInstrumented);
-        mView.updateRemoveInstrumentationButton(isInstrumented);
     }
 
     private String convertTimestampToDateAndTime(long timestamp) {

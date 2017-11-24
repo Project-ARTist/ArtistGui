@@ -41,7 +41,7 @@ import saarland.cispa.artist.artistgui.applist.AppListFragment;
 import saarland.cispa.artist.artistgui.applist.AppListPresenter;
 import saarland.cispa.artist.artistgui.settings.manager.SettingsManager;
 
-class MainActivityPresenter implements MainActivityContract.Presenter {
+public class MainActivityPresenter implements MainActivityContract.Presenter {
 
     static final int INFO_FRAGMENT = 0;
     static final int INSTRUMENTATION_FRAGMENT = 1;
@@ -86,7 +86,7 @@ class MainActivityPresenter implements MainActivityContract.Presenter {
     @Override
     public void checkCompatibility() {
         checkAndroidVersionCompatibility();
-        if (!dex2oatBundledWithApp()) {
+        if (!dex2oatBundledWithApp(mContext)) {
             mView.showMissingDex2OatFilesDialog();
         }
     }
@@ -96,6 +96,10 @@ class MainActivityPresenter implements MainActivityContract.Presenter {
         if (!supportedByArtist()) {
             mView.showIncompatibleAndroidVersionDialog();
         }
+    }
+
+    public static boolean isDeviceCompatible(Context context) {
+        return supportedByArtist() && dex2oatBundledWithApp(context);
     }
 
     private static boolean supportedByArtist() {
@@ -108,10 +112,10 @@ class MainActivityPresenter implements MainActivityContract.Presenter {
         return false;
     }
 
-    private boolean dex2oatBundledWithApp() {
+    private static boolean dex2oatBundledWithApp(Context context) {
         boolean result = false;
         try {
-            final AssetManager assetManager = mContext.getAssets();
+            final AssetManager assetManager = context.getAssets();
             String[] files = assetManager.list(ASSETS_ARTIST_PATH);
             int foundFiles = 0;
             for (String file : files) {
