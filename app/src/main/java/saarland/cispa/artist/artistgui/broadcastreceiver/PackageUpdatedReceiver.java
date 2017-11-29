@@ -17,13 +17,14 @@
  *
  */
 
-package saarland.cispa.artist.artistgui;
+package saarland.cispa.artist.artistgui.broadcastreceiver;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 
-import saarland.cispa.artist.artistgui.instrumentation.InstrumentationService;
+import saarland.cispa.artist.artistgui.Application;
 
 public class PackageUpdatedReceiver extends BroadcastReceiver {
 
@@ -31,13 +32,20 @@ public class PackageUpdatedReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        String packageName = extractPackageName(intent);
+        if (packageName != null) {
+            final Application appContext = (Application) context.getApplicationContext();
+            new InstrumentUpdatedPackagesAsyncTask(appContext)
+                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, packageName);
+        }
+    }
+
+    private String extractPackageName(Intent intent) {
         String packageName = intent.getDataString();
         if (packageName != null) {
-            packageName = packageName.replace(PACKAGE_NAME_PREFIX, "");
-
-            Intent serviceIntent = new Intent(context, InstrumentationService.class);
-            serviceIntent.putExtra(InstrumentationService.INTENT_KEY_APP_NAME, packageName);
-            context.startService(serviceIntent);
+            return packageName.replace(PACKAGE_NAME_PREFIX, "");
+        } else {
+            return null;
         }
     }
 }

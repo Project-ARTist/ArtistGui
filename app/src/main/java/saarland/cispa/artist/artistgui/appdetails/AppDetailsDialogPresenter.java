@@ -161,7 +161,7 @@ public class AppDetailsDialogPresenter implements AppDetailsDialogContract.Prese
             mView.updateKeepInstrumentedViews(true, mSelectedPackage);
             mView.updateRemoveInstrumentationButton(true);
 
-            if (wasInstrumented) {
+            if (!wasInstrumented) {
                 new AddInstrumentedPackageToDbAsyncTask(mDatabase).execute(mSelectedPackage);
             } else {
                 new PersistPackageToDbAsyncTask(mDatabase).execute(mSelectedPackage);
