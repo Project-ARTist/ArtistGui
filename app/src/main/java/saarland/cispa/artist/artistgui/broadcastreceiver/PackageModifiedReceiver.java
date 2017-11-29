@@ -25,23 +25,37 @@ import android.content.Intent;
 import android.os.AsyncTask;
 
 import saarland.cispa.artist.artistgui.Application;
+import saarland.cispa.artist.artistgui.database.AppDatabase;
+import saarland.cispa.artist.artistgui.database.PackageDao;
+import saarland.cispa.artist.artistgui.database.operations.RemovePackagesFromDbAsyncTask;
 
-public class PackageUpdatedReceiver extends BroadcastReceiver {
+public class PackageModifiedReceiver extends BroadcastReceiver {
 
     private static final String PACKAGE_NAME_PREFIX = "package:";
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        String packageName = extractPackageName(intent);
-        if (packageName != null) {
+        final String action = intent.getAction();
+        final String packageName = extractPackageName(intent);
+        if (action != null && packageName != null) {
             final Application appContext = (Application) context.getApplicationContext();
-            new InstrumentUpdatedPackagesAsyncTask(appContext)
-                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, packageName);
+            switch (action) {
+                case Intent.ACTION_PACKAGE_REPLACED:
+                    new InstrumentUpdatedPackagesAsyncTask(appContext)
+                            .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, packageName);
+                    break;
+                case Intent.ACTION_PACKAGE_REMOVED:
+                    AppDatabase database = appContext.getDatabase();
+                    new RemovePackagesFromDbAsyncTask(database)
+                            .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, packageName);
+                    break;
+            }
+
         }
     }
 
     private String extractPackageName(Intent intent) {
-        String packageName = intent.getDataString();
+        final String packageName = intent.getDataString();
         if (packageName != null) {
             return packageName.replace(PACKAGE_NAME_PREFIX, "");
         } else {
