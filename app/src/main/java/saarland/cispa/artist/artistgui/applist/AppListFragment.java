@@ -28,13 +28,16 @@ import android.support.v4.content.Loader;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.SearchView;
 
 import java.util.List;
 
-import saarland.cispa.artist.artistgui.database.Package;
 import saarland.cispa.artist.artistgui.R;
 import saarland.cispa.artist.artistgui.appdetails.AppDetailsDialog;
 import saarland.cispa.artist.artistgui.appdetails.AppDetailsDialogPresenter;
@@ -42,6 +45,7 @@ import saarland.cispa.artist.artistgui.applist.adapter.AppIconCache;
 import saarland.cispa.artist.artistgui.applist.adapter.AppListAdapter;
 import saarland.cispa.artist.artistgui.applist.adapter.OnPackageSelectedListener;
 import saarland.cispa.artist.artistgui.applist.loader.AppListLoader;
+import saarland.cispa.artist.artistgui.database.Package;
 import saarland.cispa.artist.artistgui.settings.manager.SettingsManagerImpl;
 import saarland.cispa.artist.artistgui.utils.GuiUtils;
 
@@ -52,6 +56,7 @@ public class AppListFragment extends Fragment implements AppListContract.View,
 
     private AppListContract.Presenter mPresenter;
 
+    private SearchView mSearchView;
     private ProgressBar mProgressBar;
     private RecyclerView mAppListView;
     private AppListAdapter mAdapter;
@@ -65,6 +70,7 @@ public class AppListFragment extends Fragment implements AppListContract.View,
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
+        setHasOptionsMenu(true);
         View rootView = inflater.inflate(R.layout.fragment_app_list, container, false);
         mProgressBar = rootView.findViewById(R.id.progress_bar);
         mAppListView = rootView.findViewById(R.id.recycler_view);
@@ -99,6 +105,50 @@ public class AppListFragment extends Fragment implements AppListContract.View,
     }
 
     @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.menu_fragment_app_list, menu);
+
+        final MenuItem item = menu.findItem(R.id.search);
+        mSearchView = (SearchView) item.getActionView();
+
+        item.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
+            @Override
+            public boolean onMenuItemActionExpand(MenuItem item) {
+                mSearchView.setIconified(false);
+                return true;
+            }
+
+            @Override
+            public boolean onMenuItemActionCollapse(MenuItem item) {
+                mAdapter.cancelSearchRequest();
+                mSearchView.setQuery("", false);
+                return true;
+            }
+        });
+
+
+        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                mAdapter.handleSearchRequest(query);
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                mAdapter.handleSearchRequest(newText);
+                return true;
+            }
+        });
+
+        mSearchView.setOnCloseListener(() -> {
+            mAdapter.cancelSearchRequest();
+            return false;
+        });
+    }
+
+    @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         if (savedInstanceState == null) {
             mPresenter.checkIfCodeLibIsChosen();
@@ -127,7 +177,7 @@ public class AppListFragment extends Fragment implements AppListContract.View,
     @Override
     public void onLoadFinished(Loader<List<Package>> loader, List<Package> data) {
         // Set the new data in the adapter.
-        mAdapter.setData(data);
+        mAdapter.setPackagesList(data);
 
         if (mProgressBar.getVisibility() == View.VISIBLE) {
             mProgressBar.setVisibility(View.GONE);
@@ -138,7 +188,7 @@ public class AppListFragment extends Fragment implements AppListContract.View,
     @Override
     public void onLoaderReset(Loader<List<Package>> loader) {
         // Clear the data in the adapter.
-        mAdapter.setData(null);
+        mAdapter.setPackagesList(null);
     }
 
     @Override
