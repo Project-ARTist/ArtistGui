@@ -29,8 +29,8 @@ api_level_string="android-${api_level}"
 dex2oat_path="./assets/artist/${api_level_string}/dex2oat"
 art_version_file="assets/VERSION_ARTIST-${api_level_string}.md"
 
-mounted_art_path="${mounted_aosp}/art/"
-mounted_art_git_path="${mounted_art_path}/.git"
+server_art_path="${server_aosp}/art/"
+server_art_git_path="${server_art_path}/.git"
 
 working_dir=`pwd`
 lib="lib"
@@ -134,8 +134,8 @@ if [ $? -eq 0 ]; then
 
     echo ""
     echo "Saving Git stats"
-    git --git-dir ${mounted_art_git_path} --work-tree ${mounted_art_path} log -1 | grep commit > ${art_version_file}
-    git --git-dir ${mounted_art_git_path} --work-tree ${mounted_art_path} status --porcelain >> ${art_version_file}
+    ssh ${server_alias} "git --git-dir ${server_art_git_path} --work-tree ${server_art_path} log -1 | grep commit" > ${art_version_file}
+    ssh ${server_alias} "git --git-dir ${server_art_git_path} --work-tree ${server_art_path} status --porcelain" >> ${art_version_file}
 
 else
     echo "Building ARTist failed..."
