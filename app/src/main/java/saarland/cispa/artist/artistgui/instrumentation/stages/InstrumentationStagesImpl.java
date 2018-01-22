@@ -303,7 +303,21 @@ public class InstrumentationStagesImpl implements InstrumentationStages {
 
         Log.d(TAG, "Dex2oat: Compiler Threads: " + mRunConfig.COMPILER_THREADS);
 
-
+        if (mRunConfig.app_oat_architecture.contains("x86_64")) {
+            cmd_dex2oat_compile += " --instruction-set=x86_64";
+            // TODO: instruction-set features and variant probably have to be changed
+            cmd_dex2oat_compile += " --instruction-set-features=smp,ssse3,sse4.1,sse4.2,-avx,-avx2";
+            cmd_dex2oat_compile += " --instruction-set-variant=x86_64";
+            cmd_dex2oat_compile += " --instruction-set-features=default";
+        } else {
+            if (mRunConfig.app_oat_architecture.contains("x86")) {
+                cmd_dex2oat_compile += " --instruction-set=x86";
+                // TODO: instruction-set features and variant probably have to be changed
+                cmd_dex2oat_compile += " --instruction-set-features=smp,ssse3,sse4.1,sse4.2,-avx,-avx2";
+                cmd_dex2oat_compile += " --instruction-set-variant=x86";
+                cmd_dex2oat_compile += " --instruction-set-features=default";
+            }
+        }
         if (mRunConfig.app_oat_architecture.contains("arm64")) {
             // ARM64 Special Flags
             cmd_dex2oat_compile += " --instruction-set=arm64";
