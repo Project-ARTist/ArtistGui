@@ -28,7 +28,11 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,17 +41,24 @@ import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import java.util.List;
+
 import saarland.cispa.artist.artistgui.Application;
 import saarland.cispa.artist.artistgui.R;
+import saarland.cispa.artist.artistgui.database.Module;
 import saarland.cispa.artist.artistgui.database.Package;
 import saarland.cispa.artist.artistgui.database.operations.PersistPackageToDbAsyncTask;
 import saarland.cispa.artist.artistgui.instrumentation.progress.ProgressPublisher;
+import saarland.cispa.artist.artistgui.modules.loader.ModuleListLoader;
 import saarland.cispa.artist.artistgui.progress.ProgressDialogFragment;
 
-public class AppDetailsDialog extends DialogFragment implements AppDetailsDialogContract.View {
+public class AppDetailsDialog extends DialogFragment implements AppDetailsDialogContract.View,
+        LoaderManager.LoaderCallbacks<List<Module>> {
 
     public static final String TAG = "AppDetailsDialog";
     public static final String PACKAGE_KEY = "package";
+
+    private static final int LOADER_ID = 459323415;
 
     private AppDetailsDialogContract.Presenter mPresenter;
     private View mRootView;
@@ -56,6 +67,9 @@ public class AppDetailsDialog extends DialogFragment implements AppDetailsDialog
     private Switch mKeepInstrumentedSwitch;
     private Button mInstrumentationButton;
     private Button mRemoveInstrumentationButton;
+
+    private RecyclerView mModuleSelectionView;
+    private ModuleSelectionAdapter mAdapter;
 
     private BroadcastReceiver mResultReceiver = new BroadcastReceiver() {
         @Override
@@ -69,6 +83,14 @@ public class AppDetailsDialog extends DialogFragment implements AppDetailsDialog
         }
     };
 
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        // Prepare the loader.  Either re-connect with an existing one,
+        // or start a new one.
+        getLoaderManager().initLoader(LOADER_ID, null, this);
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
@@ -77,8 +99,20 @@ public class AppDetailsDialog extends DialogFragment implements AppDetailsDialog
         mLastInstrumentationView = mRootView.findViewById(R.id.last_instrumentation);
         mKeepInstrumentedSwitch = mRootView.findViewById(R.id.keep_instrumented_switch);
 
+        // Module selection recycler view setup
+        mModuleSelectionView = mRootView.findViewById(R.id.module_selection_list);
+        mModuleSelectionView.setHasFixedSize(true);
+        final Context context = getContext();
+        LinearLayoutManager mLayoutManager = new LinearLayoutManager(context);
+        mModuleSelectionView.setLayoutManager(mLayoutManager);
+        mAdapter = new ModuleSelectionAdapter();
+        mModuleSelectionView.setAdapter(mAdapter);
+
         mInstrumentationButton = mRootView.findViewById(R.id.instrument_button);
-        mInstrumentationButton.setOnClickListener(v -> mPresenter.startInstrumentation());
+        mInstrumentationButton.setOnClickListener(v -> {
+            List<Module> selectedModules = mAdapter.getSelectedModules();
+            mPresenter.startInstrumentation(selectedModules);
+        });
 
         mRemoveInstrumentationButton = mRootView.findViewById(R.id.remove_instrumentation_button);
         mRemoveInstrumentationButton.setOnClickListener(v -> mPresenter.removeInstrumentation());
@@ -132,6 +166,22 @@ public class AppDetailsDialog extends DialogFragment implements AppDetailsDialog
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         mPresenter.saveInstanceState(outState);
+    }
+
+    @Override
+    public Loader<List<Module>> onCreateLoader(int id, Bundle args) {
+        return new ModuleListLoader(getContext());
+    }
+
+    @Override
+    public void onLoadFinished(Loader<List<Module>> loader, List<Module> data) {
+        // Set the new data in the adapter.
+        mAdapter.setData(data);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<List<Module>> loader) {
+        mAdapter.setData(null);
     }
 
     @Override

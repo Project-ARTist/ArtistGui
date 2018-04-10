@@ -1,4 +1,4 @@
-/**
+/*
  * The ARTist Project (https://artist.cispa.saarland)
  *
  * Copyright (C) 2017 CISPA (https://cispa.saarland), Saarland University
@@ -15,19 +15,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * @author "Oliver Schranz <oliver.schranz@cispa.saarland>"
- * @author "Sebastian Weisgerber <weisgerber@cispa.saarland>"
- *
  */
-package saarland.cispa.artist.artistgui.settings.config;
 
-public class ArtistAppConfig {
+package saarland.cispa.artist.artistgui.utils;
 
-    public static final String APP_FOLDER_APK_BACKUP = "backup";
+import java.io.File;
 
-    public static final String KEY_PREF_COMPILER_THREADS = "pref_key_compiler_threads";
-
-    public static final String KEY_PREF_COMPILER_LAUNCH_ACTIVITY = "pref_key_compiler_launch_activity";
-
-    public static final String KEY_PREF_GENERAL_LOGLEVEL = "pref_general_log_level";
+public class FileUtils {
+    public static void delete(File file) {
+        if (file.isDirectory()) {
+            for (File f : file.listFiles()) {
+                delete(f);
+            }
+        }
+        file.delete();
+    }
 }

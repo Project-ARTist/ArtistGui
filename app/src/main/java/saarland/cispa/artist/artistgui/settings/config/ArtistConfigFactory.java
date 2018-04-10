@@ -34,7 +34,6 @@ import java.lang.reflect.Field;
 
 import saarland.cispa.artist.artistgui.instrumentation.config.ArtistRunConfig;
 import saarland.cispa.artist.artistgui.utils.AndroidUtils;
-import saarland.cispa.artist.artistgui.utils.ArtistUtils;
 import trikita.log.Log;
 
 /**
@@ -45,7 +44,6 @@ import trikita.log.Log;
 public class ArtistConfigFactory {
 
     private static final String TAG = "ArtistConfigFactory";
-    private static final String CODE_LIB_ASSET = "assetcodelib.apk";
 
     private final static String PATH_ASSET_ARTIST_ROOT = "artist";
     private final static String PATH_ASSET_ARTIST_BIN_PREFIX = PATH_ASSET_ARTIST_ROOT + File.separator + "android-";
@@ -87,10 +85,6 @@ public class ArtistConfigFactory {
                 + artistConfig.app_oat_architecture
                 + File.separator + ArtistRunConfig.OAT_FILE;
 
-        final String userCodeLib = sharedPref.getString(ArtistAppConfig.PREF_KEY_CODELIB_SELECTION, "");
-        artistConfig.codeLibName = userCodeLib;
-        artistConfig.codeLib = getPathToCodeLib(context, userCodeLib);
-
         artistConfig.keystore = new File(AndroidUtils.getFilesDirLocation(context, ArtistRunConfig.KEYSTORE_NAME));
 
         try {
@@ -114,25 +108,6 @@ public class ArtistConfigFactory {
         }
         Log.i(TAG, artistConfig.toString());
         return artistConfig;
-    }
-
-    @Nullable
-    private static File getPathToCodeLib(final Context context, final String userCodeLib) {
-        File codeLib = null;
-        if (userCodeLib != null) {
-            String codeLibPath = null;
-            if (userCodeLib.startsWith(ArtistUtils.CODELIB_IMPORTED)) {
-                String codeLibName = userCodeLib.replaceFirst(ArtistUtils.CODELIB_IMPORTED, "");
-                codeLibPath = AndroidUtils.getFilesDirLocation(context, ArtistAppConfig.APP_FOLDER_CODELIBS + File.separator + codeLibName);
-            } else if (userCodeLib.startsWith(ArtistUtils.CODELIB_ASSET)) {
-                codeLibPath = AndroidUtils.getFilesDirLocation(context, CODE_LIB_ASSET);
-            }
-
-            if (codeLibPath != null) {
-                codeLib = new File(codeLibPath);
-            }
-        }
-        return codeLib;
     }
 
     @Nullable

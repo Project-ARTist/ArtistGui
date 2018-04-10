@@ -28,13 +28,17 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.DisplayMetrics;
+import android.widget.Toast;
 
 import java.text.DateFormat;
 import java.util.Date;
+import java.util.List;
 
 import saarland.cispa.artist.artistgui.MainActivityPresenter;
 import saarland.cispa.artist.artistgui.Application;
+import saarland.cispa.artist.artistgui.R;
 import saarland.cispa.artist.artistgui.database.AppDatabase;
+import saarland.cispa.artist.artistgui.database.Module;
 import saarland.cispa.artist.artistgui.database.Package;
 import saarland.cispa.artist.artistgui.database.operations.AddInstrumentedPackageToDbAsyncTask;
 import saarland.cispa.artist.artistgui.database.operations.PersistPackageToDbAsyncTask;
@@ -114,12 +118,26 @@ public class AppDetailsDialogPresenter implements AppDetailsDialogContract.Prese
     }
 
     @Override
-    public void startInstrumentation() {
+    public void startInstrumentation(List<Module> modules) {
+        int selectedModulesCount = modules.size();
+        if (selectedModulesCount == 0) {
+            Toast.makeText(mContext,
+                    mContext.getString(R.string.no_module_selected),
+                    Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         mView.showInstrumentationProgress();
+        String[] modulePackageNames = new String[selectedModulesCount];
+        for (int i = 0; i < selectedModulesCount; i++) {
+            modulePackageNames[i] = modules.get(i).packageName;
+        }
 
         Intent intent = new Intent(mContext, InstrumentationService.class);
         intent.putExtra(InstrumentationService.INTENT_KEY_APP_NAME,
                 mSelectedPackage.packageName);
+        intent.putExtra(InstrumentationService.INTENT_KEY_MODULE_PACKAGE_NAMES,
+                modulePackageNames);
         mContext.startService(intent);
     }
 

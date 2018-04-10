@@ -23,8 +23,6 @@ package saarland.cispa.artist.artistgui.instrumentation.config;
 
 import java.io.File;
 
-import saarland.cispa.artist.artistgui.utils.ArtistUtils;
-
 public class ArtistRunConfig {
 
     public final static String KEYSTORE_NAME = "artist.bks";
@@ -69,9 +67,6 @@ public class ArtistRunConfig {
     public String artist_exec_path_libs_dir = "";
     public String artist_exec_path_dex2oat = "";
 
-    public File codeLib = null;
-    public String codeLibName = "";
-
     public File keystore = null;
 
     public String nativeLibraryDir = "";
@@ -109,8 +104,6 @@ public class ArtistRunConfig {
                 ", artist_exec_path=                 '" + artist_exec_path + '\'' + "\n" +
                 ", artist_exec_path_libs_dir=        '" + artist_exec_path_libs_dir + '\'' + "\n" +
                 ", artist_exec_path_dex2oat=         '" + artist_exec_path_dex2oat + '\'' + "\n" +
-                ", codeLib=                          '" + codeLib + "'\n" +
-                ", codeLibName=                      '" + codeLibName + "'\n" +
                 ", keystore=                         '" + keystore + "'\n" +
                 ", nativeLibraryDir=                 '" + nativeLibraryDir + '\'' + "\n" +
                 ", nativeLibraryRootDir=             '" + nativeLibraryRootDir + '\'' + "\n" +
@@ -123,9 +116,5 @@ public class ArtistRunConfig {
                 ", oatGroup=                         '" + oatGroup + '\'' + "\n" +
                 ", oatPermissions=                   '" + oatPermissions + '\'' + "\n" +
                 '}';
-    }
-
-    public boolean isAssetCodeLib() {
-        return codeLibName != null && codeLibName.startsWith(ArtistUtils.CODELIB_ASSET);
     }
 }

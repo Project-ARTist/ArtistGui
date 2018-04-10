@@ -17,22 +17,32 @@
  *
  */
 
-package saarland.cispa.artist.artistgui.settings;
+package saarland.cispa.artist.artistgui.modules;
 
-import android.preference.Preference;
+import android.content.Intent;
+
+import java.util.List;
 
 import saarland.cispa.artist.artistgui.base.BasePresenter;
 import saarland.cispa.artist.artistgui.base.BaseView;
+import saarland.cispa.artist.artistgui.database.Module;
 
-interface SettingsContract {
+public interface ModuleContract {
+    interface View extends BaseView<ModuleContract.Presenter> {
+        void openFileChooser();
 
-    interface View extends BaseView<SettingsContract.Presenter> {
+        void addModules(List<Module> modules);
+
+        void removeModules(Module[] modules);
+
+        void moduleImportFailed();
+
+        void showRemovalDialog(Module module);
     }
 
     interface Presenter extends BasePresenter {
-        void bindPrefValueToSummary(boolean isNewInstance, Preference preference);
+        void addModule(Intent fileChooserIntent);
 
-        void setupLoggingListener(boolean isNewInstance, Preference preference);
-
+        void removeModule(Module module);
     }
 }

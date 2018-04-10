@@ -78,6 +78,14 @@
         app:layout_constraintBaseline_toBaselineOf="@id/keep_instrumented_switch"
         app:layout_constraintStart_toStartOf="parent" />
 
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/module_selection_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        app:layout_constraintStart_toStartOf="@id/keep_instrumented_switch"
+        app:layout_constraintTop_toBottomOf="@id/keep_instrumented_switch"/>
+
     <Button
         android:id="@+id/remove_instrumentation_button"
         style="?android:attr/borderlessButtonStyle"
@@ -91,7 +99,7 @@
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/instrument_button"
-        app:layout_constraintTop_toBottomOf="@id/keep_instrumented_switch_info_text"
+        app:layout_constraintTop_toBottomOf="@id/module_selection_list"
         tools:text="Remove instrumentation"
         tools:visibility="visible" />
 
@@ -105,7 +113,7 @@
         android:layout_marginTop="24dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/keep_instrumented_switch_info_text"
+        app:layout_constraintTop_toBottomOf="@id/module_selection_list"
         tools:text="Reinstrument" />
 
 </android.support.constraint.ConstraintLayout>

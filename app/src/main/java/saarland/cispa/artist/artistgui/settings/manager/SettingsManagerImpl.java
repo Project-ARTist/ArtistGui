@@ -34,17 +34,6 @@ public class SettingsManagerImpl implements SettingsManager {
     }
 
     @Override
-    public String getSelectedCodeLib() {
-        return mSharedPreferences.getString(ArtistAppConfig.PREF_KEY_CODELIB_SELECTION, null);
-    }
-
-    @Override
-    public boolean shouldInjectCodeLib() {
-        return mSharedPreferences
-                .getBoolean(ArtistAppConfig.KEY_PREF_COMPILER_INJECT_CODELIB, true);
-    }
-
-    @Override
     public boolean shouldLaunchActivityAfterCompilation() {
         return mSharedPreferences
                 .getBoolean(ArtistAppConfig.KEY_PREF_COMPILER_LAUNCH_ACTIVITY, false);

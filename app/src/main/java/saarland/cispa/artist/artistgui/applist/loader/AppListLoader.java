@@ -41,7 +41,6 @@ public class AppListLoader extends AsyncTaskLoader<List<Package>> {
     private final PackageManager mPackageManager;
     private AppListChangedReceiver mPackageObserver;
 
-    private List<Package> mDbAppList;
     private List<Package> mCachedResult;
 
     public AppListLoader(Context context) {

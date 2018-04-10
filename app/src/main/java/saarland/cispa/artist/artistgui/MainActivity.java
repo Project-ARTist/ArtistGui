@@ -111,6 +111,9 @@ public class MainActivity extends AppCompatActivity
             case R.id.nav_app_list:
                 mPresenter.selectFragment(MainActivityPresenter.INSTRUMENTATION_FRAGMENT);
                 break;
+            case R.id.nav_modules:
+                mPresenter.selectFragment(MainActivityPresenter.MODULES_FRAGMENT);
+                break;
             case R.id.nav_settings:
                 final Intent generalSettings = new Intent(this, SettingsActivity.class);
                 startActivity(generalSettings);

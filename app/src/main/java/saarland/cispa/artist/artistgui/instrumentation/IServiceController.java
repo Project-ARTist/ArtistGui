@@ -24,7 +24,7 @@ import android.app.Service;
 interface IServiceController {
     void moveToForeground(Service service);
 
-    void instrument(String packageName);
+    void instrument(String packageName, String[] modules);
 
     void cancel();
 

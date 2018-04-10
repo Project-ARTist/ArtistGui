@@ -11,6 +11,11 @@
             android:id="@+id/nav_app_list"
             android:icon="@drawable/ic_menu_cpu"
             android:title="@string/menu_drawer_instrumentation" />
+
+        <item
+            android:id="@+id/nav_modules"
+            android:icon="@drawable/ic_menu_cpu"
+            android:title="@string/menu_drawer_modules" />
     </group>
 
     <item

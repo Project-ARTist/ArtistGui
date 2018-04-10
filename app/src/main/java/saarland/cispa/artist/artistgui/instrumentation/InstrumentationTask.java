@@ -41,10 +41,10 @@ class InstrumentationTask implements Runnable {
     private InstrumentationStages mInstrumenationStages;
 
     InstrumentationTask(@NonNull Context context, @NonNull ArtistRunConfig runConfig,
-                        @NonNull List<ProgressListener> listeners) {
+                        @NonNull String[] modules, @NonNull List<ProgressListener> listeners) {
         this.mRunConfig = runConfig;
         mProgressListeners = listeners;
-        mInstrumenationStages = new InstrumentationStagesImpl(context, mRunConfig,
+        mInstrumenationStages = new InstrumentationStagesImpl(context, mRunConfig, modules,
                 mProgressListeners);
     }
 
@@ -52,7 +52,6 @@ class InstrumentationTask implements Runnable {
     public void run() {
         Log.i(TAG, "Run() compiling and starting " + mRunConfig.app_package_name);
         Log.i(TAG, "> apkPath:     " + mRunConfig.app_apk_file_path);
-        Log.i(TAG, "> codeLibName: " + mRunConfig.codeLibName);
         Log.i(TAG, "> Keystore:    " + mRunConfig.keystore);
 
         try {
