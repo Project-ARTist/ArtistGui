@@ -24,8 +24,11 @@ api_level=2x
 # how many threads are available for compilation on the build server
 threads=1
 
+# Select the target architectures: arm || x86
+# arch=x86 # arch=arm
+
 # Select the target architectures: 32bit (false) / 64bit (true)
 arch_64=false
 
-# Strip debug symbols / shrink binaries
-debug_binaries=true
+# Debug Symbols: true: Keep Debug Symbols/bug binaries || false: Strip debug symbols / shrink binaries
+debug_binaries=false

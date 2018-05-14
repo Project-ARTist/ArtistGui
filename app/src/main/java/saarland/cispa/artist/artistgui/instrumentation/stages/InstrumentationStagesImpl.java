@@ -20,11 +20,13 @@
 package saarland.cispa.artist.artistgui.instrumentation.stages;
 
 import android.content.Context;
+import android.os.Build;
 import android.os.Environment;
 
 import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -281,7 +283,25 @@ public class InstrumentationStagesImpl implements InstrumentationStages {
         }
     }
 
+    //
+    // TODO: instruction-set features & variant needs to get set "per device" or we use generic
+    //       settings
     private String setupDex2oatCommand(final String pathDex2oat) {
+        Log.d(TAG, "Dex2oat: Build.BOOTLOADER:            " + Build.BOOTLOADER);
+        Log.d(TAG, "Dex2oat: Build.BRAND:                 " + Build.BRAND);
+        Log.d(TAG, "Dex2oat: Build.DEVICE:                " + Build.DEVICE);
+        Log.d(TAG, "Dex2oat: Build.FINGERPRINT:           " + Build.FINGERPRINT);
+        Log.d(TAG, "Dex2oat: Build.HARDWARE:              " + Build.HARDWARE);
+        Log.d(TAG, "Dex2oat: Build.HOST:                  " + Build.HOST);
+        Log.d(TAG, "Dex2oat: Build.ID:                    " + Build.ID);
+        Log.d(TAG, "Dex2oat: Build.MANUFACTURER:          " + Build.MANUFACTURER);
+        Log.d(TAG, "Dex2oat: Build.MODEL:                 " + Build.MODEL);
+        Log.d(TAG, "Dex2oat: Build.PRODUCT:               " + Build.PRODUCT);
+        Log.d(TAG, "Dex2oat: Build.SUPPORTED_64_BIT_ABIS: ");
+        for (final String abi : Build.SUPPORTED_64_BIT_ABIS) {
+            Log.d(TAG, "         - ABI: " + abi);
+        }
+
         String cmd_dex2oat_compile =
                 "export LD_LIBRARY_PATH=" + mContext.getApplicationInfo().nativeLibraryDir + ":"
                         + AndroidUtils.getFilesDirLocation(mContext, mRunConfig.artist_exec_path_libs_dir) + ";"
@@ -299,43 +319,71 @@ public class InstrumentationStagesImpl implements InstrumentationStages {
 
         if (mRunConfig.COMPILER_THREADS != -1) {
             cmd_dex2oat_compile += " -j" + mRunConfig.COMPILER_THREADS;
-        }
-
-        Log.d(TAG, "Dex2oat: Compiler Threads: " + mRunConfig.COMPILER_THREADS);
-
-        if (mRunConfig.app_oat_architecture.contains("x86_64")) {
-            cmd_dex2oat_compile += " --instruction-set=x86_64";
-            // TODO: instruction-set features and variant probably have to be changed
-            cmd_dex2oat_compile += " --instruction-set-features=smp,ssse3,sse4.1,sse4.2,-avx,-avx2";
-            cmd_dex2oat_compile += " --instruction-set-variant=x86_64";
-            cmd_dex2oat_compile += " --instruction-set-features=default";
+            Log.d(TAG, "Dex2oat: Compiler Threads: " + mRunConfig.COMPILER_THREADS);
         } else {
-            if (mRunConfig.app_oat_architecture.contains("x86")) {
-                cmd_dex2oat_compile += " --instruction-set=x86";
-                // TODO: instruction-set features and variant probably have to be changed
-                cmd_dex2oat_compile += " --instruction-set-features=smp,ssse3,sse4.1,sse4.2,-avx,-avx2";
-                cmd_dex2oat_compile += " --instruction-set-variant=x86";
-                cmd_dex2oat_compile += " --instruction-set-features=default";
-            }
+            Log.d(TAG, "Dex2oat: Compiler Threads: <DEFAULT>");
         }
-        if (mRunConfig.app_oat_architecture.contains("arm64")) {
+
+        Log.d(TAG, "Dex2oat: app_oat_architecture: " + mRunConfig.app_oat_architecture);
+        if (mRunConfig.app_oat_architecture.contains("x86_64")) {
+            Log.d(TAG, "Dex2oat: Architecture: x86_64");
+            cmd_dex2oat_compile += " --instruction-set=x86_64";
+            cmd_dex2oat_compile += " --instruction-set-variant=atom";
+        } else if (mRunConfig.app_oat_architecture.contains("x86")
+                && !mRunConfig.app_oat_architecture.contains("x86_64")) {
+            Log.d(TAG, "Dex2oat: Architecture: x86");
+            cmd_dex2oat_compile += " --instruction-set=x86";
+            cmd_dex2oat_compile += " --instruction-set-variant=atom";
+        } else if (mRunConfig.app_oat_architecture.contains("arm64")) {
+            Log.d(TAG, "Dex2oat: Architecture: arm64");
             // ARM64 Special Flags
             cmd_dex2oat_compile += " --instruction-set=arm64";
-
-            // TODO: instruction-set features & variant needs to get set "per device" or we use generic
-            //       settings
             if (PIXEL_PHONE_ANDROID_8) {
                 cmd_dex2oat_compile += " --instruction-set-variant=kryo";
-                cmd_dex2oat_compile += " --instruction-set-features=default";
             } else {
-                // smp does not exist anymore on Android 8.0 Oreo
-                cmd_dex2oat_compile += " --instruction-set-features=smp,a53";
                 cmd_dex2oat_compile += " --instruction-set-variant=denver64";
-                cmd_dex2oat_compile += " --instruction-set-features=default";
             }
-
             // ARM64 Special Flags END
             Log.d(TAG, "Compiling for 64bit Architecture!");
+        } else {
+            Log.w(TAG, "Dex2oat: Architecture: <Unsupported Architecture>");
+        }
+        // ////////////////////////////////////////////
+        //
+        // smp does not exist anymore on Android 8.0 Oreo !
+        //
+        if (Build.HARDWARE.equals("ranchu")) {
+            Log.d(TAG, "Dex2oat: InstructionSet: <emulator>");
+//            cmd_dex2oat_compile += " --instruction-set-features=smp";
+            cmd_dex2oat_compile += " --instruction-set-features=default";
+//
+//            --boot-image=<file.art>: provide the image file for the boot class path.
+//                                     Do not include the arch as part of the name, it is added automatically.
+//                                     Example: --boot-image=/system/framework/boot.art
+//                                     (specifies /system/framework/<arch>/boot.art as the image file)
+//
+//                Default: $ANDROID_ROOT/system/framework/boot.art
+//            cmd_dex2oat_compile += " --boot-image=/system/framework/boot.art";
+//            cmd_dex2oat_compile += " --boot-image=/system/framework/x86_64/boot.art";
+//            cmd_dex2oat_compile += " --instruction-set-features=smp,ssse3,sse4.1,sse4.2,-avx,-avx2";
+//            cmd_dex2oat_compile += " --instruction-set-features=default";
+        } else if (mRunConfig.app_oat_architecture.contains("x86")) {
+            Log.d(TAG, "Dex2oat: InstructionSet: x86*");
+            cmd_dex2oat_compile += " --instruction-set-features=smp,ssse3,sse4.1,sse4.2,-avx,-avx2";
+            cmd_dex2oat_compile += " --instruction-set-features=default";
+        } else if (mRunConfig.app_oat_architecture.contains("arm64") && PIXEL_PHONE_ANDROID_8) {
+            Log.d(TAG, "Dex2oat: InstructionSet: arm64 (Pixel Phone)");
+            // ARM64 Special Flags
+            cmd_dex2oat_compile += " --instruction-set-features=default";
+        } else if (mRunConfig.app_oat_architecture.contains("arm64")) {
+            Log.d(TAG, "Dex2oat: InstructionSet: arm64*");
+            // smp does not exist anymore on Android 8.0 Oreo
+            cmd_dex2oat_compile += " --instruction-set-features=smp,a53";
+            cmd_dex2oat_compile += " --instruction-set-features=default";
+            Log.d(TAG, "Dex2oat: ranchu (emulator)");
+        } else {
+            Log.w(TAG, "Dex2oat: InstructionSet: <Unsupported InstructionSet>");
+            cmd_dex2oat_compile += " --instruction-set-features=default";
         }
         return cmd_dex2oat_compile;
     }
