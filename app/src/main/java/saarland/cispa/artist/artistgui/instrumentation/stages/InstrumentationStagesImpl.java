@@ -21,15 +21,9 @@ package saarland.cispa.artist.artistgui.instrumentation.stages;
 
 import android.content.Context;
 import android.os.Build;
-import android.os.Environment;
 
 import java.io.File;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 import saarland.cispa.apksigner.ApkSigner;
 import saarland.cispa.apksigner.ApkZipSir;
@@ -287,20 +281,7 @@ public class InstrumentationStagesImpl implements InstrumentationStages {
     // TODO: instruction-set features & variant needs to get set "per device" or we use generic
     //       settings
     private String setupDex2oatCommand(final String pathDex2oat) {
-        Log.d(TAG, "Dex2oat: Build.BOOTLOADER:            " + Build.BOOTLOADER);
-        Log.d(TAG, "Dex2oat: Build.BRAND:                 " + Build.BRAND);
-        Log.d(TAG, "Dex2oat: Build.DEVICE:                " + Build.DEVICE);
-        Log.d(TAG, "Dex2oat: Build.FINGERPRINT:           " + Build.FINGERPRINT);
-        Log.d(TAG, "Dex2oat: Build.HARDWARE:              " + Build.HARDWARE);
-        Log.d(TAG, "Dex2oat: Build.HOST:                  " + Build.HOST);
-        Log.d(TAG, "Dex2oat: Build.ID:                    " + Build.ID);
-        Log.d(TAG, "Dex2oat: Build.MANUFACTURER:          " + Build.MANUFACTURER);
-        Log.d(TAG, "Dex2oat: Build.MODEL:                 " + Build.MODEL);
-        Log.d(TAG, "Dex2oat: Build.PRODUCT:               " + Build.PRODUCT);
-        Log.d(TAG, "Dex2oat: Build.SUPPORTED_64_BIT_ABIS: ");
-        for (final String abi : Build.SUPPORTED_64_BIT_ABIS) {
-            Log.d(TAG, "         - ABI: " + abi);
-        }
+        AndroidUtils.logBuildInformation();
 
         String cmd_dex2oat_compile =
                 "export LD_LIBRARY_PATH=" + mContext.getApplicationInfo().nativeLibraryDir + ":"
@@ -327,7 +308,11 @@ public class InstrumentationStagesImpl implements InstrumentationStages {
         Log.d(TAG, "Dex2oat: app_oat_architecture: " + mRunConfig.app_oat_architecture);
         if (mRunConfig.app_oat_architecture.contains("x86_64")) {
             Log.d(TAG, "Dex2oat: Architecture: x86_64");
-            cmd_dex2oat_compile += " --instruction-set=x86_64";
+            // @ToDo: This workaround leads to a successful compilation of the instrumented app
+            //        on the official 7.1.1 x86_64 emulator, but the execution afterwards,
+            //        does not contain the injected code / oat gets not used.
+            cmd_dex2oat_compile += " --instruction-set=x86";
+//            cmd_dex2oat_compile += " --instruction-set=x86_64";
             cmd_dex2oat_compile += " --instruction-set-variant=atom";
         } else if (mRunConfig.app_oat_architecture.contains("x86")
                 && !mRunConfig.app_oat_architecture.contains("x86_64")) {

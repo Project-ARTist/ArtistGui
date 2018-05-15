@@ -23,6 +23,7 @@ package saarland.cispa.artist.artistgui.utils;
 
 import android.content.Context;
 import android.net.Uri;
+import android.os.Build;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -325,6 +326,23 @@ public class AndroidUtils {
             Log.d(TAG, String.format("sukill(%s) FAILED", processInfo));
         }
         Log.d(TAG, String.format("sukill(%s) DONE", processInfo));
+    }
+
+    public static void logBuildInformation() {
+        Log.d(TAG, "Dex2oat: Build.BOOTLOADER:            " + Build.BOOTLOADER);
+        Log.d(TAG, "Dex2oat: Build.BRAND:                 " + Build.BRAND);
+        Log.d(TAG, "Dex2oat: Build.DEVICE:                " + Build.DEVICE);
+        Log.d(TAG, "Dex2oat: Build.FINGERPRINT:           " + Build.FINGERPRINT);
+        Log.d(TAG, "Dex2oat: Build.HARDWARE:              " + Build.HARDWARE);
+        Log.d(TAG, "Dex2oat: Build.HOST:                  " + Build.HOST);
+        Log.d(TAG, "Dex2oat: Build.ID:                    " + Build.ID);
+        Log.d(TAG, "Dex2oat: Build.MANUFACTURER:          " + Build.MANUFACTURER);
+        Log.d(TAG, "Dex2oat: Build.MODEL:                 " + Build.MODEL);
+        Log.d(TAG, "Dex2oat: Build.PRODUCT:               " + Build.PRODUCT);
+        Log.d(TAG, "Dex2oat: Build.SUPPORTED_64_BIT_ABIS: ");
+        for (final String abi : Build.SUPPORTED_64_BIT_ABIS) {
+            Log.d(TAG, "         - ABI: " + abi);
+        }
     }
 }
 
