@@ -2,10 +2,7 @@
 
 buildscript {
     repositories {
-        repositories {
-            jcenter()
-            google()
-        }
+        jcenter()
         google()
     }
     dependencies {
@@ -23,7 +20,7 @@ allprojects {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '4.2.1'
+    gradleVersion = '4.4.1'
 }
 
 
