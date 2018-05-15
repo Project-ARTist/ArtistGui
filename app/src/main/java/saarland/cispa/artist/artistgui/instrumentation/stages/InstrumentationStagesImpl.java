@@ -308,11 +308,9 @@ public class InstrumentationStagesImpl implements InstrumentationStages {
         Log.d(TAG, "Dex2oat: app_oat_architecture: " + mRunConfig.app_oat_architecture);
         if (mRunConfig.app_oat_architecture.contains("x86_64")) {
             Log.d(TAG, "Dex2oat: Architecture: x86_64");
-            // @ToDo: This workaround leads to a successful compilation of the instrumented app
-            //        on the official 7.1.1 x86_64 emulator, but the execution afterwards,
-            //        does not contain the injected code / oat gets not used.
-            cmd_dex2oat_compile += " --instruction-set=x86";
-//            cmd_dex2oat_compile += " --instruction-set=x86_64";
+            // @FYI: ARTist only compiles on the x86_64 emulator with: " --instruction-set=x86"
+            //       but doesn't start the instrumented app
+            cmd_dex2oat_compile += " --instruction-set=x86_64";
             cmd_dex2oat_compile += " --instruction-set-variant=atom";
         } else if (mRunConfig.app_oat_architecture.contains("x86")
                 && !mRunConfig.app_oat_architecture.contains("x86_64")) {
