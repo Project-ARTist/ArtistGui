@@ -29,6 +29,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import comm.android.dx.merge.DexMerger;
 import saarland.cispa.apksigner.ApkSigner;
 import saarland.cispa.apksigner.ApkZipSir;
 import saarland.cispa.artist.artistgui.instrumentation.config.ArtistRunConfig;
@@ -181,7 +182,12 @@ public class InstrumentationStagesImpl implements InstrumentationStages {
 
             Dexterous dexterous = new Dexterous(mergeConfig);
             dexterous.init(appApk, codeLibApk);
-            dexterous.mergeCodeLib();
+            try {
+                dexterous.mergeCodeLib();
+            } catch (DexMerger.MergeException e) {
+                e.getValue().printStackTrace();
+                throw new InstrumentationException(e.getValue().toString());
+            }
             final String pathToApk = dexterous.buildApk();
             reportProgressDetails("Resigning APK");
             Log.d(TAG, String.format("MergeCodeLib DONE (%s)", pathToApk));
