@@ -36,7 +36,7 @@ import saarland.cispa.artist.artistgui.utils.ArtistUtils;
 import saarland.cispa.artist.artistgui.utils.ProcessExecutor;
 import saarland.cispa.dexterous.Dexterous;
 import saarland.cispa.dexterous.MergeConfig;
-import trikita.log.Log;
+import saarland.cispa.utils.LogA;
 
 public class InstrumentationStagesImpl implements InstrumentationStages {
 
@@ -87,7 +87,7 @@ public class InstrumentationStagesImpl implements InstrumentationStages {
     }
 
     private void setupKeystore() {
-        Log.d(TAG, "setupKeystore()");
+        LogA.d(TAG, "setupKeystore()");
         reportProgressDetails("KeyStore: " + mRunConfig.keystore);
         AndroidUtils.copyAsset(mContext, mRunConfig.asset_path_keystore,
                 mRunConfig.keystore.getAbsolutePath());
@@ -97,8 +97,8 @@ public class InstrumentationStagesImpl implements InstrumentationStages {
         final String pathDex2oat = copyAssetToFilesDir(mContext,
                 mRunConfig.asset_path_dex2oat,
                 mRunConfig.artist_exec_path_dex2oat);
-        Log.i(TAG, "> pathDex2oat: " + pathDex2oat);
-        Log.i(TAG, "  > config:    " + mRunConfig.artist_exec_path_dex2oat);
+        LogA.i(TAG, "> pathDex2oat: " + pathDex2oat);
+        LogA.i(TAG, "  > config:    " + mRunConfig.artist_exec_path_dex2oat);
 
         if (pathDex2oat.isEmpty()) {
             throw new InstrumentationException("Artist: Dex2oat Setup failed");
@@ -122,7 +122,7 @@ public class InstrumentationStagesImpl implements InstrumentationStages {
     }
 
     private void setupArtistLibraries() {
-        Log.d(TAG, "setupArtistLibraries()");
+        LogA.d(TAG, "setupArtistLibraries()");
         reportProgressDetails("Copying Libraries to: " + mRunConfig.artist_exec_path_libs_dir);
         // Example Permissions: /data/app/com.deepinc.arte360-1/lib/arm/
         // -rwxr-xr-x 1 system system  511044 2016-05-05 17:30 libTBAudioEngine.so
@@ -140,7 +140,7 @@ public class InstrumentationStagesImpl implements InstrumentationStages {
         mRunConfig.oatGroup = AndroidUtils.getFileGroupId(mRunConfig.app_oat_file_path);
         mRunConfig.oatPermissions = AndroidUtils.getFilePermissions(mRunConfig.app_oat_file_path);
         mRunConfig.stats.oatFileSizeOriginal = new File(mRunConfig.app_oat_file_path).length();
-        Log.d(TAG, String.format("base.odex UID: %s GID: %s Permissions: %s Size: %s",
+        LogA.d(TAG, String.format("base.odex UID: %s GID: %s Permissions: %s Size: %s",
                 mRunConfig.oatOwner,
                 mRunConfig.oatGroup,
                 mRunConfig.oatPermissions,
@@ -149,7 +149,7 @@ public class InstrumentationStagesImpl implements InstrumentationStages {
         reportProgressDetails("Deleting existing oat file: " + mRunConfig.app_oat_file_path);
         boolean success = deleteRootFile(mRunConfig.app_oat_file_path);
         if (!success) {
-            Log.d(TAG, String.format("Failed to delete old base oat: %s - Continue", mRunConfig.app_oat_file_path));
+            LogA.d(TAG, String.format("Failed to delete old base oat: %s - Continue", mRunConfig.app_oat_file_path));
         }
     }
 
@@ -161,7 +161,7 @@ public class InstrumentationStagesImpl implements InstrumentationStages {
 
     @Override
     public void mergeCodeLib() throws InstrumentationException {
-        Log.d(TAG, "MergeCodeLib into: " + mRunConfig.app_apk_file_path);
+        LogA.d(TAG, "MergeCodeLib into: " + mRunConfig.app_apk_file_path);
 
         String pathToApkSigned;
         // deactivate injection upon user wish or if no code lib is provided
@@ -180,44 +180,44 @@ public class InstrumentationStagesImpl implements InstrumentationStages {
             dexterous.mergeCodeLib();
             final String pathToApk = dexterous.buildApk();
             reportProgressDetails("Resigning APK");
-            Log.d(TAG, String.format("MergeCodeLib DONE (%s)", pathToApk));
+            LogA.d(TAG, String.format("MergeCodeLib DONE (%s)", pathToApk));
 
             pathToApkSigned = resignApk(pathToApk);
-            Log.d(TAG, String.format("MergeCodeLib Signing DONE (%s)", pathToApkSigned));
+            LogA.d(TAG, String.format("MergeCodeLib Signing DONE (%s)", pathToApkSigned));
 
             if (pathToApkSigned.isEmpty()) {
                 throw new InstrumentationException("Codelib Merge Failed");
             }
         } else {
             reportProgressDetails("Not Injecting CodeLib");
-            Log.i(TAG, "Skip CodeLib Injection");
-            Log.d(TAG, "MergeCodeLib SKIPPED");
+            LogA.i(TAG, "Skip CodeLib Injection");
+            LogA.d(TAG, "MergeCodeLib SKIPPED");
         }
     }
 
     private void setupCodeLib() {
         if (mRunConfig.codeLibName.startsWith(ArtistUtils.CODELIB_ASSET)) {
-            Log.d(TAG, "setupCodeLib() " + mRunConfig.codeLibName);
+            LogA.d(TAG, "setupCodeLib() " + mRunConfig.codeLibName);
             final String assetName = mRunConfig.codeLibName.replaceFirst(ArtistUtils.CODELIB_ASSET, "");
             AndroidUtils.copyAsset(mContext, "codelib" + File.separator + assetName,
                     mRunConfig.codeLib.getAbsolutePath());
             if (!mRunConfig.codeLib.exists()) {
-                Log.e(TAG, " setupCodeLib: " + mRunConfig.codeLib + " FAILED");
+                LogA.e(TAG, " setupCodeLib: " + mRunConfig.codeLib + " FAILED");
             } else {
-                Log.d(TAG, " setupCodeLib: " + mRunConfig.codeLib + " READY");
+                LogA.d(TAG, " setupCodeLib: " + mRunConfig.codeLib + " READY");
             }
         }
     }
 
     private String resignApk(final String unsignedApkPath) {
-        Log.d(TAG, "resignApk() " + unsignedApkPath);
+        LogA.d(TAG, "resignApk() " + unsignedApkPath);
 
         String signedApkPath;
         final ApkSigner apkSir = new ApkZipSir(mRunConfig.app_apk_merged_signed_file_path);
         try {
             signedApkPath = apkSir.signApk(mRunConfig.keystore.getAbsolutePath(), unsignedApkPath);
         } catch (final IllegalArgumentException e) {
-            Log.e(TAG, "> Signing of APK Failed", e);
+            LogA.e(TAG, "> Signing of APK Failed", e);
             signedApkPath = "";
         }
         return signedApkPath;
@@ -225,7 +225,7 @@ public class InstrumentationStagesImpl implements InstrumentationStages {
 
     @Override
     public void backupMergedApk() {
-        Log.v(TAG, "backupMergedApk()");
+        LogA.v(TAG, "backupMergedApk()");
         final File externalStorage = mContext.getExternalFilesDir(null);
         if (externalStorage != null) {
             final String mergedApkBackupPath = externalStorage.getAbsolutePath() + File.separator
@@ -240,9 +240,9 @@ public class InstrumentationStagesImpl implements InstrumentationStages {
                     ProcessExecutor.processName(mRunConfig.app_package_name, "cp_backup_merged"));
 
             if (success) {
-                Log.d(TAG, "backupMergedApk() Success: " + mergedApkBackupPath);
+                LogA.d(TAG, "backupMergedApk() Success: " + mergedApkBackupPath);
             } else {
-                Log.e(TAG, "backupMergedApk() Failed:  " + mergedApkBackupPath);
+                LogA.e(TAG, "backupMergedApk() Failed:  " + mergedApkBackupPath);
             }
         }
     }
@@ -251,28 +251,28 @@ public class InstrumentationStagesImpl implements InstrumentationStages {
     public void runDex2OatCompilation(String pathDex2oat) throws InstrumentationException {
         final String cmd_dex2oat_compile = setupDex2oatCommand(pathDex2oat);
 
-        Log.d(TAG, "dex2oat command:");
-        Log.d(TAG, cmd_dex2oat_compile);
-        Log.d(TAG, "Starting the compilation process!");
-        Log.d(TAG, "> Result will get placed at: " + mRunConfig.app_oat_file_path);
+        LogA.d(TAG, "dex2oat command:");
+        LogA.d(TAG, cmd_dex2oat_compile);
+        LogA.d(TAG, "Starting the compilation process!");
+        LogA.d(TAG, "> Result will get placed at: " + mRunConfig.app_oat_file_path);
 
         final String divider = "########################################################";
 
-        Log.d(TAG, divider);
-        Log.d(TAG, divider);
-        Log.d(TAG, divider);
+        LogA.d(TAG, divider);
+        LogA.d(TAG, divider);
+        LogA.d(TAG, divider);
 
         boolean success = ProcessExecutor.execute(cmd_dex2oat_compile, true,
                 ProcessExecutor.processName(mRunConfig.app_package_name, "dex2artist"));
 
-        Log.d(TAG, divider);
-        Log.d(TAG, divider);
-        Log.d(TAG, divider);
+        LogA.d(TAG, divider);
+        LogA.d(TAG, divider);
+        LogA.d(TAG, divider);
 
         if (success) {
-            Log.d(TAG, "Compilation was successfull");
+            LogA.d(TAG, "Compilation was successfull");
         } else {
-            Log.d(TAG, "Compilation failed...");
+            LogA.d(TAG, "Compilation failed...");
             throw new InstrumentationException("Artist Injection Failed");
         }
     }
@@ -300,25 +300,25 @@ public class InstrumentationStagesImpl implements InstrumentationStages {
 
         if (mRunConfig.COMPILER_THREADS != -1) {
             cmd_dex2oat_compile += " -j" + mRunConfig.COMPILER_THREADS;
-            Log.d(TAG, "Dex2oat: Compiler Threads: " + mRunConfig.COMPILER_THREADS);
+            LogA.d(TAG, "Dex2oat: Compiler Threads: " + mRunConfig.COMPILER_THREADS);
         } else {
-            Log.d(TAG, "Dex2oat: Compiler Threads: <DEFAULT>");
+            LogA.d(TAG, "Dex2oat: Compiler Threads: <DEFAULT>");
         }
 
-        Log.d(TAG, "Dex2oat: app_oat_architecture: " + mRunConfig.app_oat_architecture);
+        LogA.d(TAG, "Dex2oat: app_oat_architecture: " + mRunConfig.app_oat_architecture);
         if (mRunConfig.app_oat_architecture.contains("x86_64")) {
-            Log.d(TAG, "Dex2oat: Architecture: x86_64");
+            LogA.d(TAG, "Dex2oat: Architecture: x86_64");
             // @FYI: ARTist only compiles on the x86_64 emulator with: " --instruction-set=x86"
             //       but doesn't start the instrumented app
             cmd_dex2oat_compile += " --instruction-set=x86_64";
             cmd_dex2oat_compile += " --instruction-set-variant=atom";
         } else if (mRunConfig.app_oat_architecture.contains("x86")
                 && !mRunConfig.app_oat_architecture.contains("x86_64")) {
-            Log.d(TAG, "Dex2oat: Architecture: x86");
+            LogA.d(TAG, "Dex2oat: Architecture: x86");
             cmd_dex2oat_compile += " --instruction-set=x86";
             cmd_dex2oat_compile += " --instruction-set-variant=atom";
         } else if (mRunConfig.app_oat_architecture.contains("arm64")) {
-            Log.d(TAG, "Dex2oat: Architecture: arm64");
+            LogA.d(TAG, "Dex2oat: Architecture: arm64");
             // ARM64 Special Flags
             cmd_dex2oat_compile += " --instruction-set=arm64";
             if (PIXEL_PHONE_ANDROID_8) {
@@ -327,16 +327,16 @@ public class InstrumentationStagesImpl implements InstrumentationStages {
                 cmd_dex2oat_compile += " --instruction-set-variant=denver64";
             }
             // ARM64 Special Flags END
-            Log.d(TAG, "Compiling for 64bit Architecture!");
+            LogA.d(TAG, "Compiling for 64bit Architecture!");
         } else {
-            Log.w(TAG, "Dex2oat: Architecture: <Unsupported Architecture>");
+            LogA.w(TAG, "Dex2oat: Architecture: <Unsupported Architecture>");
         }
         // ////////////////////////////////////////////
         //
         // smp does not exist anymore on Android 8.0 Oreo !
         //
         if (Build.HARDWARE.equals("ranchu")) {
-            Log.d(TAG, "Dex2oat: InstructionSet: <emulator>");
+            LogA.d(TAG, "Dex2oat: InstructionSet: <emulator>");
 //            cmd_dex2oat_compile += " --instruction-set-features=smp";
             cmd_dex2oat_compile += " --instruction-set-features=default";
 //
@@ -351,21 +351,21 @@ public class InstrumentationStagesImpl implements InstrumentationStages {
 //            cmd_dex2oat_compile += " --instruction-set-features=smp,ssse3,sse4.1,sse4.2,-avx,-avx2";
 //            cmd_dex2oat_compile += " --instruction-set-features=default";
         } else if (mRunConfig.app_oat_architecture.contains("x86")) {
-            Log.d(TAG, "Dex2oat: InstructionSet: x86*");
+            LogA.d(TAG, "Dex2oat: InstructionSet: x86*");
             cmd_dex2oat_compile += " --instruction-set-features=smp,ssse3,sse4.1,sse4.2,-avx,-avx2";
             cmd_dex2oat_compile += " --instruction-set-features=default";
         } else if (mRunConfig.app_oat_architecture.contains("arm64") && PIXEL_PHONE_ANDROID_8) {
-            Log.d(TAG, "Dex2oat: InstructionSet: arm64 (Pixel Phone)");
+            LogA.d(TAG, "Dex2oat: InstructionSet: arm64 (Pixel Phone)");
             // ARM64 Special Flags
             cmd_dex2oat_compile += " --instruction-set-features=default";
         } else if (mRunConfig.app_oat_architecture.contains("arm64")) {
-            Log.d(TAG, "Dex2oat: InstructionSet: arm64*");
+            LogA.d(TAG, "Dex2oat: InstructionSet: arm64*");
             // smp does not exist anymore on Android 8.0 Oreo
             cmd_dex2oat_compile += " --instruction-set-features=smp,a53";
             cmd_dex2oat_compile += " --instruction-set-features=default";
-            Log.d(TAG, "Dex2oat: ranchu (emulator)");
+            LogA.d(TAG, "Dex2oat: ranchu (emulator)");
         } else {
-            Log.w(TAG, "Dex2oat: InstructionSet: <Unsupported InstructionSet>");
+            LogA.w(TAG, "Dex2oat: InstructionSet: <Unsupported InstructionSet>");
             cmd_dex2oat_compile += " --instruction-set-features=default";
         }
         return cmd_dex2oat_compile;
@@ -376,47 +376,47 @@ public class InstrumentationStagesImpl implements InstrumentationStages {
         boolean success = false;
         final File oatFile = new File(this.mRunConfig.app_oat_file_path);
         if (oatFile.exists() && !oatFile.isDirectory()) {
-            Log.d(TAG, "Success! Oat file created.");
+            LogA.d(TAG, "Success! Oat file created.");
             reportProgressDetails("Fixing oat file permissions");
 
             mRunConfig.stats.oatFileSizeRecompiled = oatFile.length();
 
             reportProgressDetails("odex OLD size: " + mRunConfig.stats.oatFileSizeOriginal);
-            Log.d(TAG, "odex OLD size: " + mRunConfig.stats.oatFileSizeOriginal);
+            LogA.d(TAG, "odex OLD size: " + mRunConfig.stats.oatFileSizeOriginal);
             reportProgressDetails("odex NEW size: " + mRunConfig.stats.oatFileSizeRecompiled);
-            Log.d(TAG, "odex NEW size: " + mRunConfig.stats.oatFileSizeRecompiled);
+            LogA.d(TAG, "odex NEW size: " + mRunConfig.stats.oatFileSizeRecompiled);
 
-            Log.d(TAG, "Changing the owner of the oat file to " + mRunConfig.oatOwner);
+            LogA.d(TAG, "Changing the owner of the oat file to " + mRunConfig.oatOwner);
 
             final String cmd_chown_oat = "chown " + mRunConfig.oatOwner + " " + this.mRunConfig.app_oat_file_path;
             success = ProcessExecutor.execute(cmd_chown_oat, true, ProcessExecutor.processName(mRunConfig.app_package_name, "chown_oatfile"));
 
             if (!success) {
-                Log.d(TAG, "Could not change oat owner to " + mRunConfig.oatOwner + "... ");
-                Log.d(TAG, "... for path " + this.mRunConfig.app_oat_file_path);
+                LogA.d(TAG, "Could not change oat owner to " + mRunConfig.oatOwner + "... ");
+                LogA.d(TAG, "... for path " + this.mRunConfig.app_oat_file_path);
                 return success;
             }
-            Log.d(TAG, "Changing the group of the oat file to " + mRunConfig.oatGroup);
+            LogA.d(TAG, "Changing the group of the oat file to " + mRunConfig.oatGroup);
 
             final String cmd_chgrp_oat = "chgrp " + mRunConfig.oatGroup + " " + this.mRunConfig.app_oat_file_path;
             success = ProcessExecutor.execute(cmd_chgrp_oat, true, ProcessExecutor.processName(mRunConfig.app_package_name, "chgrp_oatfile"));
 
             if (!success) {
-                Log.d(TAG, "Could not change oat group to " + mRunConfig.oatGroup + "... ");
-                Log.d(TAG, "... for path " + this.mRunConfig.app_oat_file_path);
+                LogA.d(TAG, "Could not change oat group to " + mRunConfig.oatGroup + "... ");
+                LogA.d(TAG, "... for path " + this.mRunConfig.app_oat_file_path);
                 return success;
             }
 
             success = AndroidUtils.chmodExecutable(this.mRunConfig.app_oat_file_path);
 
             if (!success) {
-                Log.d(TAG, "Could not change oat permissions to 777");
-                Log.d(TAG, "... for path " + this.mRunConfig.app_oat_file_path);
+                LogA.d(TAG, "Could not change oat permissions to 777");
+                LogA.d(TAG, "... for path " + this.mRunConfig.app_oat_file_path);
                 return success;
             }
-            Log.d(TAG, "Everything worked out as expected!!!");
+            LogA.d(TAG, "Everything worked out as expected!!!");
         } else {
-            Log.d(TAG, "Fail! Oat file not created.");
+            LogA.d(TAG, "Fail! Oat file not created.");
         }
         return success;
     }

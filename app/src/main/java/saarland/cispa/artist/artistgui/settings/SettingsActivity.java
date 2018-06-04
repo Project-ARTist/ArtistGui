@@ -26,7 +26,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import trikita.log.Log;
+import saarland.cispa.utils.LogA;
 
 public class SettingsActivity extends Activity {
 
@@ -66,7 +66,7 @@ public class SettingsActivity extends Activity {
     @Override
     public void onActivityResult(final int requestCode, final int resultCode,
                                  final Intent resultData) {
-        Log.d(TAG, "SettingsActivity.onActivityResult()");
+        LogA.d(TAG, "SettingsActivity.onActivityResult()");
 
         if (requestCode == SettingsPresenter.READ_EXTERNAL_STORAGE_REQUEST_CODE
                 && resultCode == Activity.RESULT_OK) {

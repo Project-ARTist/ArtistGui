@@ -31,7 +31,6 @@ import android.support.v4.content.LocalBroadcastManager;
 
 import saarland.cispa.artist.artistgui.instrumentation.progress.ProgressPublisher;
 import saarland.cispa.utils.LogA;
-import trikita.log.Log;
 
 public class InstrumentationService extends Service {
 
@@ -76,7 +75,7 @@ public class InstrumentationService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        Log.i(TAG, "CompilationService()");
+        LogA.i(TAG, "CompilationService()");
         LogA.setUserLogLevel(getApplicationContext());
         mServiceController = new ServiceController(this);
 
@@ -87,11 +86,11 @@ public class InstrumentationService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.d(TAG, "onStartCommand()");
+        LogA.d(TAG, "onStartCommand()");
         if (intent != null) {
             final String packageName = intent.getStringExtra(INTENT_KEY_APP_NAME);
             if (packageName != null && !packageName.isEmpty()) {
-                Log.d(TAG, "onStartCommand() Extra: " + packageName);
+                LogA.d(TAG, "onStartCommand() Extra: " + packageName);
                 instrumentApp(packageName);
             }
         }
@@ -112,7 +111,7 @@ public class InstrumentationService extends Service {
 
     @Override
     public void onRebind(Intent intent) {
-        Log.d(TAG, "onRebind()");
+        LogA.d(TAG, "onRebind()");
         // A client is binding to the service with bindService(),
         // after onUnbind() has already been called
         mClientsBoundToService = true;
@@ -120,7 +119,7 @@ public class InstrumentationService extends Service {
 
     @Override
     public boolean onUnbind(Intent intent) {
-        Log.d(TAG, "onUnbind()");
+        LogA.d(TAG, "onUnbind()");
         mClientsBoundToService = false;
         stopIfNothingToDo();
         return ALLOW_REBIND;
@@ -129,7 +128,7 @@ public class InstrumentationService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.i(TAG, "onDestroy()");
+        LogA.i(TAG, "onDestroy()");
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mResultReceiver);
     }
 

@@ -25,19 +25,20 @@ import android.net.Uri;
 
 import java.io.File;
 
-import trikita.log.Log;
+import saarland.cispa.utils.LogA;
+
 
 public class UriUtils {
 
     private static final String TAG = "UriUtils";
 
     public static String getFilenameFromUri(final Uri uri) {
-        Log.v(TAG, "Uri: " + uri.toString());
-        Log.v(TAG, "Uri Path: " + uri.getPath());
-        Log.v(TAG, "Uri LastPathSegment: " + uri.getLastPathSegment());
+        LogA.v(TAG, "Uri: " + uri.toString());
+        LogA.v(TAG, "Uri Path: " + uri.getPath());
+        LogA.v(TAG, "Uri LastPathSegment: " + uri.getLastPathSegment());
 
         final File fileFromUri = new File(uri.getPath());
-        Log.v(TAG, "Uri File Name: " + fileFromUri.getName());
+        LogA.v(TAG, "Uri File Name: " + fileFromUri.getName());
         String filename = fileFromUri.getName();
         filename = cleanUriFilename(filename);
         return filename;

@@ -30,7 +30,7 @@ import saarland.cispa.artist.artistgui.instrumentation.progress.ProgressListener
 import saarland.cispa.artist.artistgui.instrumentation.stages.InstrumentationStages;
 import saarland.cispa.artist.artistgui.instrumentation.stages.InstrumentationStagesImpl;
 import saarland.cispa.artist.artistgui.instrumentation.exceptions.ArtistInterruptedException;
-import trikita.log.Log;
+import saarland.cispa.utils.LogA;
 
 class InstrumentationTask implements Runnable {
 
@@ -50,10 +50,10 @@ class InstrumentationTask implements Runnable {
 
     @Override
     public void run() {
-        Log.i(TAG, "Run() compiling and starting " + mRunConfig.app_package_name);
-        Log.i(TAG, "> apkPath:     " + mRunConfig.app_apk_file_path);
-        Log.i(TAG, "> codeLibName: " + mRunConfig.codeLibName);
-        Log.i(TAG, "> Keystore:    " + mRunConfig.keystore);
+        LogA.i(TAG, "Run() compiling and starting " + mRunConfig.app_package_name);
+        LogA.i(TAG, "> apkPath:     " + mRunConfig.app_apk_file_path);
+        LogA.i(TAG, "> codeLibName: " + mRunConfig.codeLibName);
+        LogA.i(TAG, "> Keystore:    " + mRunConfig.keystore);
 
         try {
             ArtistThread.checkThreadCancellation();

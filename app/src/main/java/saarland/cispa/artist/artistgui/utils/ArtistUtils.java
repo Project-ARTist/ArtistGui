@@ -29,7 +29,8 @@ import java.io.InputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import trikita.log.Log;
+import saarland.cispa.utils.LogA;
+
 
 public class ArtistUtils {
 
@@ -51,12 +52,12 @@ public class ArtistUtils {
                 while ((apkContent = zipInput.getNextEntry()) != null) {
                     if (apkContent.getName().endsWith(".dex")) {
                         ++dexFileCount;
-                        Log.d(TAG, apkPath + " DexFile: " + dexFileCount);
+                        LogA.d(TAG, apkPath + " DexFile: " + dexFileCount);
                     }
                 }
             }
         } catch (IOException e) {
-            Log.e(TAG, "Copying Could not find APK: " + apkPath);
+            LogA.e(TAG, "Copying Could not find APK: " + apkPath);
         }
         if (dexFileCount > 1) {
             isMultidexApk = true;
