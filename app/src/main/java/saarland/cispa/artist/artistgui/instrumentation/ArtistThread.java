@@ -1,7 +1,7 @@
 package saarland.cispa.artist.artistgui.instrumentation;
 
 import saarland.cispa.artist.artistgui.instrumentation.exceptions.ArtistInterruptedException;
-import trikita.log.Log;
+import saarland.cispa.utils.LogA;
 
 /**
  * The ARTist Project (https://artist.cispa.saarland)
@@ -30,7 +30,7 @@ class ArtistThread {
 
     static void checkThreadCancellation() throws ArtistInterruptedException {
         if (Thread.currentThread().isInterrupted()) {
-            Log.d(TAG, String.format("checkThreadCancellation() interrupted[%b]",
+            LogA.d(TAG, String.format("checkThreadCancellation() interrupted[%b]",
                     Thread.currentThread().isInterrupted()));
             throw new ArtistInterruptedException("Thread is interrupted.");
         }

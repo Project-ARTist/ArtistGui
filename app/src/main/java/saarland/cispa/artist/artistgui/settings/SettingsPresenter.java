@@ -42,7 +42,6 @@ import saarland.cispa.artist.artistgui.utils.AndroidUtils;
 import saarland.cispa.artist.artistgui.utils.ArtistUtils;
 import saarland.cispa.utils.LogA;
 import saarland.cispa.artist.artistgui.utils.UriUtils;
-import trikita.log.Log;
 
 class SettingsPresenter implements SettingsContract.Presenter {
 
@@ -139,13 +138,13 @@ class SettingsPresenter implements SettingsContract.Presenter {
     public void setupCodeLibImport(final Activity activity, Preference codeLibPref) {
         codeLibPref.setOnPreferenceClickListener((Preference preference) ->
         {
-            Log.d(TAG, "performFileSearch()");
+            LogA.d(TAG, "performFileSearch()");
 
             final int permissionCheck = activity
                     .checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE);
 
             if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
-                Log.d(TAG, "Requesting Permission: " + Manifest.permission.READ_EXTERNAL_STORAGE);
+                LogA.d(TAG, "Requesting Permission: " + Manifest.permission.READ_EXTERNAL_STORAGE);
                 activity.requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
                         READ_EXTERNAL_STORAGE_REQUEST_CODE);
             } else {
@@ -181,7 +180,7 @@ class SettingsPresenter implements SettingsContract.Presenter {
             final String pathToCodeLib =
                     AndroidUtils.copyUriToFilesystem(mContext, uri, toPath);
             if (!pathToCodeLib.isEmpty()) {
-                Log.i(TAG, "CodeLib copied: " + pathToCodeLib);
+                LogA.i(TAG, "CodeLib copied: " + pathToCodeLib);
             }
         }
     }
@@ -203,7 +202,7 @@ class SettingsPresenter implements SettingsContract.Presenter {
             }
 
         } catch (final IOException e) {
-            Log.e(TAG, "Could not open assetfolder: ", e);
+            LogA.e(TAG, "Could not open assetfolder: ", e);
 
         }
         return cleanedAssetCodeLibs.toArray(new String[0]);

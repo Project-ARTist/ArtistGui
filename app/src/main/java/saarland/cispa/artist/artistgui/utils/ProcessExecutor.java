@@ -27,7 +27,7 @@ import java.io.InputStreamReader;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import trikita.log.Log;
+import saarland.cispa.utils.LogA;
 
 public enum ProcessExecutor {
     INSTANCE;
@@ -72,10 +72,10 @@ public enum ProcessExecutor {
         try {
             ProcessBuilder pb = new ProcessBuilder();
             if (rootExecution) {
-                Log.d(TAG, String.format("execute() SU [`%s`]", command));
+                LogA.d(TAG, String.format("execute() SU [`%s`]", command));
                 pb.command("su", "-c", command);
             } else {
-                Log.d(TAG, String.format("execute() [`%s`]", command));
+                LogA.d(TAG, String.format("execute() [`%s`]", command));
                 pb.command(command);
             }
 
@@ -83,13 +83,13 @@ public enum ProcessExecutor {
             Process process = pb.start();
 
             // ["Process[pid=18546, hasExited=false]"]
-            Log.d(TAG, String.format("> execute() ProcessInfos: [%s]", process.toString()));
+            LogA.d(TAG, String.format("> execute() ProcessInfos: [%s]", process.toString()));
 
             PROCESSES.put(processName, process);
-        
-            Log.d(TAG, String.format("> execute() Waiting: %s", processName));
+
+            LogA.d(TAG, String.format("> execute() Waiting: %s", processName));
             process.waitFor();
-            Log.d(TAG, String.format("> execute() Waiting: %s DONE", processName));
+            LogA.d(TAG, String.format("> execute() Waiting: %s DONE", processName));
 
             final BufferedReader reader =
                     new BufferedReader(new InputStreamReader(process.getInputStream()));
@@ -104,17 +104,18 @@ public enum ProcessExecutor {
             }
             reader.close();
 
-            Log.d(TAG, "> $ " + output.toString());
+            LogA.d(TAG, "> $ " + output.toString());
 
             if (output != null && outputBuffer != null) {
                 outputBuffer.append(output);
             }
             final boolean SUCCESS = process.exitValue() == 0;
             PROCESSES.remove(processName);
-            Log.d(TAG, String.format("> execute() [`%s`] SUCCESS", command));
+            LogA.d(TAG, String.format("> execute() [`%s`] SUCCESS", command));
             return SUCCESS;
         } catch (final IOException|InterruptedException e) {
-            Log.d(TAG, String.format("> execute() [`%s`] FAILED", command), e);
+            LogA.d(TAG, String.format("> execute() [`%s`] FAILED", command));
+            e.printStackTrace();
             return false;
         }
     }
@@ -124,9 +125,9 @@ public enum ProcessExecutor {
     }
 
     public static void killAllExecutorProcesses() {
-        Log.d(TAG, String.format("killAllExecutorProcesses() [count: %d]", PROCESSES.size()));
+        LogA.d(TAG, String.format("killAllExecutorProcesses() [count: %d]", PROCESSES.size()));
         for (final String processName : PROCESSES.keySet()) {
-            Log.i(TAG, String.format("Killing Process %s", processName));
+            LogA.i(TAG, String.format("Killing Process %s", processName));
             final Process process = PROCESSES.remove(processName);
             AndroidUtils.suKill(process);
             killSystemProcessDex2oat();
@@ -135,24 +136,24 @@ public enum ProcessExecutor {
     }
 
     public static void killExecutorProcess(final String processName) {
-        Log.d(TAG, String.format("killDefaultExecutorProcess() %s", processName));
+        LogA.d(TAG, String.format("killDefaultExecutorProcess() %s", processName));
         final Process process = PROCESSES.remove(processName);
         if (process != null) {
-            Log.d(TAG, String.format("killDefaultExecutorProcess() %s FOUND -> EXTERMINATE!", processName));
+            LogA.d(TAG, String.format("killDefaultExecutorProcess() %s FOUND -> EXTERMINATE!", processName));
             AndroidUtils.suKill(process);
             killSystemProcessDex2oat();
             process.destroy();
         }
-        Log.d(TAG, String.format("killDefaultExecutorProcess() %s DONE", processName));
+        LogA.d(TAG, String.format("killDefaultExecutorProcess() %s DONE", processName));
     }
 
     public static void killSystemProcessDex2oat() {
         killSystemProcess(DEX2OAT_PROCESS_NAME);
     }
     public static void killSystemProcess(final String processName) {
-        Log.d(TAG, String.format("killSystemProcess()"));
+        LogA.d(TAG, String.format("killSystemProcess()"));
         execute("pgrep -f \"" + processName + "\" | xargs kill -9", true, "pgrep_dex2oat");
-        Log.d(TAG, String.format("killSystemProcess() DONE"));
+        LogA.d(TAG, String.format("killSystemProcess() DONE"));
     }
 
 }

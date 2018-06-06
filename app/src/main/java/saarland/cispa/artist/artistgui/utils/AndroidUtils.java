@@ -30,7 +30,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import trikita.log.Log;
+import saarland.cispa.utils.LogA;
+
 
 public class AndroidUtils {
 
@@ -51,7 +52,7 @@ public class AndroidUtils {
                                               final String toFolderPath) {
         final String cleanedAssetFolderPath = prepareAssetFolderPath(assetFolderPath);
 
-        Log.d(TAG, "copyAssetFolderContent " + cleanedAssetFolderPath + " -> " + toFolderPath);
+        LogA.d(TAG, "copyAssetFolderContent " + cleanedAssetFolderPath + " -> " + toFolderPath);
         final String filesDirFolder = createFoldersInFilesDir(context, toFolderPath);
         try {
             final String[] assetFiles = context.getAssets().list(cleanedAssetFolderPath);
@@ -60,7 +61,7 @@ public class AndroidUtils {
                 copyAsset(context, assetFilePath,  filesDirFolder + File.separator + assetFile);
             }
         } catch (final IOException e) {
-            Log.e(TAG, "copyAssetFolderContent " + cleanedAssetFolderPath + " -> " + toFolderPath + " FAILED");
+            LogA.e(TAG, "copyAssetFolderContent " + cleanedAssetFolderPath + " -> " + toFolderPath + " FAILED");
         }
     }
 
@@ -70,7 +71,7 @@ public class AndroidUtils {
     }
 
     public static String createFolders(final String toFolderPath) {
-        Log.d(TAG, "Create Folder(s): " + toFolderPath);
+        LogA.d(TAG, "Create Folder(s): " + toFolderPath);
         final File toFolderFile = new File(toFolderPath);
         if (!toFolderFile.exists()) {
             toFolderFile.mkdirs();
@@ -108,7 +109,7 @@ public class AndroidUtils {
                                  final String assetPath,
                                  final String toPath,
                                  final boolean rootCopy) {
-        Log.d(TAG, "copyAsset() " + assetPath + " -> " + toPath);
+        LogA.d(TAG, "copyAsset() " + assetPath + " -> " + toPath);
 
         deleteExistingFile(toPath);
 
@@ -121,9 +122,9 @@ public class AndroidUtils {
             while ((read = in.read(buffer)) > 0) {
                 out.write(buffer, 0, read);
             }
-            Log.d(TAG, "copyAsset() " + assetPath + " -> " + toPath + " Done");
+            LogA.d(TAG, "copyAsset() " + assetPath + " -> " + toPath + " Done");
         } catch (final IOException e) {
-            Log.e(TAG, "copyAsset() " + assetPath + " -> " + toPath + " ERROR", e);
+            LogA.e(TAG, "copyAsset() " + assetPath + " -> " + toPath + " ERROR", e);
         }
     }
 
@@ -134,7 +135,7 @@ public class AndroidUtils {
         final boolean success = ProcessExecutor.execute(cmd_stat_uid, true, returnValue);
 
         if (!success) {
-            Log.e(TAG, "ERROR with command: " + cmd_stat_uid);
+            LogA.e(TAG, "ERROR with command: " + cmd_stat_uid);
             return "";
         }
         return removeAllWhitespaces(returnValue);
@@ -155,7 +156,7 @@ public class AndroidUtils {
         final boolean success = ProcessExecutor.execute(cmd_stat_gid, true, returnValue);
 
         if (!success) {
-            Log.e(TAG, "ERROR with command: " + cmd_stat_gid);
+            LogA.e(TAG, "ERROR with command: " + cmd_stat_gid);
             return "";
         }
         return removeAllWhitespaces(returnValue);
@@ -168,7 +169,7 @@ public class AndroidUtils {
         final boolean success = ProcessExecutor.execute(cmd_stat_perms, true, returnValue);
 
         if (!success) {
-            Log.e(TAG, "ERROR with command: " + cmd_stat_perms);
+            LogA.e(TAG, "ERROR with command: " + cmd_stat_perms);
             return "";
         }
         return removeAllWhitespaces(returnValue);
@@ -179,8 +180,8 @@ public class AndroidUtils {
         final String os_arch_property = System.getProperty("os.arch");
         final String ro_product_cpu_abi_property = System.getProperty("ro.product.cpu.abi");
 
-        Log.e(TAG, "SystemProperty os.arch:            " + os_arch_property);
-        Log.e(TAG, "SystemProperty ro.product.cpu.abi: " + ro_product_cpu_abi_property);
+        LogA.e(TAG, "SystemProperty os.arch:            " + os_arch_property);
+        LogA.e(TAG, "SystemProperty ro.product.cpu.abi: " + ro_product_cpu_abi_property);
 
         final String architecture;
 
@@ -206,7 +207,7 @@ public class AndroidUtils {
                 || os_arch_property.compareTo("mips") == 0) {
             architecture = os_arch_property;
         } else {
-            Log.e(TAG, "Unrecognized architecture: " + os_arch_property);
+            LogA.e(TAG, "Unrecognized architecture: " + os_arch_property);
             throw new RuntimeException("Unrecognized architecture: " + os_arch_property);
         }
         return architecture;
@@ -232,9 +233,9 @@ public class AndroidUtils {
         final boolean success = ProcessExecutor.execute(cmd_chmod_octal, true);
 
         if (!success) {
-            Log.e(TAG, "Command FAILED " + cmd_chmod_octal);
+            LogA.e(TAG, "Command FAILED " + cmd_chmod_octal);
         } else {
-            Log.d(TAG, "PERM Set " + path + " to: " + octalFormatPerms);
+            LogA.d(TAG, "PERM Set " + path + " to: " + octalFormatPerms);
         }
     }
 
@@ -245,9 +246,9 @@ public class AndroidUtils {
         final boolean success = ProcessExecutor.execute(cmd_chown_gid, true);
 
         if (!success) {
-            Log.e(TAG, "Command FAILED " + cmd_chown_gid);
+            LogA.e(TAG, "Command FAILED " + cmd_chown_gid);
         } else {
-            Log.d(TAG, "GID Set " + path + " to: " + baseApkGid);
+            LogA.d(TAG, "GID Set " + path + " to: " + baseApkGid);
         }
     }
 
@@ -258,9 +259,9 @@ public class AndroidUtils {
         final boolean success = ProcessExecutor.execute(cmd_chown_uid, true);
 
         if (!success) {
-            Log.e(TAG, "Command FAILED " + cmd_chown_uid);
+            LogA.e(TAG, "Command FAILED " + cmd_chown_uid);
         } else {
-            Log.d(TAG, "UID Set " + path + " to: " + baseApkUid);
+            LogA.d(TAG, "UID Set " + path + " to: " + baseApkUid);
         }
     }
 
@@ -270,14 +271,14 @@ public class AndroidUtils {
         boolean success = ProcessExecutor.execute(cmd_chmod777, true);
 
         if (!success) {
-            Log.e(TAG, "Command Failed: " + cmd_chmod777);
+            LogA.e(TAG, "Command Failed: " + cmd_chmod777);
         }
         return success;
     }
 
     public static void deleteExistingFile(final File absoluteFile) {
         if (absoluteFile.exists()) {
-            Log.d(TAG, "delete() -> " + absoluteFile.getAbsolutePath());
+            LogA.d(TAG, "delete() -> " + absoluteFile.getAbsolutePath());
             absoluteFile.delete();
         }
     }
@@ -287,7 +288,7 @@ public class AndroidUtils {
     }
 
     public static String copyUriToFilesystem(final Context context, final Uri uri, final String toPathAbsolute) {
-        Log.d(TAG, "copyUriToFilesystem() " + uri + " -> " + toPathAbsolute);
+        LogA.d(TAG, "copyUriToFilesystem() " + uri + " -> " + toPathAbsolute);
         try (
                 InputStream in = context.getContentResolver().openInputStream(uri);
                 FileOutputStream out = new FileOutputStream(toPathAbsolute);
@@ -297,10 +298,10 @@ public class AndroidUtils {
             while ((read = in.read(buffer)) > 0) {
                 out.write(buffer, 0, read);
             }
-            Log.d(TAG, "copyUriToFilesystem() " + uri + " -> " + toPathAbsolute + " Done");
+            LogA.d(TAG, "copyUriToFilesystem() " + uri + " -> " + toPathAbsolute + " Done");
             return toPathAbsolute;
         } catch (final IOException e) {
-            Log.e(TAG, "copyUriToFilesystem() " + uri + " -> " + toPathAbsolute + " ERROR", e);
+            LogA.e(TAG, "copyUriToFilesystem() " + uri + " -> " + toPathAbsolute + " ERROR", e);
             //Convert your stream to data here
             return "";
         }
@@ -314,34 +315,34 @@ public class AndroidUtils {
         //
         // 7481 root     20   0  25% R     2 506728K 122772K  fg /data/user/0/de.infsec.artist.saarland.cispa.artist.artistgui/files/artist/dex2oat
         final String processInfo = process.toString();
-        Log.d(TAG, String.format("sukill(%s)", processInfo));
+        LogA.d(TAG, String.format("sukill(%s)", processInfo));
         try {
             final String[] parts = processInfo.split("pid=");
             final String pid = parts[1].split(", hasExited")[0];
-            Log.d(TAG, String.format("sukill(PID %s)", pid));
+            LogA.d(TAG, String.format("sukill(PID %s)", pid));
             final String cmd_kill = "kill -9 " + pid;
-            Log.d(TAG, String.format("sukill() Command: <%s>", cmd_kill));
+            LogA.d(TAG, String.format("sukill() Command: <%s>", cmd_kill));
             ProcessExecutor.execute(cmd_kill, true, "kill_process");
         } catch (final NullPointerException|ArrayIndexOutOfBoundsException e) {
-            Log.d(TAG, String.format("sukill(%s) FAILED", processInfo));
+            LogA.d(TAG, String.format("sukill(%s) FAILED", processInfo));
         }
-        Log.d(TAG, String.format("sukill(%s) DONE", processInfo));
+        LogA.d(TAG, String.format("sukill(%s) DONE", processInfo));
     }
 
     public static void logBuildInformation() {
-        Log.d(TAG, "Dex2oat: Build.BOOTLOADER:            " + Build.BOOTLOADER);
-        Log.d(TAG, "Dex2oat: Build.BRAND:                 " + Build.BRAND);
-        Log.d(TAG, "Dex2oat: Build.DEVICE:                " + Build.DEVICE);
-        Log.d(TAG, "Dex2oat: Build.FINGERPRINT:           " + Build.FINGERPRINT);
-        Log.d(TAG, "Dex2oat: Build.HARDWARE:              " + Build.HARDWARE);
-        Log.d(TAG, "Dex2oat: Build.HOST:                  " + Build.HOST);
-        Log.d(TAG, "Dex2oat: Build.ID:                    " + Build.ID);
-        Log.d(TAG, "Dex2oat: Build.MANUFACTURER:          " + Build.MANUFACTURER);
-        Log.d(TAG, "Dex2oat: Build.MODEL:                 " + Build.MODEL);
-        Log.d(TAG, "Dex2oat: Build.PRODUCT:               " + Build.PRODUCT);
-        Log.d(TAG, "Dex2oat: Build.SUPPORTED_64_BIT_ABIS: ");
+        LogA.d(TAG, "Dex2oat: Build.BOOTLOADER:            " + Build.BOOTLOADER);
+        LogA.d(TAG, "Dex2oat: Build.BRAND:                 " + Build.BRAND);
+        LogA.d(TAG, "Dex2oat: Build.DEVICE:                " + Build.DEVICE);
+        LogA.d(TAG, "Dex2oat: Build.FINGERPRINT:           " + Build.FINGERPRINT);
+        LogA.d(TAG, "Dex2oat: Build.HARDWARE:              " + Build.HARDWARE);
+        LogA.d(TAG, "Dex2oat: Build.HOST:                  " + Build.HOST);
+        LogA.d(TAG, "Dex2oat: Build.ID:                    " + Build.ID);
+        LogA.d(TAG, "Dex2oat: Build.MANUFACTURER:          " + Build.MANUFACTURER);
+        LogA.d(TAG, "Dex2oat: Build.MODEL:                 " + Build.MODEL);
+        LogA.d(TAG, "Dex2oat: Build.PRODUCT:               " + Build.PRODUCT);
+        LogA.d(TAG, "Dex2oat: Build.SUPPORTED_64_BIT_ABIS: ");
         for (final String abi : Build.SUPPORTED_64_BIT_ABIS) {
-            Log.d(TAG, "         - ABI: " + abi);
+            LogA.d(TAG, "         - ABI: " + abi);
         }
     }
 }

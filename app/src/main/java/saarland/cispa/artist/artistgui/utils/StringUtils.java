@@ -28,7 +28,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import trikita.log.Log;
+import saarland.cispa.utils.LogA;
+
 
 /** String manipulation utilities
  *
@@ -61,7 +62,7 @@ public class StringUtils {
             }
             returnString = result.toString("UTF-8");
         } catch (final IOException e) {
-            Log.e(TAG, "Could not read supplied InputStream: " + inputStream, e);
+            LogA.e(TAG, "Could not read supplied InputStream: " + inputStream, e);
         }
         return returnString;
     }

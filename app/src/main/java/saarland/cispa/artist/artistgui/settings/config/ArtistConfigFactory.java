@@ -35,7 +35,7 @@ import java.lang.reflect.Field;
 import saarland.cispa.artist.artistgui.instrumentation.config.ArtistRunConfig;
 import saarland.cispa.artist.artistgui.utils.AndroidUtils;
 import saarland.cispa.artist.artistgui.utils.ArtistUtils;
-import trikita.log.Log;
+import saarland.cispa.utils.LogA;
 
 /**
  * @author Sebastian Weisgerber (weisgerber@cispa.saarland)
@@ -110,9 +110,9 @@ public class ArtistConfigFactory {
             Field fieldSecondaryCpuAbi = ApplicationInfo.class.getDeclaredField("secondaryCpuAbi");
             artistConfig.secondaryCpuAbi = (String) fieldSecondaryCpuAbi.get(context.getApplicationInfo());
         } catch (final NoSuchFieldException | IllegalAccessException e) {
-            Log.e(TAG, "Getting ApplicationInfo FAILED", e);
+            LogA.e(TAG, "Getting ApplicationInfo FAILED", e);
         }
-        Log.i(TAG, artistConfig.toString());
+        LogA.i(TAG, artistConfig.toString());
         return artistConfig;
     }
 
@@ -141,7 +141,7 @@ public class ArtistConfigFactory {
         try {
             packageInfo = context.getPackageManager().getPackageInfo(app_name, 0);
         } catch (PackageManager.NameNotFoundException e) {
-            Log.e(TAG, "Could not find packge: " + app_name);
+            LogA.e(TAG, "Could not find packge: " + app_name);
         }
         return packageInfo;
     }

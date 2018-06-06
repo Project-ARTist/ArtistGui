@@ -45,7 +45,7 @@ import saarland.cispa.artist.artistgui.instrumentation.config.ArtistRunConfig;
 import saarland.cispa.artist.artistgui.instrumentation.progress.ProgressPublisher;
 import saarland.cispa.artist.artistgui.settings.config.ArtistConfigFactory;
 import saarland.cispa.artist.artistgui.settings.manager.SettingsManager;
-import trikita.log.Log;
+import saarland.cispa.utils.LogA;
 
 public class AppDetailsDialogPresenter implements AppDetailsDialogContract.Presenter {
 
@@ -174,7 +174,7 @@ public class AppDetailsDialogPresenter implements AppDetailsDialogContract.Prese
         final boolean launchActivity = mSettingsManager.shouldLaunchActivityAfterCompilation();
         if (launchActivity) {
             String packageName = mSelectedPackage.packageName;
-            Log.d(TAG, "Starting compiled app: " + packageName);
+            LogA.d(TAG, "Starting compiled app: " + packageName);
             final Intent launchIntent = mContext.getPackageManager()
                     .getLaunchIntentForPackage(packageName);
             mContext.startActivity(launchIntent);

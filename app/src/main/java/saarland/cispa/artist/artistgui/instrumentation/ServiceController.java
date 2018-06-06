@@ -37,7 +37,7 @@ import saarland.cispa.artist.artistgui.instrumentation.progress.ProgressListener
 import saarland.cispa.artist.artistgui.instrumentation.progress.ProgressPublisher;
 import saarland.cispa.artist.artistgui.settings.config.ArtistConfigFactory;
 import saarland.cispa.artist.artistgui.utils.ProcessExecutor;
-import trikita.log.Log;
+import saarland.cispa.utils.LogA;
 
 class ServiceController implements IServiceController {
 
@@ -67,7 +67,7 @@ class ServiceController implements IServiceController {
 
     @Override
     public void instrument(String packageName) {
-        Log.d(TAG, String.format("instrument(%s)", packageName));
+        LogA.d(TAG, String.format("instrument(%s)", packageName));
         InstrumentationTask task = createInstrumentationTask(packageName);
         if (!mInstrumentationQueue.contains(task)) {
             createOrRestartThreadPool();
@@ -90,7 +90,7 @@ class ServiceController implements IServiceController {
 
     @Override
     public void cancel() {
-        Log.d(TAG, "cancel()");
+        LogA.d(TAG, "cancel()");
         mInstrumentationQueue.clear();
         if (mThreadPool != null) {
             mThreadPool.shutdownNow();

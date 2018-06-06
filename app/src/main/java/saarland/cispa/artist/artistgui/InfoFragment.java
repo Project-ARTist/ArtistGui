@@ -33,7 +33,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import saarland.cispa.artist.artistgui.utils.StringUtils;
-import trikita.log.Log;
+import saarland.cispa.utils.LogA;
 
 public class InfoFragment extends Fragment {
 
@@ -88,7 +88,7 @@ public class InfoFragment extends Fragment {
             }
 
         } catch (final IOException e) {
-            Log.e(TAG, "Could not read Artist Version files from assets.", e);
+            LogA.e(TAG, "Could not read Artist Version files from assets.", e);
         }
 
         mTextView.append("\n\n");
