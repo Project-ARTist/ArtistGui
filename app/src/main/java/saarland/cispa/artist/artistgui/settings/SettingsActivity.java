@@ -30,10 +30,6 @@ import trikita.log.Log;
 
 public class SettingsActivity extends Activity {
 
-    private static final String TAG = "SettingsActivity";
-
-    private SettingsPresenter mPresenter;
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,33 +40,15 @@ public class SettingsActivity extends Activity {
 
         if (savedInstanceState != null) {
             mFragment = (SettingsFragment) fragmentManager.findFragmentById(android.R.id.content);
-            mPresenter = new SettingsPresenter(this, mFragment);
+            // Presenter binds itself to view
+            new SettingsPresenter(mFragment);
         } else {
             mFragment = new SettingsFragment();
-            mPresenter = new SettingsPresenter(this, mFragment);
-
+            // Presenter binds itself to view
+            new SettingsPresenter(mFragment);
             fragmentManager.beginTransaction()
                     .replace(android.R.id.content, mFragment)
                     .commit();
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
-        if (requestCode == SettingsPresenter.READ_EXTERNAL_STORAGE_REQUEST_CODE) {
-            mPresenter.onRequestPermissionsResult(grantResults);
-        }
-    }
-
-    @Override
-    public void onActivityResult(final int requestCode, final int resultCode,
-                                 final Intent resultData) {
-        Log.d(TAG, "SettingsActivity.onActivityResult()");
-
-        if (requestCode == SettingsPresenter.READ_EXTERNAL_STORAGE_REQUEST_CODE
-                && resultCode == Activity.RESULT_OK) {
-            mPresenter.processChosenCodeLib(resultData);
         }
     }
 }

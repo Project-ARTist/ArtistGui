@@ -35,9 +35,11 @@ import trikita.log.Log;
 
 public class InstrumentationService extends Service {
 
-    private final static String TAG = "CompilationService";
+    private final static String TAG = "InstrumentationService";
 
     public static final String INTENT_KEY_APP_NAME = "app_name";
+    public static final String INTENT_KEY_MODULE_PACKAGE_NAMES = "module_package_names";
+
     private static final boolean ALLOW_REBIND = true;
 
     private final IBinder mBinder;
@@ -90,17 +92,19 @@ public class InstrumentationService extends Service {
         Log.d(TAG, "onStartCommand()");
         if (intent != null) {
             final String packageName = intent.getStringExtra(INTENT_KEY_APP_NAME);
-            if (packageName != null && !packageName.isEmpty()) {
+            final String[] modules = intent.getStringArrayExtra(INTENT_KEY_MODULE_PACKAGE_NAMES);
+            if (packageName != null && modules != null && !packageName.isEmpty() &&
+                    modules.length > 0) {
                 Log.d(TAG, "onStartCommand() Extra: " + packageName);
-                instrumentApp(packageName);
+                instrumentApp(packageName, modules);
             }
         }
         return START_STICKY;
     }
 
-    private void instrumentApp(String packageName) {
+    private void instrumentApp(String packageName, String[] modules) {
         mServiceController.moveToForeground(this);
-        mServiceController.instrument(packageName);
+        mServiceController.instrument(packageName, modules);
     }
 
     @Nullable

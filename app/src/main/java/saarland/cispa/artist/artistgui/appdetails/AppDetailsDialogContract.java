@@ -22,6 +22,9 @@ package saarland.cispa.artist.artistgui.appdetails;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
+import java.util.List;
+
+import saarland.cispa.artist.artistgui.database.Module;
 import saarland.cispa.artist.artistgui.database.Package;
 import saarland.cispa.artist.artistgui.base.BasePresenter;
 import saarland.cispa.artist.artistgui.base.BaseView;
@@ -48,7 +51,7 @@ interface AppDetailsDialogContract {
 
         void determineInstrumentationStatusAndUpdateViews();
 
-        void startInstrumentation();
+        void startInstrumentation(List<Module> modules);
 
         void removeInstrumentation();
 

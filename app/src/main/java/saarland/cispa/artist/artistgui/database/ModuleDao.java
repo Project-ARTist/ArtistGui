@@ -17,18 +17,30 @@
  *
  */
 
-package saarland.cispa.artist.artistgui.applist;
+package saarland.cispa.artist.artistgui.database;
 
-import saarland.cispa.artist.artistgui.base.BasePresenter;
-import saarland.cispa.artist.artistgui.base.BaseView;
+import android.arch.persistence.room.Dao;
+import android.arch.persistence.room.Delete;
+import android.arch.persistence.room.Insert;
+import android.arch.persistence.room.Query;
+import android.arch.persistence.room.Update;
 
-public interface AppListContract {
+import java.util.List;
 
-    interface View extends BaseView<Presenter> {
-        void showNoCodeLibChosenMessage();
-    }
+@Dao
+public interface ModuleDao {
+    @Query("SELECT * FROM modules")
+    List<Module> getAll();
 
-    interface Presenter extends BasePresenter {
-        void checkIfCodeLibIsChosen();
-    }
+    @Query("SELECT * FROM modules WHERE package_name=:packageName")
+    Module get(String packageName);
+
+    @Insert
+    void insertAll(Module... module);
+
+    @Update
+    void update(Module... modules);
+
+    @Delete
+    void delete(Module... packages);
 }

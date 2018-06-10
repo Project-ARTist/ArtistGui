@@ -13,6 +13,7 @@
 
     <string name="menu_drawer_home">Home</string>
     <string name="menu_drawer_instrumentation">Instrumentation</string>
+    <string name="menu_drawer_modules">Modules</string>
     <string name="action_settings">Settings</string>
 
     <string name="app_icon">App icon</string>
@@ -22,7 +23,6 @@
     <string name="title_activity_artist_gui_settings_general">ArtistGUI Settings</string>
 
     <string name="pref_category_dex2oat">Dex2oat Compiler Config</string>
-    <string name="pref_category_codelib">Codelib Config</string>
     <string name="pref_category_apk">Apk Config</string>
 
 
@@ -40,7 +40,6 @@
     <string name="no_browser_installed">Couldn\'t open homepage because no web browser isn\'t installed.</string>
 
     <!-- App list Fragment -->
-    <string name="no_codelib_chosen">WARNING: No codelib chosen yet. Compilation might crash.</string>
     <string name="search_hint">Search for a specific app</string>
 
     <!-- App details dialog -->
@@ -51,6 +50,17 @@
     <string name="remove_instrumentation">Remove Instrumentation</string>
     <string name="never_instrumented">Never instrumented</string>
     <string name="last_instrumentation">Last instrumentation: %s</string>
+
+    <!-- Modules Fragment -->
+    <string name="add_module">Add Module</string>
+    <string name="module_import_success">Module import succeeded.</string>
+    <string name="module_removal_success">Module removal succeeded.</string>
+    <string name="module_import_failed">Couldn\'t import module.</string>
+    <string name="select_module">Select modules</string>
+    <string name="remove_module">Remove %1$s?</string>
+    <string name="cancel">Cancel</string>
+    <string name="remove">Remove</string>
+    <string name="no_module_selected">No module selected.</string>
 
     <!-- Settings -->
     <string name="pref_title_logging">Logging</string>
@@ -90,15 +100,8 @@
 
     <string name="pref_compiler_launch_activity">Launch Activity</string>
     <string name="pref_compiler_launch_activity_summary">Select if you want artist to launch the app after injection/recompilation.</string>
-    <string name="pref_compiler_inject_codelib">Inject CodeLib</string>
-    <string name="pref_compiler_inject_codelib_summary">Select if you want to inject an external code library via DexMerger</string>
 
-
-    <string name="pref_title_codelib_import">Codelib (Import)</string>
-    <string name="pref_summary_codelib_import">Please select a CodeLib that should get imported into the CodeLib Folder.</string>
     <string name="external_storage_permission_denied">Can\'t access external storage. Please grant the permission.</string>
-    <string name="pref_title_codelib_selection">CodeLib (Choose)</string>
-    <string name="pref_summary_codelib_selection">Please choose a CodeLib for injection.</string>
     <string name="notification_instrumentation_title">Artist Instrumentation</string>
 
     <string name="snack_compilation_success">Compilation Success: </string>

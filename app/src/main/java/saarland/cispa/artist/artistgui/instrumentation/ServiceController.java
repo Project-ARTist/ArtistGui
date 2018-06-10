@@ -66,9 +66,9 @@ class ServiceController implements IServiceController {
     }
 
     @Override
-    public void instrument(String packageName) {
+    public void instrument(String packageName, String[] modules) {
         Log.d(TAG, String.format("instrument(%s)", packageName));
-        InstrumentationTask task = createInstrumentationTask(packageName);
+        InstrumentationTask task = createInstrumentationTask(packageName, modules);
         if (!mInstrumentationQueue.contains(task)) {
             createOrRestartThreadPool();
             mThreadPool.submit(task);
@@ -76,10 +76,10 @@ class ServiceController implements IServiceController {
         }
     }
 
-    private InstrumentationTask createInstrumentationTask(String packageName) {
+    private InstrumentationTask createInstrumentationTask(String packageName, String[] modules) {
         final ArtistRunConfig runConfig =
                 ArtistConfigFactory.buildArtistRunConfig(mAppContext, packageName);
-        return new InstrumentationTask(mAppContext, runConfig, mProgressListener);
+        return new InstrumentationTask(mAppContext, runConfig, modules, mProgressListener);
     }
 
     private void createOrRestartThreadPool() {

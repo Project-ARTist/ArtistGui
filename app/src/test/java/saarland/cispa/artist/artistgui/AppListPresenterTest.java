@@ -21,13 +21,9 @@ package saarland.cispa.artist.artistgui;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import saarland.cispa.artist.artistgui.applist.AppListContract;
-import saarland.cispa.artist.artistgui.applist.AppListPresenter;
 import saarland.cispa.artist.artistgui.settings.manager.SettingsManager;
 
 import static org.mockito.Mockito.never;

@@ -47,31 +47,23 @@ import saarland.cispa.artist.artistgui.applist.adapter.OnPackageSelectedListener
 import saarland.cispa.artist.artistgui.applist.loader.AppListLoader;
 import saarland.cispa.artist.artistgui.database.Package;
 import saarland.cispa.artist.artistgui.settings.manager.SettingsManagerImpl;
-import saarland.cispa.artist.artistgui.utils.GuiUtils;
 
-public class AppListFragment extends Fragment implements AppListContract.View,
-        LoaderManager.LoaderCallbacks<List<Package>>, OnPackageSelectedListener {
+public class AppListFragment extends Fragment implements LoaderManager
+        .LoaderCallbacks<List<Package>>, OnPackageSelectedListener {
 
     private static final int LOADER_ID = 9574583;
-
-    private AppListContract.Presenter mPresenter;
 
     private SearchView mSearchView;
     private ProgressBar mProgressBar;
     private RecyclerView mAppListView;
     private AppListAdapter mAdapter;
 
-    @Override
-    public void setPresenter(AppListContract.Presenter presenter) {
-        mPresenter = presenter;
-    }
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         setHasOptionsMenu(true);
-        View rootView = inflater.inflate(R.layout.fragment_app_list, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_recyclerview, container, false);
         mProgressBar = rootView.findViewById(R.id.progress_bar);
         mAppListView = rootView.findViewById(R.id.recycler_view);
 
@@ -149,13 +141,6 @@ public class AppListFragment extends Fragment implements AppListContract.View,
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        if (savedInstanceState == null) {
-            mPresenter.checkIfCodeLibIsChosen();
-        }
-    }
-
-    @Override
     public void onPackageSelected(Package selectedPackage) {
         AppDetailsDialog detailsDialog = new AppDetailsDialog();
         // constructor connects presenter to view
@@ -189,10 +174,5 @@ public class AppListFragment extends Fragment implements AppListContract.View,
     public void onLoaderReset(Loader<List<Package>> loader) {
         // Clear the data in the adapter.
         mAdapter.setPackagesList(null);
-    }
-
-    @Override
-    public void showNoCodeLibChosenMessage() {
-        GuiUtils.displaySnackForever(mAppListView, getString(R.string.no_codelib_chosen));
     }
 }

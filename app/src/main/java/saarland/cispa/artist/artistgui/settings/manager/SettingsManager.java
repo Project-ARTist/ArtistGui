@@ -20,9 +20,5 @@
 package saarland.cispa.artist.artistgui.settings.manager;
 
 public interface SettingsManager {
-    String getSelectedCodeLib();
-
-    boolean shouldInjectCodeLib();
-
     boolean shouldLaunchActivityAfterCompilation();
 }
