@@ -1,8 +1,15 @@
-apply plugin: 'com.android.application'
+plugins {
+    id 'com.android.application'
+    id 'com.gladed.androidgitversion' version '0.4.4'
+}
+
+androidGitVersion {
+    prefix 'v'  // to match our tag format, e.g. v0.0.1-beta
+}
 
 android {
     compileSdkVersion 26
-    buildToolsVersion "26.0.2"
+    buildToolsVersion "27.0.3"
 
 //    splits {
 //        abi {
@@ -17,8 +24,8 @@ android {
         applicationId "saarland.cispa.artist.artistgui"
         minSdkVersion 23
         targetSdkVersion 26
-        versionCode 1
-        versionName "1.0"
+        versionName androidGitVersion.name()
+        versionCode androidGitVersion.code()
 
         javaCompileOptions {
             annotationProcessorOptions {
@@ -84,8 +91,8 @@ dependencies {
     compile "com.android.support:design:$supportLibVersion"
     compile "com.android.support:support-v13:$supportLibVersion"
 
-    implementation "android.arch.persistence.room:runtime:1.0.0"
-    annotationProcessor "android.arch.persistence.room:compiler:1.0.0"
+    implementation "android.arch.persistence.room:runtime:1.1.0"
+    annotationProcessor "android.arch.persistence.room:compiler:1.1.0"
 
     compile 'com.madgag.spongycastle:core:1.54.0.0'
     compile 'com.madgag.spongycastle:pkix:1.54.0.0'
