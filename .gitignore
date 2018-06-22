@@ -33,6 +33,7 @@ src/main/assets/artist/android-26/dex2oat
 src/main/assets/artist/android-27/dex2oat
 src/main/assets/artist/android-28/dex2oat
 gradle.properties
+app/release
 
 # version numbers for debugging
 app/src/main/assets/VERSION_ARTISTGUI.md
