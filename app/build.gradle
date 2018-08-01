@@ -94,6 +94,9 @@ dependencies {
     implementation "android.arch.persistence.room:runtime:1.1.0"
     annotationProcessor "android.arch.persistence.room:compiler:1.1.0"
 
+    // Support library depends on this lightweight import
+    implementation "android.arch.lifecycle:runtime:1.1.1"
+
     compile 'com.madgag.spongycastle:core:1.54.0.0'
     compile 'com.madgag.spongycastle:pkix:1.54.0.0'
 
