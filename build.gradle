@@ -2,11 +2,8 @@
 
 buildscript {
     repositories {
-        repositories {
-            jcenter()
-            google()
-        }
         google()
+        jcenter()
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.1.3'
@@ -31,22 +28,22 @@ task clean(type: Delete) {
     delete rootProject.buildDir
 }
 
-task buildArtMarshmallow(type:Exec) {
+task buildArtMarshmallow(type: Exec) {
 
     commandLine './scripts/build_marshmallow.sh'
 }
 
-task buildArtNougat(type:Exec) {
+task buildArtNougat(type: Exec) {
 
     commandLine './scripts/build_nougat.sh'
 }
 
-task buildArtNougat_7_1(type:Exec) {
+task buildArtNougat_7_1(type: Exec) {
 
     commandLine './scripts/build_nougat_7.1.sh'
 }
 
-task buildArtOreo(type:Exec) {
+task buildArtOreo(type: Exec) {
 
     commandLine './scripts/build_oreo.sh'
 }
