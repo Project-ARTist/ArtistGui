@@ -1,6 +1,10 @@
 plugins {
     id 'com.android.application'
     id 'com.gladed.androidgitversion' version '0.4.4'
+
+    id 'kotlin-android'
+    id 'kotlin-kapt'
+    id 'kotlin-android-extensions'
 }
 
 androidGitVersion {
@@ -92,7 +96,7 @@ dependencies {
     implementation "com.android.support:support-v13:$supportLibVersion"
 
     implementation "android.arch.persistence.room:runtime:1.1.1"
-    annotationProcessor "android.arch.persistence.room:compiler:1.1.1"
+    kapt "android.arch.persistence.room:compiler:1.1.1"
 
     // Support library depends on this lightweight import
     implementation "android.arch.lifecycle:runtime:1.1.1"
@@ -104,4 +108,5 @@ dependencies {
     testImplementation "junit:junit:$junitVersion"
     testImplementation "org.mockito:mockito-all:$mockitoVersion"
     testImplementation "org.hamcrest:hamcrest-all:$hamcrestVersion"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }
