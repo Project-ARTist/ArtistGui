@@ -20,7 +20,7 @@
 package saarland.cispa.artist.artistgui.instrumentation;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import java.util.List;
 

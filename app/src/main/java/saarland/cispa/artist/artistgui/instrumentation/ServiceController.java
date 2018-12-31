@@ -22,7 +22,7 @@ package saarland.cispa.artist.artistgui.instrumentation;
 import android.app.Notification;
 import android.app.Service;
 import android.content.Context;
-import android.support.v4.content.LocalBroadcastManager;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import java.util.ArrayList;
 import java.util.LinkedList;

@@ -21,7 +21,7 @@ package saarland.cispa.artist.artistgui.instrumentation.progress;
 
 import android.app.Notification;
 import android.content.Context;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import saarland.cispa.artist.artistgui.R;
 

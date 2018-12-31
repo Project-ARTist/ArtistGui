@@ -20,7 +20,7 @@
 package saarland.cispa.artist.artistgui.modules.importer;
 
 import android.os.Build;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.util.Log;
 
 import java.io.File;

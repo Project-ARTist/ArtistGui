@@ -21,7 +21,7 @@ package saarland.cispa.artist.artistgui.broadcastreceiver;
 
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import saarland.cispa.artist.artistgui.Application;
 import saarland.cispa.artist.artistgui.database.Package;

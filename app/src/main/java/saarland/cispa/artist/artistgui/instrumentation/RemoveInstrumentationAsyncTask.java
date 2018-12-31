@@ -20,7 +20,7 @@
 package saarland.cispa.artist.artistgui.instrumentation;
 
 import android.os.AsyncTask;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import saarland.cispa.artist.artistgui.utils.ProcessExecutor;
 

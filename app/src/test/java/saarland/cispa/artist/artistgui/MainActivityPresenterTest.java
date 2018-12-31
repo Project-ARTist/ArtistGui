@@ -20,7 +20,7 @@
 package saarland.cispa.artist.artistgui;
 
 import android.os.Build;
-import android.support.v4.app.Fragment;
+import androidx.fragment.app.Fragment;
 
 import org.junit.Before;
 import org.junit.Test;

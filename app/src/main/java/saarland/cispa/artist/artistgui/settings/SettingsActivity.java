@@ -21,12 +21,9 @@ package saarland.cispa.artist.artistgui.settings;
 
 import android.app.Activity;
 import android.app.FragmentManager;
-import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-
-import trikita.log.Log;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 public class SettingsActivity extends Activity {
 

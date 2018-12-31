@@ -1,6 +1,6 @@
 package saarland.cispa.artist.artistgui.progress;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import saarland.cispa.artist.artistgui.base.BasePresenter;
 import saarland.cispa.artist.artistgui.base.BaseView;

@@ -19,7 +19,7 @@
 
 package saarland.cispa.artist.artistgui.database.operations;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import saarland.cispa.artist.artistgui.database.AppDatabase;
 import saarland.cispa.artist.artistgui.database.Package;

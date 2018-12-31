@@ -19,7 +19,7 @@
 
 package saarland.cispa.artist.artistgui.instrumentation.progress;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 public interface ProgressListener {
     void prepareReporter();
