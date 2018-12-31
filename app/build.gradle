@@ -100,9 +100,6 @@ dependencies {
     // Support library depends on this lightweight import
     implementation "androidx.lifecycle:lifecycle-runtime:2.1.0-alpha01"
 
-    implementation 'com.madgag.spongycastle:core:1.54.0.0'
-    implementation 'com.madgag.spongycastle:pkix:1.54.0.0'
-
     // Dependencies for local unit tests
     testImplementation "junit:junit:$junitVersion"
     testImplementation "org.mockito:mockito-all:$mockitoVersion"
