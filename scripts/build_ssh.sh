@@ -1,4 +1,9 @@
 #!/usr/bin/env bash
+#
+# set -x # Prints A LOT of stuff we don't want to see, so prefix commands wit `exe` if you want to
+#        # have them printed
+#
+exe() { echo "\$ $@" ; "$@" ; }
 
 ### Building ARTist on a remote machine that is included locally via ssh.
 ### First argument is expected to be the file path of the corresponding ssh config for a particular sdk level.
@@ -17,12 +22,6 @@ echo "ARTist SSH build started"
 
 # set the configuration values
 source $config
-
-ndk_binary_strip="${ndk_path}/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86_64/bin/arm-linux-androideabi-strip"
-
-#server_aosp_path = ${server_mount_path}
-#server_art_path="${server_mount_path}/art/"
-#server_art_git_path="${server_art_path}/.git"
 
 api_level_string="android-${api_level}"
 
@@ -60,24 +59,40 @@ dexToOatLibs=(
 set -e # fail on errors in subcommands
 set -u # treat missing variables as errors
 
-# do the actual building
-if [ "${arch_64}" = true ]; then
-    echo "Connecting to ${server_alias}, building Android [arm64]"
+# Setup architecture Specific variables & log
+if [ "${arch}" = "x86" ]; then
+    if [ "${arch_64}" = true ]; then
+        ndk_binary_strip="${ndk_path}/toolchains/x86_64-4.9/prebuilt/linux-x86_64/bin/x86_64-linux-android-strip"
+        arch_path='generic_x86_64'
+        lunch_arch='aosp_x86_64-eng'
+    else
+        ndk_binary_strip="${ndk_path}/toolchains/x86-4.9/prebuilt/linux-x86_64/bin/i686-linux-android-strip"
+        arch_path='generic_x86'
+        lunch_arch='aosp_x86-eng'
+    fi
+elif [ "${arch}" = "arm" ]; then
+    if [ "${arch_64}" = true ]; then
+        ndk_binary_strip="${ndk_path}/toolchains/aarch64-linux-android-4.9/prebuilt/linux-x86_64/bin/aarch64-linux-android-strip"
+        arch_path='generic_arm64'
+        lunch_arch='aosp_arm64-eng'
+    else
+        ndk_binary_strip="${ndk_path}/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86_64/bin/arm-linux-androideabi-strip"
+        arch_path='generic'
+        lunch_arch='aosp_arm-eng'
+    fi
 else
-    echo "Connecting to ${server_alias}, building Android [arm32]"
+    echo "unsupported architecture"
+    exit 1
 fi
+echo "Connecting to ${server_alias}, building Android '${arch}' 64bit: '${arch_64}' target-path: '${arch_path}'"
 
+# do the actual building
 if [ "${debug_binaries}" = true ]; then
     [ -d "debug/android-${api_level}" ] || mkdir -p "debug/android-${api_level}"
 fi
 
-if [ "${arch_64}" = true ]; then
-#    ssh ${server_alias} "cd ${server_aosp} ; . build/envsetup.sh; lunch aosp_arm64-eng; mmma art/ -j${threads}"
-    ssh ${server_alias} "cd ${server_aosp} ; . build/envsetup.sh; lunch aosp_arm64-eng; mmm art/ -j${threads}"
-else
-#    ssh ${server_alias} "cd ${server_aosp} ; . build/envsetup.sh; lunch aosp_arm-eng; mmma art/ -j${threads}"
-    ssh ${server_alias} "cd ${server_aosp} ; . build/envsetup.sh; lunch aosp_arm-eng; mmm art/ -j${threads}"
-fi
+ssh ${server_alias} "cd ${server_aosp} ; . build/envsetup.sh; lunch ${lunch_arch}; mmm art/ -j${threads}"
+#ssh ${server_alias} "cd ${server_aosp} ; . build/envsetup.sh; lunch ${lunch_arch}; mmma art/ -j${threads}"
 
 if [ $? -eq 0 ]; then
     echo ""
@@ -94,6 +109,7 @@ if [ $? -eq 0 ]; then
 
     echo "Creating folders if necessary: ./assets/artist/${api_level_string}/lib/"
     mkdir -p ./assets/artist/${api_level_string}/lib/ || true
+
     echo ""
     echo "Debug binaries will get copied to ${working_dir}/debug/android-${api_level}/${lib}"
     mkdir -p ${working_dir}/debug/android-${api_level}/${lib} || true
@@ -102,31 +118,22 @@ if [ $? -eq 0 ]; then
     echo "Copying new binaries and shared objects"
     echo ""
 
-    if [ "${arch_64}" = true ]; then
-        echo "Copy dex2oat (64bit) -> ./assets/artist/${api_level_string}/dex2oat"
-        cp ${mounted_aosp}/out/target/product/generic_arm64/symbols/system/bin/dex2oat ./assets/artist/${api_level_string}/dex2oat
-    else
-        echo "Copy dex2oat (32bit) -> ./assets/artist/${api_level_string}/dex2oat"
-        cp ${mounted_aosp}/out/target/product/generic/symbols/system/bin/dex2oat ./assets/artist/${api_level_string}/dex2oat
-    fi
-    cp ./assets/artist/${api_level_string}/dex2oat ${working_dir}/debug/android-${api_level}/dex2oat
+    echo "Copy dex2oat -> ./assets/artist/${api_level_string}/dex2oat"
+    exe cp ${mounted_aosp}/out/target/product/${arch_path}/symbols/system/bin/dex2oat ./assets/artist/${api_level_string}/dex2oat
+    exe cp ./assets/artist/${api_level_string}/dex2oat ${working_dir}/debug/android-${api_level}/dex2oat
 
     ## now loop through the above array
     for lib in "${dexToOatLibs[@]}"
     do
-        if [ "${arch_64}" = true ]; then
-            echo "Copy ${lib} (64bit) -> './assets/artist/${api_level_string}/lib/'"
-            cp ${mounted_aosp}/out/target/product/generic_arm64/symbols/system/lib/${lib} ./assets/artist/${api_level_string}/lib/ || true
-        else
-            echo "Copy ${lib} (32bit) -> './assets/artist/${api_level_string}/lib/'"
-            cp ${mounted_aosp}/out/target/product/generic/symbols/system/lib/${lib} ./assets/artist/${api_level_string}/lib/ || true
-        fi
-        cp ./assets/artist/${api_level_string}/lib/${lib} ${working_dir}/debug/android-${api_level}/${lib} || true
+        echo "Copy ${lib} -> './assets/artist/${api_level_string}/lib/'"
+        exe cp ${mounted_aosp}/out/target/product/${arch_path}/symbols/system/lib/${lib} ./assets/artist/${api_level_string}/lib/ || true
+        exe cp ./assets/artist/${api_level_string}/lib/${lib} ${working_dir}/debug/android-${api_level}/${lib} || true
+
         if [ "${debug_binaries}" = true ]; then
             echo " > ${lib}: Keeping debug symbols"
         else
             echo " > ${lib}: Stripping debug symbols"
-            ${ndk_binary_strip} ./assets/artist/${api_level_string}/lib/${lib} || true
+            exe ${ndk_binary_strip} ./assets/artist/${api_level_string}/lib/${lib} || true
         fi
     done
     echo ""
@@ -134,12 +141,10 @@ if [ $? -eq 0 ]; then
 
     echo ""
     echo "Saving Git stats"
-    ssh ${server_alias} "git --git-dir ${server_art_git_path} --work-tree ${server_art_path} log -1 | grep commit" > ${art_version_file}
-    ssh ${server_alias} "git --git-dir ${server_art_git_path} --work-tree ${server_art_path} status --porcelain" >> ${art_version_file}
-
+    exe ssh ${server_alias} "git --git-dir ${server_art_git_path} --work-tree ${server_art_path} log -1 | grep commit" > ${art_version_file}
+    exe ssh ${server_alias} "git --git-dir ${server_art_git_path} --work-tree ${server_art_path} status --porcelain" >> ${art_version_file}
 else
     echo "Building ARTist failed..."
 fi
 
 echo "" && date
-
