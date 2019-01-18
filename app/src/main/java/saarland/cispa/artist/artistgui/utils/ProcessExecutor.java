@@ -72,10 +72,10 @@ public enum ProcessExecutor {
         try {
             ProcessBuilder pb = new ProcessBuilder();
             if (rootExecution) {
-                Log.d(TAG, String.format("execute() SU <%s>", command));
+                Log.d(TAG, String.format("execute() SU [`%s`]", command));
                 pb.command("su", "-c", command);
             } else {
-                Log.d(TAG, String.format("execute() <%s>", command));
+                Log.d(TAG, String.format("execute() [`%s`]", command));
                 pb.command(command);
             }
 
@@ -111,10 +111,10 @@ public enum ProcessExecutor {
             }
             final boolean SUCCESS = process.exitValue() == 0;
             PROCESSES.remove(processName);
-            Log.d(TAG, String.format("> execute() <%s> SUCCESS", command));
+            Log.d(TAG, String.format("> execute() [`%s`] SUCCESS", command));
             return SUCCESS;
         } catch (final IOException|InterruptedException e) {
-            Log.d(TAG, String.format("> execute() <%s> FAILED", command), e);
+            Log.d(TAG, String.format("> execute() [`%s`] FAILED", command), e);
             return false;
         }
     }
