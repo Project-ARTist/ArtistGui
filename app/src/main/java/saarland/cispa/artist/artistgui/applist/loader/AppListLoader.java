@@ -32,6 +32,7 @@ import java.util.List;
 import saarland.cispa.artist.artistgui.Application;
 import saarland.cispa.artist.artistgui.database.Package;
 import saarland.cispa.artist.artistgui.database.PackageDao;
+import saarland.cispa.artist.artistgui.system.FrameworkPackages;
 
 public class AppListLoader extends AsyncTaskLoader<List<Package>> {
 
@@ -114,6 +115,8 @@ public class AppListLoader extends AsyncTaskLoader<List<Package>> {
         String appName;
         int appIconId;
 
+        FrameworkPackages.addJarsToPackageList(packageList);
+
         for (PackageInfo packageInfo : packageInfos) {
             // Collect meta data
             applicationInfo = packageInfo.applicationInfo;
@@ -131,6 +134,7 @@ public class AppListLoader extends AsyncTaskLoader<List<Package>> {
         Collections.sort(packageList, Package.sComparator);
         return packageList;
     }
+
 
     /**
      * Fetches package details if present in db or return package without additional data.

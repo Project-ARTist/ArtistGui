@@ -31,6 +31,7 @@ import saarland.cispa.artist.artistgui.instrumentation.config.ArtistRunConfig;
 import saarland.cispa.artist.artistgui.instrumentation.exceptions.InstrumentationException;
 import saarland.cispa.artist.artistgui.instrumentation.progress.ProgressListener;
 import saarland.cispa.artist.artistgui.settings.config.ArtistAppConfig;
+import saarland.cispa.artist.artistgui.system.FrameworkPackages;
 import saarland.cispa.artist.artistgui.utils.AndroidUtils;
 import saarland.cispa.artist.artistgui.utils.ProcessExecutor;
 import saarland.cispa.dexterous.Dexterous;
@@ -77,11 +78,13 @@ public class InstrumentationStagesImpl implements InstrumentationStages {
     }
 
     private void cleanOldBuildFiles() {
-        reportProgressDetails("Deleting: " + mRunConfig.app_apk_merged_file_path);
-        AndroidUtils.deleteExistingFile(mRunConfig.app_apk_merged_file_path);
+        for (int i = 0; i < mRunConfig.input_files.size(); i++) {
+            reportProgressDetails("Deleting: " + mRunConfig.input_files.getMergedPath(i));
+            AndroidUtils.deleteExistingFile(mRunConfig.input_files.getMergedPath(i));
 
-        reportProgressDetails("Deleting: " + mRunConfig.app_apk_merged_signed_file_path);
-        AndroidUtils.deleteExistingFile(mRunConfig.app_apk_merged_signed_file_path);
+            reportProgressDetails("Deleting: " + mRunConfig.input_files.getSignedPath(i));
+            AndroidUtils.deleteExistingFile(mRunConfig.input_files.getSignedPath(i));
+        }
     }
 
     private void setupKeystore() {
@@ -159,85 +162,90 @@ public class InstrumentationStagesImpl implements InstrumentationStages {
 
     @Override
     public void mergeCodeLib() throws InstrumentationException {
-        Log.d(TAG, "MergeCodeLib into: " + mRunConfig.app_apk_file_path);
+        for (int inputFileId = 0; inputFileId < mRunConfig.input_files.size(); inputFileId++) {
+            Log.d(TAG, "MergeCodeLib into: " + mRunConfig.input_files.getFilePath(inputFileId));
 
-        String pathToApkSigned;
-        // deactivate injection upon user wish or if no code lib is provided
-        reportProgressDetails("Injecting CodeLib");
-        File modulesDir = mContext.getDir("modules", Context.MODE_PRIVATE);
+            String pathToApkSigned;
+            // deactivate injection upon user wish or if no code lib is provided
+            reportProgressDetails("Injecting CodeLib");
+            File modulesDir = mContext.getDir("modules", Context.MODE_PRIVATE);
 
-        String toMergeApk = mRunConfig.app_apk_file_path;
-        String mergedApkPath = mRunConfig.app_apk_merged_file_path;
+            String toMergeApk = mRunConfig.input_files.getFilePath(inputFileId);
+            String mergedApkPath = mRunConfig.input_files.getMergedPath(inputFileId);
 
-        try {
-            for (String module_path : mModules) {
-                File codeLibApk = new File(modulesDir, module_path + "/codelib.apk");
-                if (codeLibApk.exists()) {
-                    final File appApk = new File(mRunConfig.app_apk_file_path);
-                    final MergeConfig mergeConfig = new MergeConfig(codeLibApk.getName(),
-                            mergedApkPath, toMergeApk);
+            try {
+                for (String module_path : mModules) {
+                    File codeLibApk = new File(modulesDir, module_path + "/codelib.apk");
+                    if (codeLibApk.exists()) {
+                        final File appApk = new File(mRunConfig.input_files.getFilePath(inputFileId));
+                        final MergeConfig mergeConfig = new MergeConfig(codeLibApk.getName(),
+                                mergedApkPath, toMergeApk);
 
-                    Dexterous dexterous = new Dexterous(mergeConfig);
-                    dexterous.init(appApk, codeLibApk);
-                    dexterous.mergeCodeLib();
-                    final String pathToApk = dexterous.buildApk();
-                    reportProgressDetails("Resigning APK");
-                    Log.d(TAG, String.format("MergeCodeLib DONE (%s)", pathToApk));
-
-                    pathToApkSigned = resignApk(pathToApk);
-                    Log.d(TAG, String.format("MergeCodeLib Signing DONE (%s)", pathToApkSigned));
+                        Dexterous dexterous = new Dexterous(mergeConfig);
+                        dexterous.init(appApk, codeLibApk);
+                        dexterous.mergeCodeLib();
+                        final String pathToApk = dexterous.buildApk();
+                        reportProgressDetails("Resigning APK");
+                        Log.d(TAG, String.format("MergeCodeLib DONE (%s)", pathToApk));
 
 
-                    if (pathToApkSigned.isEmpty()) {
-                        throw new InstrumentationException("Codelib Merge Failed");
+                        pathToApkSigned = resignApk(pathToApk, mRunConfig.input_files.getSignedPath(inputFileId));
+                        Log.d(TAG, String.format("MergeCodeLib Signing DONE (%s)", pathToApkSigned));
+
+
+                        if (pathToApkSigned.isEmpty()) {
+                            throw new InstrumentationException("Codelib Merge Failed");
+                        }
+
+                        toMergeApk = mergedApkPath;
+                        mergedApkPath = mergedApkPath + "AAAA";
+
+                        mUsingCodeLib = true;
                     }
-
-                    toMergeApk = mergedApkPath;
-                    mergedApkPath = mergedApkPath + "AAAA";
-
-                    mUsingCodeLib = true;
                 }
+            } catch (DexMerger.MergeException e) {
+                e.getValue().printStackTrace();
+                throw new InstrumentationException(e.getValue().toString());
             }
-        } catch (DexMerger.MergeException e) {
-            e.getValue().printStackTrace();
-            throw new InstrumentationException(e.getValue().toString());
         }
     }
 
-    private String resignApk(final String unsignedApkPath) {
+    private String resignApk(final String unsignedApkPath, final String signedApkPath) {
         Log.d(TAG, "resignApk() " + unsignedApkPath);
 
-        String signedApkPath;
-        final ApkSigner apkSir = new ApkZipSir(mRunConfig.app_apk_merged_signed_file_path);
+        String out_signedApkPath;
+        final ApkSigner apkSir = new ApkZipSir(signedApkPath);
         try {
-            signedApkPath = apkSir.signApk(mRunConfig.keystore.getAbsolutePath(), unsignedApkPath);
+            out_signedApkPath = apkSir.signApk(mRunConfig.keystore.getAbsolutePath(), unsignedApkPath);
         } catch (final IllegalArgumentException e) {
             Log.e(TAG, "> Signing of APK Failed", e);
-            signedApkPath = "";
+            out_signedApkPath = "";
         }
         return signedApkPath;
     }
 
     @Override
     public void backupMergedApk() {
-        Log.v(TAG, "backupMergedApk()");
-        final File externalStorage = mContext.getExternalFilesDir(null);
-        if (externalStorage != null) {
-            final String mergedApkBackupPath = externalStorage.getAbsolutePath() + File.separator
-                    + "last_merged_signed_instrumented_app.apk";
+        for (int inputFileId = 0; inputFileId < mRunConfig.input_files.size(); inputFileId++) {
+            Log.v(TAG, "backupMergedApk()");
+            final File externalStorage = mContext.getExternalFilesDir(null);
+            if (externalStorage != null) {
+                final String mergedApkBackupPath = externalStorage.getAbsolutePath() + File.separator
+                        + "last_merged_signed_instrumented_app_"+inputFileId+".apk";
 
-            reportProgressDetails("Backing up Merged APK: " + mergedApkBackupPath);
+                reportProgressDetails("Backing up Merged APK: " + mergedApkBackupPath);
 
-            final String cmd_backup_merged_apk = "cp " + mRunConfig.app_apk_merged_signed_file_path +
-                    " " + mergedApkBackupPath;
+                final String cmd_backup_merged_apk = "cp " + mRunConfig.input_files.getSignedPath(inputFileId) +
+                        " " + mergedApkBackupPath;
 
-            boolean success = ProcessExecutor.execute(cmd_backup_merged_apk, true,
-                    ProcessExecutor.processName(mRunConfig.app_package_name, "cp_backup_merged"));
+                boolean success = ProcessExecutor.execute(cmd_backup_merged_apk, true,
+                        ProcessExecutor.processName(mRunConfig.app_package_name, "cp_backup_merged"));
 
-            if (success) {
-                Log.d(TAG, "backupMergedApk() Success: " + mergedApkBackupPath);
-            } else {
-                Log.e(TAG, "backupMergedApk() Failed:  " + mergedApkBackupPath);
+                if (success) {
+                    Log.d(TAG, "backupMergedApk() Success: " + mergedApkBackupPath);
+                } else {
+                    Log.e(TAG, "backupMergedApk() Failed:  " + mergedApkBackupPath);
+                }
             }
         }
     }
@@ -302,10 +310,13 @@ public class InstrumentationStagesImpl implements InstrumentationStages {
                         + " --compile-pic"
                         + modules;
 
-        cmd_dex2oat_compile += " --dex-file=" + (mUsingCodeLib ?
-                mRunConfig.app_apk_merged_signed_file_path : mRunConfig.app_apk_file_path);
+        for (int inputFileId = 0; inputFileId < mRunConfig.input_files.size(); inputFileId++) {
+            cmd_dex2oat_compile += " --dex-file=" + (mUsingCodeLib ?
+                    mRunConfig.input_files.getSignedPath(inputFileId) : mRunConfig.input_files.getFilePath(inputFileId));
+            cmd_dex2oat_compile += " --dex-location=" + mRunConfig.input_files.getFilePath(inputFileId);
+        }
         cmd_dex2oat_compile += " --checksum-rewriting";
-        cmd_dex2oat_compile += " --dex-location=" + mRunConfig.app_apk_file_path;
+        cmd_dex2oat_compile += " --inline-depth-limit=0";
 
         if (mRunConfig.COMPILER_THREADS != -1) {
             cmd_dex2oat_compile += " -j" + mRunConfig.COMPILER_THREADS;
@@ -347,6 +358,9 @@ public class InstrumentationStagesImpl implements InstrumentationStages {
             // ARM64 Special Flags END
             Log.d(TAG, "Compiling for 64bit Architecture!");
         }
+
+        cmd_dex2oat_compile += FrameworkPackages.getAdditionalCmdlineParams(mRunConfig.app_package_name);
+
         return cmd_dex2oat_compile;
     }
 
