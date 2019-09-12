@@ -51,7 +51,6 @@ class InstrumentationTask implements Runnable {
     @Override
     public void run() {
         Log.i(TAG, "Run() compiling and starting " + mRunConfig.app_package_name);
-        Log.i(TAG, "> apkPath:     " + mRunConfig.app_apk_file_path);
         Log.i(TAG, "> Keystore:    " + mRunConfig.keystore);
 
         try {
@@ -69,8 +68,8 @@ class InstrumentationTask implements Runnable {
             mInstrumenationStages.mergeCodeLib();
             ArtistThread.checkThreadCancellation();
             mInstrumenationStages.backupMergedApk();
-
             ArtistThread.checkThreadCancellation();
+
             reportProgress(50, "Compiling: " + mRunConfig.app_package_name);
             mInstrumenationStages.runDex2OatCompilation(pathDex2oat);
 

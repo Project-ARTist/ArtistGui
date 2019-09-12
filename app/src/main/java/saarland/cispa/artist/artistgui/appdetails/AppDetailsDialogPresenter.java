@@ -49,6 +49,8 @@ import saarland.cispa.artist.artistgui.instrumentation.config.ArtistRunConfig;
 import saarland.cispa.artist.artistgui.instrumentation.progress.ProgressPublisher;
 import saarland.cispa.artist.artistgui.settings.config.ArtistConfigFactory;
 import saarland.cispa.artist.artistgui.settings.manager.SettingsManager;
+import saarland.cispa.artist.artistgui.system.FrameworkPackages;
+import saarland.cispa.artist.artistgui.utils.ProcessExecutor;
 import trikita.log.Log;
 
 public class AppDetailsDialogPresenter implements AppDetailsDialogContract.Presenter {
@@ -85,6 +87,7 @@ public class AppDetailsDialogPresenter implements AppDetailsDialogContract.Prese
                             DisplayMetrics.DENSITY_XHIGH, null);
             mView.setAppIcon(appIcon);
         } catch (PackageManager.NameNotFoundException | Resources.NotFoundException e) {
+            mView.setAppIcon(mContext.getDrawable(android.R.mipmap.sym_def_app_icon));
             e.printStackTrace();
         }
     }
@@ -192,10 +195,15 @@ public class AppDetailsDialogPresenter implements AppDetailsDialogContract.Prese
         final boolean launchActivity = mSettingsManager.shouldLaunchActivityAfterCompilation();
         if (launchActivity) {
             String packageName = mSelectedPackage.packageName;
-            Log.d(TAG, "Starting compiled app: " + packageName);
-            final Intent launchIntent = mContext.getPackageManager()
-                    .getLaunchIntentForPackage(packageName);
-            mContext.startActivity(launchIntent);
+            if (FrameworkPackages.shouldReboot(packageName)) {
+                Log.d(TAG, "Rebooting...");
+                ProcessExecutor.execute("reboot", true);
+            } else {
+                Log.d(TAG, "Starting compiled app: " + packageName);
+                final Intent launchIntent = mContext.getPackageManager()
+                        .getLaunchIntentForPackage(packageName);
+                mContext.startActivity(launchIntent);
+            }
         }
     }
 

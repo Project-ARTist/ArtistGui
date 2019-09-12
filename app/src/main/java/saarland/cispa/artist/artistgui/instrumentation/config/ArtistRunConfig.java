@@ -21,15 +21,97 @@
 
 package saarland.cispa.artist.artistgui.instrumentation.config;
 
+import android.content.Context;
+
 import java.io.File;
+import java.util.ArrayList;
+
+import saarland.cispa.artist.artistgui.utils.AndroidUtils;
 
 public class ArtistRunConfig {
+
+    public static class InputFiles {
+        private ArrayList<String> paths = new ArrayList<>();
+        private ArrayList<String> mergedpaths = new ArrayList<>();
+        private ArrayList<String> signedpaths = new ArrayList<>();
+
+
+        public InputFiles(String[] paths, final Context context) {
+            addFiles(paths, context);
+        }
+
+
+        public InputFiles() {
+        }
+
+
+        public void addFile(String filePath, final Context context) {
+            int i = paths.size();
+            paths.add(filePath);
+            mergedpaths.add(AndroidUtils.getFilesDirLocation(context, ArtistRunConfig.BASE_APK_MERGED+"_"+i+".apk"));
+            signedpaths.add(AndroidUtils.getFilesDirLocation(context, ArtistRunConfig.BASE_APK_SIGNED+"_"+i+".apk"));
+        }
+
+
+        public void addFiles(String[] paths, final Context context) {
+            for (String s :paths){
+                addFile(s, context);
+            }
+        }
+
+
+        public String getFilePath(int i) {
+            return paths.get(i);
+        }
+
+
+        public String getMergedPath(int i) {
+            return mergedpaths.get(i);
+        }
+
+
+        public String getSignedPath(int i) {
+            return signedpaths.get(i);
+        }
+
+
+        public String[] getPaths() {
+            return (String[]) paths.toArray();
+        }
+
+
+        public String[] getMergedPaths() {
+            return (String[]) mergedpaths.toArray();
+        }
+
+
+        public String[] getSignedPaths() {
+            return (String[]) signedpaths.toArray();
+        }
+
+
+        public int size(){
+            return paths.size();
+        }
+
+
+        @Override
+        public String toString() {
+            return "InputFiles{" +
+                    "paths=" + paths +
+                    ", mergedpaths=" + mergedpaths +
+                    ", signedpaths=" + signedpaths +
+                    '}';
+        }
+
+
+    }
 
     public final static String KEYSTORE_NAME = "artist.bks";
 
     public static final String BASE_APK_ALTERNATIVE = "base2.apk";
-    public static final String BASE_APK_MERGED = "base_merged.apk";
-    public static final String BASE_APK_SIGNED = "base_merged-signed.apk";
+    public static final String BASE_APK_MERGED = "base_merged";
+    public static final String BASE_APK_SIGNED = "base_merged-signed";
 
     public final static String OAT_FILE = "base.odex";
 
@@ -38,9 +120,6 @@ public class ArtistRunConfig {
      */
 
     public String app_folder_path = "";
-    public String app_apk_file_path = ""; // base.apk
-    public String app_apk_merged_file_path = ""; // base_merged.apk
-    public String app_apk_merged_signed_file_path = ""; // base_merged-signed.apk
 
     public String app_apk_file_path_alternative = "";
 
@@ -83,14 +162,14 @@ public class ArtistRunConfig {
     public String oatGroup = "";
     public String oatPermissions = "";
 
+    public InputFiles input_files = new InputFiles();
+
     @Override
     public String toString() {
         return "ArtistRunConfig {" + "\n" +
                 "  api_level=                        '" + api_level + '\'' + "\n" +
                 ", app_folder_path=                  '" + app_folder_path + '\'' + "\n" +
-                ", app_apk_file_path=                '" + app_apk_file_path + '\'' + "\n" +
-                ", app_apk_merged_file_path=         '" + app_apk_merged_file_path + '\'' + "\n" +
-                ", app_apk_merged_signed_file_path=  '" + app_apk_merged_signed_file_path + '\'' + "\n" +
+                ", input_files=                      '" + input_files + '\'' + "\n" +
                 ", app_apk_file_path_alternative=    '" + app_apk_file_path_alternative + '\'' + "\n" +
                 ", app_oat_folder_path=              '" + app_oat_folder_path + '\'' + "\n" +
                 ", app_oat_file_path=                '" + app_oat_file_path + '\'' + "\n" +

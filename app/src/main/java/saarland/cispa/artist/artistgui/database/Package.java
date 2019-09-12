@@ -45,7 +45,7 @@ public class Package implements Parcelable {
 
     // Non db fields
     public static final Comparator<Package> sComparator =
-            (p1, p2) -> p1.appName.compareTo(p2.appName);
+            (p1, p2) -> (p1.appName.compareTo(p2.appName));
 
     @Ignore
     public String appName;

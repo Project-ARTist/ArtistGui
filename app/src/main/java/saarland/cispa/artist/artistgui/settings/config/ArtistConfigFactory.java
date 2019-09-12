@@ -31,10 +31,15 @@ import android.support.annotation.Nullable;
 
 import java.io.File;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 
+import saarland.cispa.artist.artistgui.database.Package;
 import saarland.cispa.artist.artistgui.instrumentation.config.ArtistRunConfig;
+import saarland.cispa.artist.artistgui.system.FrameworkPackages;
 import saarland.cispa.artist.artistgui.utils.AndroidUtils;
 import trikita.log.Log;
+
+import static saarland.cispa.artist.artistgui.system.FrameworkPackages.getFiles;
 
 /**
  * @author Sebastian Weisgerber (weisgerber@cispa.saarland)
@@ -47,6 +52,8 @@ public class ArtistConfigFactory {
 
     private final static String PATH_ASSET_ARTIST_ROOT = "artist";
     private final static String PATH_ASSET_ARTIST_BIN_PREFIX = PATH_ASSET_ARTIST_ROOT + File.separator + "android-";
+
+
 
     public static ArtistRunConfig buildArtistRunConfig(final Context context, final String appPackageName) {
         ArtistRunConfig artistConfig = new ArtistRunConfig();
@@ -72,18 +79,25 @@ public class ArtistConfigFactory {
         final PackageInfo packageInfo = getPackageInfo(context, appPackageName);
 
         artistConfig.app_package_name = appPackageName;
-        artistConfig.app_apk_file_path = packageInfo.applicationInfo.publicSourceDir;
-        artistConfig.app_apk_merged_file_path = AndroidUtils.getFilesDirLocation(context, ArtistRunConfig.BASE_APK_MERGED);
-        artistConfig.app_apk_merged_signed_file_path = AndroidUtils.getFilesDirLocation(context, ArtistRunConfig.BASE_APK_SIGNED);
+        artistConfig.input_files = new ArtistRunConfig.InputFiles(getFiles(packageInfo == null?appPackageName:packageInfo.applicationInfo.publicSourceDir), context);
 
-        artistConfig.app_folder_path = new File(artistConfig.app_apk_file_path).getParentFile().getAbsolutePath();
+        artistConfig.app_folder_path = new File(artistConfig.input_files.getFilePath(0)).getParentFile().getAbsolutePath();
         artistConfig.app_apk_file_path_alternative = artistConfig.app_folder_path + File.separator + ArtistRunConfig.BASE_APK_ALTERNATIVE;
 
-        artistConfig.app_oat_folder_path = artistConfig.app_folder_path + File.separator + "oat" + File.separator;
-        artistConfig.app_oat_architecture = AndroidUtils.probeArchitetureFolderName(artistConfig.app_oat_folder_path);
-        artistConfig.app_oat_file_path = artistConfig.app_oat_folder_path
-                + artistConfig.app_oat_architecture
-                + File.separator + ArtistRunConfig.OAT_FILE;
+        if (packageInfo != null) {
+            // For normal applications
+            artistConfig.app_oat_folder_path = artistConfig.app_folder_path + File.separator + "oat" + File.separator;
+            artistConfig.app_oat_architecture = AndroidUtils.probeArchitetureFolderName(artistConfig.app_oat_folder_path);
+            artistConfig.app_oat_file_path = artistConfig.app_oat_folder_path
+                    + artistConfig.app_oat_architecture
+                    + File.separator + ArtistRunConfig.OAT_FILE;
+        }
+        else {
+            // For framework jar files
+            artistConfig.app_oat_folder_path = "/data/dalvik-cache/";
+            artistConfig.app_oat_architecture = AndroidUtils.probeArchitetureFolderName(artistConfig.app_oat_folder_path);
+            artistConfig.app_oat_file_path = FrameworkPackages.getOatFile(appPackageName, artistConfig);
+        }
 
         artistConfig.keystore = new File(AndroidUtils.getFilesDirLocation(context, ArtistRunConfig.KEYSTORE_NAME));
 

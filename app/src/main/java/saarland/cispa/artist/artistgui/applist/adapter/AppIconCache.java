@@ -21,6 +21,7 @@ package saarland.cispa.artist.artistgui.applist.adapter;
 
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.util.DisplayMetrics;
 import android.util.LruCache;
@@ -58,6 +59,8 @@ public class AppIconCache extends LruCache<Package, Drawable> {
 
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
+        } catch (Resources.NotFoundException e) {
+            return mContext.getDrawable(android.R.mipmap.sym_def_app_icon);
         }
 
         return appIcon;
